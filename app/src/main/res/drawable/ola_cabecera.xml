@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Borde ondulado al pie de las cabeceras verdes: se pinta con el color del fondo -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="360dp"
+    android:height="44dp"
+    android:viewportWidth="360"
+    android:viewportHeight="44">
+    <path
+        android:fillColor="@color/verde_claro"
+        android:fillAlpha="0.85"
+        android:pathData="M0,18 C70,0 150,4 220,16 C280,26 320,22 360,6 L360,44 L0,44 Z" />
+    <path
+        android:fillColor="@color/beige_fondo"
+        android:pathData="M0,28 C80,10 150,14 220,26 C285,36 325,30 360,16 L360,44 L0,44 Z" />
+</vector>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícono QuesoData (capa frontal): vaca y queso fresco, versión simplificada del logo -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:pivotX="52" android:pivotY="55" android:scaleX="0.82" android:scaleY="0.82" android:translateX="2" android:translateY="-1">
+        <!-- hoja -->
+        <group android:translateX="-10" android:translateY="6">
+            <path android:fillColor="#8BC34A" android:pathData="M66,27 C72,20 81,20 85,22 C83,28 78,35 69,35 C67,33 66,30 66,27 Z" />
+            <path android:pathData="M68,33 C73,29 77,26 82,23" android:strokeColor="#5A9A2A" android:strokeWidth="1.2" android:strokeLineCap="round" />
+        </group>
+        <!-- orejas -->
+        <group android:rotation="-22" android:pivotX="31" android:pivotY="40">
+            <path android:fillColor="#1F1F1F" android:pathData="M23,40 a8,4.6 0 1,0 16,0 a8,4.6 0 1,0 -16,0 Z" />
+        </group>
+        <group android:rotation="-22" android:pivotX="31.5" android:pivotY="40.3">
+            <path android:fillColor="#F4A7B1" android:pathData="M26.5,40.3 a5,2.6 0 1,0 10,0 a5,2.6 0 1,0 -10,0 Z" />
+        </group>
+        <group android:rotation="22" android:pivotX="65" android:pivotY="40">
+            <path android:fillColor="#FFFFFF" android:pathData="M57,40 a8,4.6 0 1,0 16,0 a8,4.6 0 1,0 -16,0 Z" />
+        </group>
+        <group android:rotation="22" android:pivotX="64.5" android:pivotY="40.3">
+            <path android:fillColor="#F4A7B1" android:pathData="M59.5,40.3 a5,2.6 0 1,0 10,0 a5,2.6 0 1,0 -10,0 Z" />
+        </group>
+        <!-- cabeza -->
+        <path android:fillColor="#FFFFFF" android:pathData="M48,27 C59,27 63,35 62.5,45 C62,53 60,58 58,62 L38,62 C36,58 34,53 33.5,45 C33,35 37,27 48,27 Z" />
+        <path android:fillColor="#1F1F1F" android:pathData="M37,31 C40,28 46,27 49,28 C50,33 47,37 43,38 C40,40 38,44 34,44 C33.4,38 34.5,34 37,31 Z" />
+        <path android:fillColor="#1F1F1F" android:pathData="M39.6,46 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M51.6,46 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z" />
+        <path android:fillColor="#FFFFFF" android:pathData="M42,45.2 a0.8,0.8 0 1,0 1.6,0 a0.8,0.8 0 1,0 -1.6,0 Z M54,45.2 a0.8,0.8 0 1,0 1.6,0 a0.8,0.8 0 1,0 -1.6,0 Z" />
+        <!-- hocico -->
+        <path android:fillColor="#F4A7B1" android:pathData="M35,61 a13,8.5 0 1,0 26,0 a13,8.5 0 1,0 -26,0 Z" />
+        <path android:fillColor="#C46B79" android:pathData="M41.5,61 a2,2.8 0 1,0 4,0 a2,2.8 0 1,0 -4,0 Z M50.5,61 a2,2.8 0 1,0 4,0 a2,2.8 0 1,0 -4,0 Z" />
+        <!-- queso fresco -->
+        <group android:translateX="-6" android:translateY="-6">
+            <path android:fillColor="#FFFDF6" android:pathData="M56,70 L80,60 L88,66 L64,77 Z" />
+            <path android:fillColor="#E8DCC0" android:pathData="M56,70 L64,77 L64,88 L56,81 Z" />
+            <path android:fillColor="#F5EEDC" android:pathData="M64,77 L88,66 L88,77 L64,88 Z" />
+            <path android:fillColor="#D9CBA8" android:pathData="M69.6,78 a2.4,2.4 0 1,0 4.8,0 a2.4,2.4 0 1,0 -4.8,0 Z M78.4,74 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 Z M67.1,83 a1.4,1.4 0 1,0 2.8,0 a1.4,1.4 0 1,0 -2.8,0 Z M81.8,79.5 a1.2,1.2 0 1,0 2.4,0 a1.2,1.2 0 1,0 -2.4,0 Z" />
+            <path android:fillColor="#EFE6CF" android:pathData="M69.8,68 a2.2,1.1 0 1,0 4.4,0 a2.2,1.1 0 1,0 -4.4,0 Z" />
+        </group>
+    </group>
+</vector>

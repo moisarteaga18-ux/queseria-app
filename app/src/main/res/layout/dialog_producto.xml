@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_producto"
+            android:text="Nombre del queso *" />
+        <EditText
+            android:id="@+id/etNombre"
+            style="@style/Queseria.Input"
+            android:hint="Ej: Queso costeño"
+            android:inputType="textCapSentences" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Descripción" />
+        <EditText
+            android:id="@+id/etDescripcion"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textCapSentences|textMultiLine" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_precio"
+            android:text="Precio de venta por kg" />
+        <EditText
+            android:id="@+id/etPrecio"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_inventario"
+            android:text="Stock mínimo (kg) para alertar" />
+        <EditText
+            android:id="@+id/etStockMinimo"
+            style="@style/Queseria.Input"
+            android:hint="0 = sin alerta"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/lblStockInicial"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_inventario"
+            android:text="Stock inicial (kg)" />
+        <EditText
+            android:id="@+id/etStockInicial"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+
+    </LinearLayout>
+</ScrollView>

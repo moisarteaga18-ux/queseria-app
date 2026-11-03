@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_semana"
+            android:text="Semana" />
+        <TextView
+            android:id="@+id/tvSemana"
+            style="@style/Queseria.CampoFecha" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_precio"
+            android:text="Queso minorista: precio por kg" />
+        <EditText
+            android:id="@+id/etPrecioKg"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvPrecioLb"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_precio"
+            android:text="Queso mayorista: precio por kg" />
+        <EditText
+            android:id="@+id/etMayoristaKg"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvMayoristaLb"
+            style="@style/Queseria.Aviso" />
+        <TextView
+            style="@style/Queseria.Aviso"
+            android:text="Al registrar una venta solo eliges si es minorista o mayorista y el precio se pone solo." />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cantina"
+            android:text="Precio del litro de leche" />
+        <EditText
+            android:id="@+id/etCostoLeche"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <TextView
+            style="@style/Queseria.Aviso"
+            android:text="Es el mismo precio con el que se calculan las liquidaciones de los ganaderos de esa semana y el costo de la leche en Ganancias." />
+
+    </LinearLayout>
+</ScrollView>

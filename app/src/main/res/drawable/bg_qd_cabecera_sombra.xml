@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sombra verde sobre la foto de la cabecera para que el texto blanco se lea -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="0"
+        android:centerColor="#6612401F"
+        android:endColor="#000F3D22"
+        android:startColor="#CC0F3D22" />
+</shape>

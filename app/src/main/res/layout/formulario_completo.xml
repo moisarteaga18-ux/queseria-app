@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Marco de todos los formularios (mostrarFormulario, guía de diseño): cabecera ilustrada (cabecera_ilustrada), el formulario, los botones Cancelar y Guardar abajo y el
+     paisaje de la finca al pie. El formulario de cada pantalla se pone en "contenido". -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollFormulario"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ===== CABECERA ===== -->
+        <include
+            android:id="@+id/cabecera"
+            layout="@layout/cabecera_ilustrada" />
+
+        <!-- ===== FORMULARIO ===== -->
+        <FrameLayout
+            android:id="@+id/contenidoFormulario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="2dp" />
+
+        <!-- ===== BOTONES ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="22dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelarFormulario"
+                style="@style/Queseria.BotonCancelar"
+                android:layout_width="0dp"
+                android:layout_marginEnd="12dp"
+                android:layout_weight="1"
+                android:text="Cancelar" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGuardarFormulario"
+                style="@style/Queseria.BotonGuardar"
+                android:layout_width="0dp"
+                android:layout_weight="1.15"
+                android:text="Guardar" />
+        </LinearLayout>
+
+        <!-- ===== PIE: paisaje de la finca ===== -->
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_guia_paisaje_finca" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/ola_pie" />
+        </FrameLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

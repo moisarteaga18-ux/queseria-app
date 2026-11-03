@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cambiar contraseña: la actual, la nueva y su repetición -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+            <include
+                android:id="@+id/cabecera"
+                layout="@layout/cabecera_ilustrada" />
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp">
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Contraseña actual *" />
+            <EditText
+                android:id="@+id/etActual"
+                style="@style/Queseria.Input"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_candado"
+                android:drawablePadding="12dp"
+                android:hint="La que usas hoy"
+                android:inputType="textPassword" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Contraseña nueva *" />
+            <EditText
+                android:id="@+id/etNueva"
+                style="@style/Queseria.Input"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_candado"
+                android:drawablePadding="12dp"
+                android:hint="Mínimo 6 caracteres"
+                android:inputType="textPassword"
+                android:maxLength="100" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado" android:text="Repite la contraseña nueva *" />
+            <EditText
+                android:id="@+id/etRepetir"
+                style="@style/Queseria.Input"
+                android:layout_width="match_parent"
+                android:drawableStart="@drawable/ic_candado"
+                android:drawablePadding="12dp"
+                android:hint="Escríbela otra vez"
+                android:inputType="textPassword"
+                android:maxLength="100" />
+
+            <CheckBox
+                android:id="@+id/cbMostrar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mostrar contraseñas"
+                android:textColor="@color/gris_texto_principal" />
+
+            <TextView
+                style="@style/Queseria.TextoSecundario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Al cambiarla, se cierra la sesión en los demás teléfonos donde hayas entrado. En este sigues dentro." />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCancelar"
+                    style="@style/Queseria.BotonCancelar"
+                    android:layout_width="0dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="1"
+                    android:text="Cancelar" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGuardar"
+                    style="@style/Queseria.BotonGuardar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.15"
+                    android:text="Cambiar" />
+            </LinearLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginHorizontal="-24dp"
+                android:layout_marginTop="12dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_guia_paisaje_finca" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:importantForAccessibility="no"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ola_pie" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <!-- Solo desde Inicio (Adelanto o descuento): se elige el ganadero -->
+        <TextView
+            android:id="@+id/lblGanadero"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_ganadero"
+            android:text="Ganadero *"
+            android:visibility="gone" />
+        <Spinner
+            android:id="@+id/spGanadero"
+            style="@style/Queseria.Desplegable"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvGanadero"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_ganadero"
+            android:layout_marginTop="4dp" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_tipo"
+            android:text="Tipo de descuento" />
+        <RadioGroup
+            android:id="@+id/rgTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rbAdelanto"
+                style="@style/Queseria.Opcion"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_campo_mano_dinero"
+                android:text="Adelanto (plata entregada antes del pago)" />
+            <RadioButton
+                android:id="@+id/rbPrestamo"
+                style="@style/Queseria.Opcion"
+                android:drawableStart="@drawable/ic_campo_porcentaje"
+                android:text="Préstamo (cuota a descontar)" />
+            <RadioButton
+                android:id="@+id/rbRechazada"
+                style="@style/Queseria.Opcion"
+                android:drawableStart="@drawable/ic_campo_botella"
+                android:text="Leche rechazada" />
+            <RadioButton
+                android:id="@+id/rbOtro"
+                style="@style/Queseria.Opcion"
+                android:drawableStart="@drawable/ic_campo_otro"
+                android:text="Otro" />
+        </RadioGroup>
+
+        <!-- Semana (viernes a jueves) en cuya liquidación se resta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_panel_semana"
+            android:orientation="vertical"
+            android:padding="12dp">
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_semana"
+            android:layout_marginTop="0dp"
+            android:text="¿En qué semana se descuenta? *" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tarjeta_semana"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/btnSemanaAnterior"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_circulo_verde_suave"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana anterior"
+                android:src="@drawable/ic_flecha_izquierda"
+                app:tint="@color/verde_principal" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvSemana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_bold"
+                    android:gravity="center"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="22sp" />
+                <TextView
+                    android:id="@+id/tvSemanaDias"
+                    style="@style/Queseria.TextoSecundario"
+                    android:gravity="center" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnSemanaSiguiente"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_circulo_verde_suave"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana siguiente"
+                android:src="@drawable/ic_flecha_derecha"
+                app:tint="@color/verde_principal" />
+        </LinearLayout>
+        </LinearLayout>
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvAyudaSemana"
+            style="@style/Queseria.Aviso" />
+
+        <TextView
+            android:id="@+id/lblValor"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_dinero"
+            android:text="Valor *" />
+        <EditText
+            android:id="@+id/etValor"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvAyudaValor"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Descripción" />
+        <EditText
+            android:id="@+id/etDescripcion"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textCapSentences" />
+
+    </LinearLayout>
+</ScrollView>

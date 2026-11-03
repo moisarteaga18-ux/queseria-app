@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cierre semanal del queso: el único dato que se pide es cuánto pasa a la semana siguiente -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="8dp">
+
+    <com.queseria.app.ui.common.Aviso
+        android:id="@+id/tvExplicacion"
+            style="@style/Queseria.Aviso" />
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_queso"
+            android:text="Kg de queso que pasan a la semana siguiente" />
+    <EditText
+        android:id="@+id/etKg"
+        style="@style/Queseria.Input"
+        android:hint="0 kg"
+        android:inputType="numberDecimal" />
+
+    <TextView
+            style="@style/Queseria.Aviso"
+            android:text="Con este dato se calcula la merma de la semana. Esos kg serán el stock inicial de la próxima." />
+
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Encabezado de un día en las listas por semana: "Viernes 30 oct" y su subtotal.
+     Sin registros: todo en gris con "Sin registros". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginTop="14dp"
+    android:layout_marginBottom="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <View
+        android:id="@+id/marca"
+        android:layout_width="4dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_chip"
+        android:backgroundTint="@color/verde_claro" />
+
+    <TextView
+        android:id="@+id/tvDia"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/verde_oscuro"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvSubtotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/verde_oscuro"
+        android:textSize="14sp" />
+</LinearLayout>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ventas: selector de semana (viernes a jueves) y resumen de la semana -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/semana"
+        layout="@layout/vista_semana" />
+
+    <!-- Total vendido en la semana -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_resumen_verde"
+        android:elevation="3dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:outlineAmbientShadowColor="@color/sombra"
+        android:outlineSpotShadowColor="@color/sombra"
+        android:padding="16dp">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_circulo"
+            android:backgroundTint="#2EFFFFFF"
+            android:importantForAccessibility="no"
+            android:padding="11dp"
+            android:src="@drawable/ic_ventas"
+            app:tint="@color/qd_precios_acento" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvTotal"
+                style="@style/Queseria.ValorGrande"
+                android:text="$ 0"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+            <TextView
+                android:id="@+id/tvNumVentas"
+                style="@style/Queseria.TextoSecundario"
+                android:layout_marginTop="2dp"
+                android:text="vendido en la semana"
+                android:textColor="#DDFFFFFF" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Cantidad (kg y lb) y el detalle minorista / mayorista -->
+    <LinearLayout
+        style="@style/Queseria.Tarjeta"
+        android:layout_marginTop="10dp"
+        android:padding="14dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icono_redondeado"
+                android:backgroundTint="@color/verde_principal"
+                android:importantForAccessibility="no"
+                android:padding="9dp"
+                android:src="@drawable/ic_inventario"
+                app:tint="@color/white" />
+            <TextView
+                android:id="@+id/tvCantidad"
+                style="@style/Queseria.ValorGrande"
+                android:layout_marginStart="12dp"
+                android:text="0 kg" />
+            <TextView
+                android:id="@+id/tvLibras"
+                style="@style/Queseria.TextoSecundario"
+                android:layout_marginStart="8dp"
+                android:text="0 lb" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_icono_redondeado"
+                android:backgroundTint="@color/dato_verde"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Minorista" />
+                <TextView android:id="@+id/tvMinorista" style="@style/Queseria.DatoInicio.Valor" />
+                <TextView android:id="@+id/tvMinoristaDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_icono_redondeado"
+                android:backgroundTint="@color/dato_azul"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Mayorista" />
+                <TextView android:id="@+id/tvMayorista" style="@style/Queseria.DatoInicio.Valor" android:textColor="@color/azul_info" />
+                <TextView android:id="@+id/tvMayoristaDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

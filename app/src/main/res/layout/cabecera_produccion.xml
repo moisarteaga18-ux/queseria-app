@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Producción: selector de semana (viernes a jueves) y resumen de la semana -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/semana"
+        layout="@layout/vista_semana" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_resumen_verde"
+        android:elevation="3dp"
+        android:orientation="horizontal"
+        android:outlineAmbientShadowColor="@color/sombra"
+        android:outlineSpotShadowColor="@color/sombra"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="14dp">
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvLitros" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView style="@style/Queseria.ResumenColumna.Rotulo" android:text="litros usados" />
+        </LinearLayout>
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvKg" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView android:id="@+id/tvKgDetalle" style="@style/Queseria.ResumenColumna.Rotulo" android:text="queso producido" />
+        </LinearLayout>
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvRendimiento" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView style="@style/Queseria.ResumenColumna.Rotulo" android:text="lb por lata (promedio)" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

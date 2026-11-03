@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ganadero (cabeza de vaca) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/white"
+        android:fillType="evenOdd"
+        android:pathData="M12,4.5 C15.3,4.5 16.8,6.8 16.8,10 C16.8,11.6 16.4,12.9 15.9,14 L8.1,14 C7.6,12.9 7.2,11.6 7.2,10 C7.2,6.8 8.7,4.5 12,4.5 Z M9.05,10 a0.95,0.95 0 1,0 1.9,0 a0.95,0.95 0 1,0 -1.9,0 Z M13.05,10 a0.95,0.95 0 1,0 1.9,0 a0.95,0.95 0 1,0 -1.9,0 Z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M1.7999999999999998,8 a2.8,1.5 0 1,0 5.6,0 a2.8,1.5 0 1,0 -5.6,0 Z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M16.599999999999998,8 a2.8,1.5 0 1,0 5.6,0 a2.8,1.5 0 1,0 -5.6,0 Z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:fillType="evenOdd"
+        android:pathData="M7,16.9 a5,3.4 0 1,0 10,0 a5,3.4 0 1,0 -10,0 Z M9.399999999999999,17 a0.8,1.1 0 1,0 1.6,0 a0.8,1.1 0 1,0 -1.6,0 Z M13,17 a0.8,1.1 0 1,0 1.6,0 a0.8,1.1 0 1,0 -1.6,0 Z" />
+</vector>

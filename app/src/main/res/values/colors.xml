@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- ===== PALETA QUESODATA (tomada del logo) ===== -->
+
+    <!-- Verdes: el contorno del logo (bosque), el campo (principal) y la palabra "Data" (hoja) -->
+    <color name="verde_bosque">#0F3D22</color>        <!-- el más oscuro: barra de estado, degradados -->
+    <color name="verde_oscuro">#14532D</color>        <!-- títulos, números importantes, toolbar -->
+    <color name="verde_principal">#2E7D32</color>     <!-- botones, acentos, elementos activos -->
+    <color name="verde_claro">#8BC34A</color>         <!-- verde hoja/lima: acentos y gráficos -->
+    <color name="verde_muy_claro">#EAF4E0</color>     <!-- fondos de íconos y chips -->
+
+    <!-- Crema del queso fresco y blanco -->
+    <color name="beige_fondo">#F7F3E8</color>         <!-- fondo crema de todas las pantallas (guía de diseño) -->
+    <color name="crema">#F4ECD8</color>               <!-- fondo de campos de texto, separadores -->
+    <color name="crema_oscura">#E6DCC3</color>        <!-- bordes suaves -->
+    <color name="dorado">#E0A82E</color>              <!-- dorado del atardecer del logo: segunda serie de gráficos -->
+
+    <!-- Textos (casi negro con un toque verde, para que no se vea genérico) -->
+    <color name="gris_texto_principal">#1E2A22</color>
+    <color name="gris_texto_secundario">#6B786F</color>
+    <color name="gris_borde">#E6E1D3</color>
+    <color name="gris_fondo">#FCFBF5</color>
+
+    <!-- Estados -->
+    <color name="rojo_error">#C62828</color>
+    <color name="ambar_advertencia">#D97706</color>
+    <color name="azul_info">#2B7A9B</color>
+    <color name="verde_exito">#2E7D32</color>
+
+    <!-- Sombra de las tarjetas (verde muy oscuro y translúcido en lugar de gris) -->
+    <color name="sombra">#5514532D</color>
+
+    <!-- Botón "Enviar por WhatsApp" (verde de WhatsApp oscurecido para que el texto blanco se lea bien) -->
+    <color name="whatsapp">#1DA851</color>
+
+
+    <!-- Superficies (tarjetas, diálogos, campos con foco, barra inferior). En modo oscuro cambian (values-night). -->
+    <color name="superficie">#FFFDF8</color>
+    <!-- Segunda línea de los títulos de las cabeceras verdes ("descuento", "producción") -->
+    <color name="dorado_titulo">#F3D36B</color>
+    <color name="crema_suave">#FFF1CC</color>
+    <color name="alerta_fondo">#FFF4E0</color>
+    <color name="alerta_borde">#F5D9A8</color>
+    <color name="error_fondo">#FDECEC</color>
+
+    <!-- Gris verdoso de elementos desactivados (botón principal deshabilitado) -->
+    <color name="nav_inactivo">#9AA59D</color>
+
+    <!-- ===== DISEÑO DE INICIO (imagenes_quesodata/LEEME.txt) ===== -->
+    <!-- Fondo de cada tarjeta: las ilustraciones se funden con estos colores -->
+    <color name="qd_venta_inicio">#0B5A33</color>
+    <color name="qd_venta_fin">#3E9A4A</color>
+    <color name="qd_inventario">#FEFCF7</color>
+    <color name="qd_liquidacion">#EEF7FB</color>
+    <color name="qd_precios">#FEF8EB</color>
+    <color name="qd_reportes_inicio">#0E481A</color>
+    <color name="qd_reportes_fin">#12592D</color>
+    <color name="qd_ganaderos">#F1FBF0</color>
+    <color name="qd_clientes">#F2F1FE</color>
+    <color name="qd_productos">#FEF2F1</color>
+    <color name="qd_configuracion">#ECFAF7</color>
+    <color name="qd_cuenta">#EEF4FD</color>
+    <color name="qd_contrasena">#F6F0FB</color>
+
+    <!-- Textos de las tarjetas con ilustración: oscuros también en modo oscuro (la tarjeta sigue pastel) -->
+    <color name="qd_texto">#1E2A22</color>
+    <color name="qd_texto_sec">#6B786F</color>
+
+    <!-- Datos del resumen del día (en modo oscuro, values-night) -->
+    <color name="dato_azul">#EEF7FB</color>
+    <color name="dato_crema">#FEF8EB</color>
+    <color name="dato_verde">#F1FBF0</color>
+    <color name="dato_turquesa">#ECFAF7</color>
+
+    <!-- Círculos de los íconos -->
+    <color name="qd_c_venta">#066F35</color>
+    <color name="qd_c_inventario">#276C16</color>
+    <color name="qd_c_liquidacion">#0C6262</color>
+    <color name="qd_c_precios">#F9B605</color>
+    <color name="qd_precios_acento">#FFD54F</color>
+    <color name="qd_c_ganaderos">#5BA54C</color>
+    <color name="qd_c_clientes">#625DC8</color>
+    <color name="qd_c_productos">#E27365</color>
+    <color name="qd_c_configuracion">#158F85</color>
+    <color name="qd_c_cuenta">#4F88E0</color>
+    <color name="qd_c_contrasena">#9163E1</color>
+
+    <!-- Verde de la palabra "Data" del logo y gris de la barra inferior -->
+    <color name="qd_verde_data">#7DC243</color>
+    <color name="qd_nav_inactivo">#CFE3D3</color>  <!-- barra inferior verde: opciones no activas -->
+
+    <!-- Efecto vidrio de Inicio: tarjetas semitransparentes sobre la foto del campo desenfocada -->
+    <color name="vidrio">#B8FFFFFF</color>
+    <color name="vidrio_barra">#D9FFFFFF</color>
+    <color name="vidrio_borde">#E6FFFFFF</color>
+    <color name="velo_fondo">#A6FCFBF5</color>
+
+</resources>

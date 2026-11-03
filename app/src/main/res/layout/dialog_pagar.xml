@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="8dp">
+
+    <com.queseria.app.ui.common.Aviso
+        android:id="@+id/tvResumen"
+            style="@style/Queseria.Aviso" />
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_fecha"
+            android:text="Fecha de pago" />
+    <TextView
+        android:id="@+id/tvFecha"
+        style="@style/Queseria.CampoFecha" />
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_pago"
+            android:text="Forma de pago *" />
+    <RadioGroup
+        android:id="@+id/rgForma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+                android:id="@+id/rbEfectivo"
+                style="@style/Queseria.Opcion"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_campo_dinero"
+                android:text="Efectivo" />
+        <RadioButton
+                android:id="@+id/rbNequi"
+                style="@style/Queseria.Opcion"
+                android:drawableStart="@drawable/ic_campo_telefono"
+                android:text="Nequi" />
+        <RadioButton
+                android:id="@+id/rbTransferencia"
+                style="@style/Queseria.Opcion"
+                android:drawableStart="@drawable/ic_campo_pago"
+                android:text="Transferencia" />
+    </RadioGroup>
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Notas" />
+    <EditText
+        android:id="@+id/etNotas"
+        style="@style/Queseria.Input"
+        android:hint="Opcional (ej. número de comprobante)"
+        android:inputType="textCapSentences" />
+
+</LinearLayout>

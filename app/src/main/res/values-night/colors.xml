@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modo oscuro: solo se redefinen los colores que cambian. Los nombres se conservan ("beige_fondo",
+     "gris_texto_principal"...) para que todas las pantallas tomen la versión oscura sin tocarlas.
+     El PDF de la liquidación siempre usa la paleta clara (ver LiquidacionPdf). -->
+<resources>
+
+    <!-- Verdes: el "oscuro" se usa para títulos y números, así que en modo oscuro es un verde claro -->
+    <color name="verde_oscuro">#93D594</color>
+    <color name="verde_principal">#3D9142</color>
+    <color name="verde_muy_claro">#1E3424</color>
+
+    <!-- Fondos y superficies -->
+    <color name="beige_fondo">#101512</color>
+    <color name="gris_fondo">#101512</color>
+    <color name="superficie">#1B231E</color>
+    <color name="crema">#26302A</color>
+    <color name="crema_oscura">#3A463F</color>
+    <color name="crema_suave">#3A3220</color>
+
+    <!-- Textos -->
+    <color name="gris_texto_principal">#E6ECE7</color>
+    <color name="gris_texto_secundario">#9DAAA1</color>
+    <color name="gris_borde">#2E3A33</color>
+
+    <!-- Estados (un poco más claros para que se lean sobre fondo oscuro) -->
+    <color name="rojo_error">#EF6B6B</color>
+    <color name="ambar_advertencia">#F2A23A</color>
+    <color name="azul_info">#5DADD0</color>
+    <color name="verde_exito">#66BB6A</color>
+    <color name="alerta_fondo">#3A2E14</color>
+    <color name="alerta_borde">#5C4520</color>
+    <color name="error_fondo">#3B1E1E</color>
+
+    <color name="sombra">#66000000</color>
+
+    <!-- Resumen del día en Inicio. Las tarjetas con ilustración (qd_*) NO cambian: las imágenes se funden
+         con su color pastel, así que en modo oscuro siguen claras y con texto oscuro (qd_texto). -->
+    <color name="dato_azul">#182A31</color>
+    <color name="dato_crema">#2C2617</color>
+    <color name="dato_verde">#1A2B1C</color>
+    <color name="dato_turquesa">#16302C</color>
+
+    <!-- Efecto vidrio de Inicio -->
+    <color name="vidrio">#A61B231E</color>
+    <color name="vidrio_barra">#D91B231E</color>
+    <color name="vidrio_borde">#33FFFFFF</color>
+    <color name="velo_fondo">#B3101512</color>
+
+</resources>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pantalla de lista genérica: franja ilustrada de la guía (campo con la vaca y borde ondulado), cabecera opcional + lista + botón flotante "+ Agregar" (cada pantalla le pone su texto).
+     La franja y la cabecera suben con la lista (AppBarLayout) para dejarle la pantalla a los registros. -->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/beige_fondo"
+        app:elevation="0dp">
+
+        <!-- Franja ilustrada (guía de diseño) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            app:layout_scrollFlags="scroll">
+            <ImageView
+                android:id="@+id/ivCabeceraLista"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_guia_cabecera_ventas" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="bottom"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/ola_cabecera" />
+        </FrameLayout>
+
+        <!-- Aquí cada pantalla agrega su buscador, filtros o resumen -->
+        <LinearLayout
+            android:id="@+id/contenedorCabecera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="4dp"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            app:layout_scrollFlags="scroll" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLista"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="96dp" />
+
+                <TextView
+                    android:id="@+id/tvVacio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="14dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="3dp"
+                    android:padding="40dp"
+                    android:textColor="@color/gris_texto_secundario"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    app:drawableTint="@color/crema_oscura"
+                    app:drawableTopCompat="@drawable/ic_vacio" />
+            </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabAgregar"
+        style="@style/Queseria.Fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:text="Agregar"
+        app:icon="@drawable/ic_agregar" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

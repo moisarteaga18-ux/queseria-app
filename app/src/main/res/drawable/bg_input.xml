@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Campo de texto (guía de diseño): grande, blanco crema, muy redondeado y con borde suave;
+     al enfocarlo, borde verde -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/superficie" />
+            <corners android:radius="18dp" />
+            <stroke android:width="2dp" android:color="@color/verde_principal" />
+            <padding android:bottom="15dp" android:left="18dp" android:right="18dp" android:top="15dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/superficie" />
+            <corners android:radius="18dp" />
+            <stroke android:width="1dp" android:color="@color/gris_borde" />
+            <padding android:bottom="15dp" android:left="18dp" android:right="18dp" android:top="15dp" />
+        </shape>
+    </item>
+</selector>

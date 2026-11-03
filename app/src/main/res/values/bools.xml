@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Iconos oscuros en las barras del sistema (modo claro); en values-night es false -->
+    <bool name="barra_clara">true</bool>
+</resources>

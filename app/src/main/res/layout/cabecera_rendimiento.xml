@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Queseria.Tarjeta"
+    android:layout_marginBottom="4dp">
+    <TextView android:id="@+id/tvPromedio" style="@style/Queseria.ValorGrande" android:text="—" />
+    <TextView style="@style/Queseria.TextoSecundario" android:text="libras de queso por lata de 20 L (promedio)" />
+    <TextView android:id="@+id/tvMejor" style="@style/Queseria.TextoSecundario" android:layout_marginTop="8dp" android:textColor="@color/verde_exito" />
+    <TextView android:id="@+id/tvPeor" style="@style/Queseria.TextoSecundario" android:layout_marginTop="2dp" android:textColor="@color/ambar_advertencia" />
+</LinearLayout>

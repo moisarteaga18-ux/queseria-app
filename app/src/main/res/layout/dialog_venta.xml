@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_fecha"
+            android:text="Fecha" />
+        <TextView
+            android:id="@+id/tvFecha"
+            style="@style/Queseria.CampoFecha" />
+
+        <!-- Solo se vende a clientes registrados -->
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cliente"
+            android:text="Cliente *" />
+        <Spinner
+            android:id="@+id/spCliente"
+            style="@style/Queseria.Desplegable" />
+        <TextView
+            android:id="@+id/btnNuevoCliente"
+            style="@style/Queseria.TextoSecundario"
+            android:layout_marginTop="6dp"
+            android:padding="4dp"
+            android:text="+ Agregar cliente"
+            android:textColor="@color/verde_principal"
+            android:textStyle="bold" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_producto"
+            android:text="Producto (descuenta del inventario)" />
+        <Spinner
+            android:id="@+id/spProducto"
+            style="@style/Queseria.Desplegable" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvStock"
+            style="@style/Queseria.Aviso" />
+
+        <!-- El precio sale de Precios (el de la semana de la venta, según el tipo) -->
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_tipo"
+            android:text="Tipo de venta" />
+        <RadioGroup
+            android:id="@+id/rgTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbLibras"
+                style="@style/Queseria.Opcion.Fila"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_campo_producto"
+                android:text="Minorista" />
+            <RadioButton
+                android:id="@+id/rbMayorista"
+                style="@style/Queseria.Opcion.Fila"
+                android:drawableStart="@drawable/ic_campo_ganadero"
+                android:text="Mayorista" />
+        </RadioGroup>
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_bascula"
+            android:text="Cantidad *" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/etCantidad"
+                style="@style/Queseria.Input"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:hint="0"
+                android:inputType="numberDecimal" />
+            <RadioGroup
+                android:id="@+id/rgUnidad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal">
+                <RadioButton
+                android:id="@+id/rbLb"
+                style="@style/Queseria.Opcion.Unidad"
+                android:checked="true"
+                android:text="lb" />
+                <RadioButton
+                android:id="@+id/rbKg"
+                style="@style/Queseria.Opcion.Unidad"
+                android:text="kg" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblPrecio"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_dinero"
+            android:text="Precio por libra *" />
+        <EditText
+            android:id="@+id/etPrecio"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvOrigenPrecio"
+            style="@style/Queseria.Aviso" />
+
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Total: $ 0"
+            android:textColor="@color/verde_oscuro"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selector de semana (viernes a jueves) de las listas: "Semana 45" y "vie 30 oct – jue 5 nov"
+     entre dos flechas. Lo maneja ui/common/NavegadorSemana. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Queseria.Tarjeta"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="10dp">
+
+    <ImageButton
+        android:id="@+id/btnSemanaAnterior"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_circulo_verde_suave"
+        android:contentDescription="Semana anterior"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_flecha_izquierda"
+        app:tint="@color/verde_principal" />
+
+    <LinearLayout
+        android:id="@+id/centroSemana"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvSemana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/verde_oscuro"
+            android:textSize="19sp" />
+        <TextView
+            android:id="@+id/tvSemanaDias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/gris_texto_secundario"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnSemanaSiguiente"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_circulo_verde_suave"
+        android:contentDescription="Semana siguiente"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_flecha_derecha"
+        app:tint="@color/verde_principal" />
+</LinearLayout>

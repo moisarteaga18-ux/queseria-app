@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tarjeta grande del menú de Inicio (Nueva venta, Inventario, Liquidación, Precios):
+     ícono en círculo de color, nombre, una línea de ayuda, botón con flecha y la ilustración
+     pegada a la esquina inferior derecha (la tarjeta recorta con sus esquinas redondeadas). -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="0dp"
+    android:layout_height="186dp"
+    android:layout_margin="6dp"
+    android:layout_weight="1"
+    android:foreground="?attr/selectableItemBackground"
+    android:outlineAmbientShadowColor="@color/sombra"
+    android:outlineSpotShadowColor="@color/sombra"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="0dp">
+
+    <FrameLayout
+        android:id="@+id/fondo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivIlustracion"
+            android:layout_width="wrap_content"
+            android:layout_height="128dp"
+            android:layout_gravity="bottom|end"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:scaleType="fitEnd" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <ImageView
+                android:id="@+id/ivIcono"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circulo"
+                android:importantForAccessibility="no"
+                android:padding="9dp"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/tvTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_bold"
+                android:includeFontPadding="false"
+                android:lineSpacingMultiplier="1.05"
+                android:textColor="@color/qd_texto"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tvDescripcion"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/qd_texto_sec"
+                android:textSize="11sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ivFlecha"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_circulo"
+                android:importantForAccessibility="no"
+                android:padding="4dp"
+                android:src="@drawable/ic_qd_flecha"
+                app:tint="@color/white" />
+        </LinearLayout>
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

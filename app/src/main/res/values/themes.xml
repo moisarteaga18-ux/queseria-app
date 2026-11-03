@@ -1,0 +1,531 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Tema claro u oscuro (Configuración en Inicio) con la paleta del logo y Poppins en toda la app.
+         Los colores oscuros están en values-night/colors.xml. -->
+    <style name="Base.Theme.QuesoData" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="colorPrimary">@color/verde_principal</item>
+        <item name="colorPrimaryVariant">@color/verde_oscuro</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/verde_claro</item>
+        <item name="colorSecondaryVariant">@color/verde_principal</item>
+        <item name="colorOnSecondary">@color/verde_bosque</item>
+
+        <item name="android:colorBackground">@color/beige_fondo</item>
+        <item name="colorOnBackground">@color/gris_texto_principal</item>
+        <item name="colorSurface">@color/superficie</item>
+        <item name="colorOnSurface">@color/gris_texto_principal</item>
+        <item name="colorControlActivated">@color/verde_principal</item>
+        <item name="colorControlNormal">@color/gris_texto_secundario</item>
+
+        <item name="colorError">@color/rojo_error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="android:statusBarColor">@color/qd_reportes_inicio</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/superficie</item>
+        <item name="android:windowLightNavigationBar">@bool/barra_clara</item>
+
+        <!-- Tipografía -->
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="textAppearanceButton">@style/Queseria.Texto.Boton</item>
+        <item name="textAppearanceHeadline6">@style/Queseria.Texto.Titulo</item>
+        <item name="textAppearanceSubtitle1">@style/Queseria.Texto.Subtitulo</item>
+        <item name="textAppearanceBody1">@style/Queseria.Texto.Cuerpo</item>
+        <item name="textAppearanceBody2">@style/Queseria.Texto.Cuerpo2</item>
+        <item name="textAppearanceCaption">@style/Queseria.Texto.Pie</item>
+
+        <!-- Componentes -->
+        <item name="toolbarStyle">@style/Queseria.Toolbar</item>
+        <item name="drawerArrowStyle">@style/Queseria.FlechaAtras</item>
+        <item name="materialButtonStyle">@style/Queseria.Boton</item>
+        <item name="alertDialogTheme">@style/Queseria.Dialogo</item>
+        <item name="materialAlertDialogTheme">@style/Queseria.Dialogo</item>
+        <item name="tabStyle">@style/Queseria.Tabs</item>
+        <item name="spinnerDropDownItemStyle">@style/Queseria.SpinnerItem</item>
+    </style>
+
+    <style name="Theme.QuesoData" parent="Base.Theme.QuesoData" />
+
+    <!-- Pantalla de carga: fondo blanco (el logo tiene fondo blanco) y el ícono mientras arranca -->
+    <style name="Theme.QuesoData.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/superficie</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.QuesoData.Carga</item>
+    </style>
+
+    <style name="Theme.QuesoData.Carga" parent="Theme.QuesoData">
+        <item name="android:statusBarColor">@color/superficie</item>
+        <item name="android:windowLightStatusBar">@bool/barra_clara</item>
+        <item name="android:windowBackground">@color/superficie</item>
+    </style>
+
+    <!-- Formularios a pantalla completa (mostrarFormulario): cabecera verde bajo la barra de estado -->
+    <style name="Theme.QuesoData.Formulario" parent="Theme.QuesoData">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/beige_fondo</item>
+        <item name="android:statusBarColor">@color/qd_reportes_inicio</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Activity</item>
+    </style>
+
+    <!-- Calendario (elegirFecha): ventana flotante redondeada -->
+    <style name="Theme.QuesoData.Calendario" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:fontFamily">@font/poppins</item>
+    </style>
+
+    <!-- Login y registro: barra de estado crema -->
+    <style name="Theme.QuesoData.Acceso" parent="Theme.QuesoData">
+        <item name="android:statusBarColor">@color/superficie</item>
+        <item name="android:windowLightStatusBar">@bool/barra_clara</item>
+        <item name="android:windowBackground">@color/superficie</item>
+    </style>
+
+    <!-- ===== Tipografía ===== -->
+    <style name="Queseria" />
+    <style name="Queseria.Texto" />
+
+    <style name="Queseria.Texto.Boton" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Queseria.Texto.Titulo" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Queseria.Texto.Subtitulo" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="Queseria.Texto.Cuerpo" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Queseria.Texto.Cuerpo2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="Queseria.Texto.Pie" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="Queseria.Texto.Pestana" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- ===== Componentes ===== -->
+
+    <style name="Queseria.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="titleCentered">true</item>
+        <item name="android:background">@drawable/bg_qd_reportes</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="titleTextAppearance">@style/Queseria.Texto.Titulo</item>
+        <item name="theme">@style/ThemeOverlay.MaterialComponents.Dark.ActionBar</item>
+        <item name="popupTheme">@style/Queseria.Menu</item>
+    </style>
+
+    <!-- Flecha "atrás" de la barra superior en blanco -->
+    <style name="Queseria.FlechaAtras" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/white</item>
+    </style>
+
+    <style name="Queseria.Menu" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:colorBackground">@color/superficie</item>
+    </style>
+
+    <style name="Queseria.Boton" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">16dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="backgroundTint">@color/verde_principal</item>
+    </style>
+
+    <style name="Queseria.Tabs" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@drawable/bg_segmento</item>
+        <item name="tabIndicator">@drawable/bg_tab_indicador</item>
+        <item name="tabIndicatorColor">@color/superficie</item>
+        <item name="tabIndicatorGravity">stretch</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorAnimationMode">elastic</item>
+        <item name="tabTextAppearance">@style/Queseria.Texto.Pestana</item>
+        <item name="tabTextColor">@color/tab_texto</item>
+        <item name="tabRippleColor">@android:color/transparent</item>
+        <item name="tabMinWidth">0dp</item>
+    </style>
+
+    <style name="Queseria.Dialogo" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_dialogo</item>
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="colorPrimary">@color/verde_principal</item>
+        <item name="colorAccent">@color/verde_principal</item>
+        <item name="android:windowTitleStyle">@style/Queseria.DialogoTitulo</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Queseria.DialogoBoton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Queseria.DialogoBoton.Secundario</item>
+    </style>
+
+    <style name="Queseria.DialogoTitulo" parent="RtlOverlay.DialogWindowTitle.AppCompat">
+        <item name="android:textAppearance">@style/Queseria.Texto.Titulo</item>
+        <item name="android:textColor">@color/verde_oscuro</item>
+    </style>
+
+    <style name="Queseria.DialogoBoton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/verde_principal</item>
+        <item name="android:textAppearance">@style/Queseria.Texto.Boton</item>
+    </style>
+
+    <style name="Queseria.DialogoBoton.Secundario">
+        <item name="android:textColor">@color/gris_texto_secundario</item>
+    </style>
+
+    <style name="Queseria.SpinnerItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textColor">@color/gris_texto_principal</item>
+        <item name="android:paddingStart">16dp</item>
+    </style>
+
+    <!-- Etiqueta encima de un campo (guía de diseño): gruesa y con un ícono de color a la izquierda
+         (android:drawableStart="@drawable/ic_campo_…" en cada formulario) -->
+    <style name="Queseria.Etiqueta">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">18dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textColor">@color/gris_texto_principal</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Campo de texto grande y redondeado -->
+    <style name="Queseria.Input">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">58dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:elevation">1dp</item>
+        <item name="android:outlineAmbientShadowColor">@color/sombra</item>
+        <item name="android:outlineSpotShadowColor">@color/sombra</item>
+        <item name="android:textColor">@color/gris_texto_principal</item>
+        <item name="android:textColorHint">@color/gris_texto_secundario</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:drawableTint">@color/verde_principal</item>
+    </style>
+
+    <!-- Campo de fecha: la fecha grande y el botón verde del calendario al final -->
+    <style name="Queseria.CampoFecha" parent="Queseria.Input">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:drawableEnd">@drawable/bg_boton_fecha</item>
+        <item name="android:drawableTint">@null</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <!-- Selector desplegable con el mismo aspecto de los campos -->
+    <style name="Queseria.Desplegable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">58dp</item>
+        <item name="android:background">@drawable/bg_spinner</item>
+        <item name="android:elevation">1dp</item>
+        <item name="android:outlineAmbientShadowColor">@color/sombra</item>
+        <item name="android:outlineSpotShadowColor">@color/sombra</item>
+    </style>
+
+    <!-- Opción como tarjeta seleccionable con ícono (RadioButton): android:drawableStart = ícono -->
+    <style name="Queseria.Opcion" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:background">@drawable/bg_opcion</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textColor">@color/gris_texto_principal</item>
+        <item name="android:textSize">15sp</item>
+        <item name="buttonTint">@color/verde_principal</item>
+    </style>
+
+    <!-- Opción en fila (dos o tres por renglón, layout_width 0dp + layout_weight 1) -->
+    <style name="Queseria.Opcion.Fila">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">6dp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <!-- Unidad (kg / lb) junto a un campo de cantidad -->
+    <style name="Queseria.Opcion.Unidad">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:minHeight">58dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <!-- Aviso informativo verde con ícono (i) -->
+    <style name="Queseria.Aviso">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:background">@drawable/bg_aviso</item>
+        <item name="android:drawableStart">@drawable/ic_info</item>
+        <item name="android:drawableTint">@color/verde_principal</item>
+        <item name="android:drawablePadding">12dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:textColor">@color/verde_oscuro</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Botones de pie de los formularios: Cancelar (borde) y Guardar (verde) -->
+    <style name="Queseria.BotonCancelar" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">58dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textColor">@color/verde_oscuro</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/superficie</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="strokeColor">@color/gris_borde</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="icon">@drawable/ic_cerrar</item>
+        <item name="iconTint">@color/verde_oscuro</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">@color/verde_muy_claro</item>
+    </style>
+
+    <style name="Queseria.BotonGuardar" parent="Queseria.Boton">
+        <item name="android:layout_height">58dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="icon">@drawable/ic_guardar</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconGravity">textStart</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- Título de sección dentro de una pantalla -->
+    <style name="Queseria.TituloSeccion">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">22dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textColor">@color/verde_oscuro</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <!-- Tarjeta blanca redondeada con sombra verde suave -->
+    <style name="Queseria.Tarjeta">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">18dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:elevation">3dp</item>
+        <item name="android:outlineAmbientShadowColor">@color/sombra</item>
+        <item name="android:outlineSpotShadowColor">@color/sombra</item>
+    </style>
+
+    <!-- Número grande dentro de una tarjeta de resumen -->
+    <style name="Queseria.ValorGrande">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textColor">@color/verde_oscuro</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Texto pequeño gris (descripción de un valor) -->
+    <style name="Queseria.TextoSecundario">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/gris_texto_secundario</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Rótulo en mayúsculas pequeñas sobre un valor -->
+    <style name="Queseria.Rotulo" parent="Queseria.TextoSecundario">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- Botón verde principal -->
+    <style name="Queseria.BotonPrimario" parent="Queseria.Boton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">0dp</item>
+    </style>
+
+    <!-- Botón con borde (acción secundaria) -->
+    <style name="Queseria.BotonSecundario" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/verde_oscuro</item>
+        <item name="strokeColor">@color/crema_oscura</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">46dp</item>
+        <item name="backgroundTint">@color/superficie</item>
+        <item name="rippleColor">@color/verde_muy_claro</item>
+    </style>
+
+    <!-- Botón de texto (enlaces dentro de tarjetas) -->
+    <style name="Queseria.BotonTexto" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/verde_principal</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">@color/verde_muy_claro</item>
+    </style>
+
+    <!-- Botón flotante "+ Agregar" (con texto, grande y fácil de tocar) -->
+    <style name="Queseria.Fab" parent="Widget.MaterialComponents.ExtendedFloatingActionButton.Icon">
+        <item name="backgroundTint">@color/verde_principal</item>
+        <item name="iconTint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textAppearance">@style/Queseria.Texto.Boton</item>
+        <item name="shapeAppearanceOverlay">@style/Queseria.Forma.Fab</item>
+        <item name="elevation">6dp</item>
+    </style>
+
+    <style name="Queseria.Forma" />
+    <style name="Queseria.Forma.Fab">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <!-- ===== Inicio: datos del resumen del día ===== -->
+    <style name="Queseria.DatoInicio">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_icono_redondeado</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="Queseria.DatoInicio.Rotulo" parent="Queseria.Rotulo">
+        <item name="android:textSize">9.5sp</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="Queseria.DatoInicio.Valor" parent="Queseria.ValorGrande">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:text">—</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Queseria.DatoInicio.Detalle" parent="Queseria.TextoSecundario">
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- Columnas de un resumen sobre la tarjeta verde (Producción) -->
+    <style name="Queseria.ResumenColumna">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Queseria.ResumenColumna.Valor" parent="Queseria.ValorGrande">
+        <item name="android:text">—</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Queseria.ResumenColumna.Rotulo" parent="Queseria.TextoSecundario">
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#DDFFFFFF</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!-- ===== Inicio: barra inferior ===== -->
+    <style name="Queseria.NavItem">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Queseria.NavItem.Icono">
+        <item name="android:layout_width">52dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:importantForAccessibility">no</item>
+        <item name="tint">@color/qd_nav_inactivo</item>
+    </style>
+
+    <style name="Queseria.NavItem.Texto">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:fontFamily">@font/poppins_medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/qd_nav_inactivo</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Rayita amarilla de la opción activa (visible solo en la activa) -->
+    <style name="Queseria.NavItem.Raya">
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">3dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:background">@drawable/bg_nav_indicador</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+
+</resources>

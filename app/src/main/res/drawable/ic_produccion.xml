@@ -1,0 +1,5 @@
+<!-- Olla con vapor: producción de queso del día -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="24dp" android:tint="#000000" android:viewportHeight="24" android:viewportWidth="24" android:width="24dp">
+    <path android:fillColor="@android:color/white" android:pathData="M3,10h18v2h-1.5v5c0,1.93 -1.57,3.5 -3.5,3.5H8c-1.93,0 -3.5,-1.57 -3.5,-3.5v-5H3z"/>
+    <path android:fillColor="@android:color/white" android:pathData="M7.5,3.5h1.6v4.5H7.5zM11.2,2.5h1.6v5.5h-1.6zM14.9,3.5h1.6v4.5h-1.6z"/>
+</vector>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_persona"
+            android:text="Nombre *" />
+    <EditText
+        android:id="@+id/etNombre"
+        style="@style/Queseria.Input"
+        android:hint="Ej: Don Pedro Pérez"
+        android:inputType="textPersonName|textCapWords" />
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_telefono"
+            android:text="Teléfono" />
+    <EditText
+        android:id="@+id/etTelefono"
+        style="@style/Queseria.Input"
+        android:hint="Opcional"
+        android:inputType="phone" />
+
+</LinearLayout>

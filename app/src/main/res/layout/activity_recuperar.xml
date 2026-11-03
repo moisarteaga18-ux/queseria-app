@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Recuperar contraseña: paso 1 pedir el código al correo; paso 2 código + contraseña nueva -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo"
+    android:fillViewport="true"
+    tools:context=".ui.auth.RecuperarActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="32dp">
+
+        <include
+            android:id="@+id/cabecera"
+            layout="@layout/cabecera_ilustrada"
+            android:layout_width="match_parent"
+            android:layout_height="236dp"
+            android:layout_marginStart="-24dp"
+            android:layout_marginEnd="-24dp"
+            android:layout_marginTop="-24dp" />
+
+        <TextView
+            android:id="@+id/tvSubtitulo"
+            style="@style/Queseria.TextoSecundario"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:text="Te enviamos un código al correo de tu perfil" />
+
+        <LinearLayout
+            style="@style/Queseria.Tarjeta"
+            android:layout_marginTop="20dp"
+            android:padding="20dp">
+
+            <!-- Paso 1 -->
+            <TextView style="@style/Queseria.Etiqueta" android:layout_marginTop="0dp" android:drawableStart="@drawable/ic_campo_usuario"
+            android:text="Usuario" />
+            <EditText
+                android:id="@+id/etUsername"
+                style="@style/Queseria.Input"
+                android:autofillHints="username"
+                android:drawableStart="@drawable/ic_cliente"
+                android:drawablePadding="12dp"
+                android:hint="Tu usuario"
+                android:imeOptions="actionDone"
+                android:inputType="text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEnviar"
+                style="@style/Queseria.BotonPrimario"
+                android:layout_marginTop="20dp"
+                android:text="Enviar código" />
+
+            <!-- Paso 2 (aparece después de enviar el código) -->
+            <LinearLayout
+                android:id="@+id/grupoCodigo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvEnviado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_card"
+                    android:backgroundTint="@color/verde_muy_claro"
+                    android:padding="12dp"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="13sp" />
+
+                <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Código del correo *" />
+                <EditText
+                    android:id="@+id/etCodigo"
+                    style="@style/Queseria.Input"
+                    android:autofillHints="smsOTPCode"
+                    android:drawableStart="@drawable/ic_correo"
+                    android:drawablePadding="12dp"
+                    android:hint="6 números"
+                    android:inputType="number"
+                    android:letterSpacing="0.3"
+                    android:maxLength="6" />
+
+                <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Contraseña nueva *" />
+                <EditText
+                    android:id="@+id/etNueva"
+                    style="@style/Queseria.Input"
+                    android:autofillHints="newPassword"
+                    android:drawableStart="@drawable/ic_candado"
+                    android:drawablePadding="12dp"
+                    android:hint="Mínimo 6 caracteres"
+                    android:inputType="textPassword"
+                    android:maxLength="100" />
+
+                <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado" android:text="Repite la contraseña nueva *" />
+                <EditText
+                    android:id="@+id/etRepetir"
+                    style="@style/Queseria.Input"
+                    android:drawableStart="@drawable/ic_candado"
+                    android:drawablePadding="12dp"
+                    android:hint="Escríbela otra vez"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:maxLength="100" />
+
+                <CheckBox
+                    android:id="@+id/cbMostrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Mostrar contraseñas"
+                    android:textColor="@color/gris_texto_principal" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCambiar"
+                    style="@style/Queseria.BotonPrimario"
+                    android:layout_marginTop="16dp"
+                    android:text="Cambiar contraseña y entrar" />
+
+                <TextView
+                    android:id="@+id/tvReenviar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/poppins_medium"
+                    android:padding="4dp"
+                    android:text="¿No te llegó? Enviar otro código"
+                    android:textColor="@color/verde_principal"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="14dp"
+                android:indeterminateTint="@color/verde_principal"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvVolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/poppins_semibold"
+            android:padding="4dp"
+            android:text="Volver a iniciar sesión"
+            android:textColor="@color/verde_principal"
+            android:textSize="14sp" />
+    </LinearLayout>
+</ScrollView>

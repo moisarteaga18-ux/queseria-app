@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Registro de una cuenta nueva -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo"
+    android:fillViewport="true"
+    tools:context=".ui.auth.RegistroActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="32dp">
+
+        <include
+            android:id="@+id/cabecera"
+            layout="@layout/cabecera_ilustrada"
+            android:layout_width="match_parent"
+            android:layout_height="236dp"
+            android:layout_marginStart="-24dp"
+            android:layout_marginEnd="-24dp"
+            android:layout_marginTop="-20dp" />
+
+        <TextView
+            style="@style/Queseria.TextoSecundario"
+            android:layout_marginTop="2dp"
+            android:text="Pon tu negocio en orden en minutos" />
+
+        <LinearLayout
+            style="@style/Queseria.Tarjeta"
+            android:layout_marginTop="18dp"
+            android:padding="20dp">
+
+            <TextView style="@style/Queseria.Etiqueta" android:layout_marginTop="0dp" android:drawableStart="@drawable/ic_campo_negocio"
+            android:text="Nombre del negocio" />
+            <EditText
+                android:id="@+id/etNombreNegocio"
+                style="@style/Queseria.Input"
+                android:autofillHints="organizationName"
+                android:drawableStart="@drawable/ic_tienda"
+                android:drawablePadding="12dp"
+                android:hint="Ej: Quesería La Cabaña"
+                android:inputType="textCapWords" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_correo"
+            android:text="Correo electrónico" />
+            <EditText
+                android:id="@+id/etEmail"
+                style="@style/Queseria.Input"
+                android:autofillHints="emailAddress"
+                android:drawableStart="@drawable/ic_correo"
+                android:drawablePadding="12dp"
+                android:hint="ejemplo@correo.com"
+                android:inputType="textEmailAddress" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_usuario"
+            android:text="Usuario" />
+            <EditText
+                android:id="@+id/etUsername"
+                style="@style/Queseria.Input"
+                android:autofillHints="username"
+                android:drawableStart="@drawable/ic_cliente"
+                android:drawablePadding="12dp"
+                android:hint="Elige un nombre de usuario"
+                android:inputType="text" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Contraseña" />
+            <EditText
+                android:id="@+id/etPassword"
+                style="@style/Queseria.Input"
+                android:autofillHints="newPassword"
+                android:drawableStart="@drawable/ic_candado"
+                android:drawablePadding="12dp"
+                android:hint="Mínimo 6 caracteres"
+                android:inputType="textPassword" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRegistro"
+                style="@style/Queseria.BotonPrimario"
+                android:layout_marginTop="24dp"
+                android:text="Crear cuenta" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="14dp"
+                android:indeterminateTint="@color/verde_principal"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+            <TextView
+                style="@style/Queseria.TextoSecundario"
+                android:text="¿Ya tienes cuenta? "
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tvIrALogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Inicia sesión"
+                android:textColor="@color/verde_principal"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

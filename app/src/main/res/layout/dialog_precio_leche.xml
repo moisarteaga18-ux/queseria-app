@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingBottom="8dp">
+
+    <com.queseria.app.ui.common.Aviso
+        android:id="@+id/tvSemana"
+            style="@style/Queseria.Aviso" />
+
+    <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cantina"
+            android:text="Precio por litro *" />
+    <EditText
+        android:id="@+id/etPrecio"
+        style="@style/Queseria.Input"
+        android:hint="Ej: 1800"
+        android:inputType="numberDecimal" />
+
+    <TextView
+            style="@style/Queseria.Aviso"
+            android:text="Se usa para calcular lo que le pagas a cada ganadero esta semana. Los pagos ya marcados no cambian." />
+
+</LinearLayout>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícono de campo (porcentaje): ilustración recortada de la guía de diseño -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="30dp" android:height="30dp" android:drawable="@drawable/img_guia_ic_porcentaje" />
+</layer-list>

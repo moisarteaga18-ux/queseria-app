@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout style="@style/Queseria.Tarjeta">
+        <TextView
+            android:id="@+id/tvNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/verde_oscuro"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        <TextView android:id="@+id/tvTipo" style="@style/Queseria.TextoSecundario" android:layout_marginTop="2dp" />
+        <TextView android:id="@+id/tvTelefono" style="@style/Queseria.TextoSecundario" android:layout_marginTop="6dp" android:textColor="@color/gris_texto_principal" />
+        <TextView android:id="@+id/tvDireccion" style="@style/Queseria.TextoSecundario" android:layout_marginTop="2dp" android:textColor="@color/gris_texto_principal" />
+        <TextView android:id="@+id/tvNotas" style="@style/Queseria.TextoSecundario" android:layout_marginTop="6dp" android:textStyle="italic" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLlamar"
+                style="@style/Queseria.BotonSecundario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Llamar" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditar"
+                style="@style/Queseria.BotonSecundario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Editar" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEliminar"
+                style="@style/Queseria.BotonSecundario"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="Eliminar"
+                android:textColor="@color/rojo_error"
+                app:strokeColor="@color/rojo_error"
+                xmlns:app="http://schemas.android.com/apk/res-auto" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Queseria.Tarjeta"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:id="@+id/tvTotalComprado" style="@style/Queseria.ValorGrande" android:text="—" />
+            <TextView style="@style/Queseria.TextoSecundario" android:text="total comprado" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="vertical">
+            <TextView android:id="@+id/tvNumCompras" style="@style/Queseria.ValorGrande" android:text="—" />
+            <TextView style="@style/Queseria.TextoSecundario" android:text="compras" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView style="@style/Queseria.TituloSeccion" android:text="Historial de compras" android:layout_marginBottom="0dp" />
+
+</LinearLayout>

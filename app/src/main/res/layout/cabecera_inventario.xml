@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Resumen del inventario -->
+    <LinearLayout
+        style="@style/Queseria.Tarjeta"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:id="@+id/tvTotalKg" style="@style/Queseria.ValorGrande" android:text="0 kg" />
+            <TextView android:id="@+id/tvTotalLb" style="@style/Queseria.TextoSecundario" android:text="0 lb en total" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="vertical">
+            <TextView android:id="@+id/tvValor" style="@style/Queseria.ValorGrande" android:text="$ 0" />
+            <TextView style="@style/Queseria.TextoSecundario" android:text="valor a precio de venta" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvEstimado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_chip"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:textColor="@color/verde_oscuro"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_queso"
+        app:drawableTint="@color/verde_principal" />
+
+    <TextView
+        android:id="@+id/tvAlertaStock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_alerta"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:textColor="@color/ambar_advertencia"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_alerta"
+        app:drawableTint="@color/ambar_advertencia" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:minHeight="48dp" />
+
+</LinearLayout>

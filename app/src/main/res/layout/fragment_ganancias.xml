@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_card"
+                android:padding="12dp"
+                android:textColor="@color/rojo_error"
+                android:visibility="gone" />
+
+            <!-- Diferencia entre semanas -->
+            <LinearLayout style="@style/Queseria.Tarjeta" android:gravity="center_horizontal">
+                <TextView style="@style/Queseria.TextoSecundario" android:text="DIFERENCIA VS SEMANA ANTERIOR" android:textStyle="bold" />
+                <TextView android:id="@+id/tvDiferencia" style="@style/Queseria.ValorGrande" android:layout_marginTop="4dp" android:textSize="28sp" android:text="—" />
+                <TextView android:id="@+id/tvPorcentaje" style="@style/Queseria.TextoSecundario" android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView style="@style/Queseria.TituloSeccion" android:text="Esta semana" />
+            <TextView android:id="@+id/tvRangoActual" style="@style/Queseria.TextoSecundario" android:layout_marginBottom="6dp" />
+            <LinearLayout style="@style/Queseria.Tarjeta">
+                <TextView android:id="@+id/tvActualIngresos" style="@style/Queseria.TextoSecundario" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
+                <TextView android:id="@+id/tvActualCostos" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
+                <TextView android:id="@+id/tvActualMerma" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/rojo_error" />
+                <TextView android:id="@+id/tvActualGanancia" style="@style/Queseria.ValorGrande" android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <TextView style="@style/Queseria.TituloSeccion" android:text="Semana anterior" />
+            <TextView android:id="@+id/tvRangoAnterior" style="@style/Queseria.TextoSecundario" android:layout_marginBottom="6dp" />
+            <LinearLayout style="@style/Queseria.Tarjeta">
+                <TextView android:id="@+id/tvAnteriorIngresos" style="@style/Queseria.TextoSecundario" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
+                <TextView android:id="@+id/tvAnteriorCostos" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
+                <TextView android:id="@+id/tvAnteriorMerma" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/rojo_error" />
+                <TextView android:id="@+id/tvAnteriorGanancia" style="@style/Queseria.ValorGrande" android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Queseria.TextoSecundario"
+                android:layout_marginTop="16dp"
+                android:text="Semanas de viernes a jueves. Ingresos = ventas. Costo = litros de leche × precio del litro de esa semana (el de Liquidaciones o, si no está, el de Precios). Pérdida por merma = kg de merma × precio por kg: es queso que no se vendió, así que ya está reflejada en la ganancia (no se resta dos veces). En la semana en curso la merma es estimada con el promedio." />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

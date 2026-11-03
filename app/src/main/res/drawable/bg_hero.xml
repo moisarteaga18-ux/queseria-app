@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cabecera destacada (Reportes, Ganancias...): el mismo verde en degradado de la tarjeta Reportes de Inicio -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient android:angle="315" android:endColor="@color/qd_reportes_inicio" android:startColor="@color/qd_venta_fin" android:centerColor="@color/qd_venta_inicio" />
+    <corners android:radius="24dp" />
+</shape>

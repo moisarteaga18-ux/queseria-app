@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_persona"
+            android:text="Nombre *" />
+        <EditText
+            android:id="@+id/etNombre"
+            style="@style/Queseria.Input"
+            android:hint="Nombre del cliente o negocio"
+            android:inputType="textPersonName|textCapWords" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_telefono"
+            android:text="Teléfono" />
+        <EditText
+            android:id="@+id/etTelefono"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="phone" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_ubicacion"
+            android:text="Dirección" />
+        <EditText
+            android:id="@+id/etDireccion"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textPostalAddress|textCapSentences" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cliente"
+            android:text="Tipo de cliente" />
+        <RadioGroup
+            android:id="@+id/rgTipo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbMinorista"
+                style="@style/Queseria.Opcion.Fila"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_campo_producto"
+                android:text="Minorista" />
+            <RadioButton
+                android:id="@+id/rbMayorista"
+                style="@style/Queseria.Opcion.Fila"
+                android:drawableStart="@drawable/ic_campo_ganadero"
+                android:text="Mayorista" />
+        </RadioGroup>
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Notas" />
+        <EditText
+            android:id="@+id/etNotas"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textCapSentences|textMultiLine" />
+
+    </LinearLayout>
+</ScrollView>

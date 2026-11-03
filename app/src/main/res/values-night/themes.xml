@@ -1,0 +1,7 @@
+<resources>
+    <!-- Modo oscuro: menús emergentes oscuros (en modo claro, Queseria.Menu es claro) -->
+    <style name="Queseria.Menu" parent="ThemeOverlay.MaterialComponents.Dark">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:colorBackground">@color/superficie</item>
+    </style>
+</resources>

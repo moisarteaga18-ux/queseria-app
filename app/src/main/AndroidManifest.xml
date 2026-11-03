@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Permisos de red -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Para poder enviar las liquidaciones directo a WhatsApp (Android 11+ exige declararlo) -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
+
+    <application
+        android:name=".QuesoDataApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.QuesoData">
+
+        <!-- ===== PANTALLA DE CARGA ===== -->
+        <!-- Es la primera pantalla que se abre al lanzar la app: logo y luego login o inicio -->
+        <activity
+            android:name=".ui.auth.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.QuesoData.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ===== LOGIN ===== -->
+        <activity
+            android:name=".ui.auth.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuesoData.Acceso"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ===== PANTALLA DE REGISTRO ===== -->
+        <!-- Se abre desde LoginActivity al tocar "Regístrate" -->
+        <activity
+            android:name=".ui.auth.RegistroActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuesoData.Acceso"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ===== RECUPERAR CONTRASEÑA ===== -->
+        <!-- Se abre desde LoginActivity: código por correo y contraseña nueva -->
+        <activity
+            android:name=".ui.auth.RecuperarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuesoData.Acceso"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ===== PANTALLA PRINCIPAL ===== -->
+        <!-- Se abre después de un login/registro exitoso -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- Comparte los PDF de liquidaciones con WhatsApp y otras apps -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.archivos"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/rutas_archivos" />
+        </provider>
+
+    </application>
+
+</manifest>

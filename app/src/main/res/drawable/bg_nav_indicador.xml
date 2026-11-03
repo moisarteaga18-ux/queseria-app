@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rayita amarilla debajo de la opción activa de la barra inferior -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/dorado_titulo" />
+    <corners android:radius="2dp" />
+</shape>

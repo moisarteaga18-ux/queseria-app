@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Inicio = menú principal (diseño de imagenes_quesodata):
+     cabecera con la foto del campo, logo, saludo y fecha; resumen del día; accesos de hoy;
+     4 tarjetas grandes; la tarjeta ancha de Reportes; "Más opciones" y la barra inferior.
+     Las tarjetas se agregan desde InicioFragment (item_tarjeta_grande / item_tarjeta_pequena).
+     Guía de diseño: cabecera verde con la vaca, tarjetas crema con sombra. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingBottom="0dp">
+
+                <!-- ===== CABECERA ===== -->
+                <!-- Esquinas de abajo redondeadas: el recorte se pone en InicioFragment -->
+                <!-- El alto lo da el contenido; la foto y el velo se estiran a ese alto (alignTop/alignBottom) -->
+                <RelativeLayout
+                    android:id="@+id/cabecera"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/contenidoCabecera"
+                        android:layout_alignBottom="@id/contenidoCabecera"
+                        android:importantForAccessibility="no"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_cabecera_campo" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/contenidoCabecera"
+                        android:layout_alignBottom="@id/contenidoCabecera"
+                        android:background="@drawable/bg_cabecera_verde" />
+
+                    <!-- paddingBottom = lo que se monta el resumen (34dp) + espacio libre debajo de la fecha -->
+                    <LinearLayout
+                        android:id="@+id/contenidoCabecera"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="54dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="68dp"
+                                android:layout_height="68dp"
+                                android:contentDescription="@string/app_name"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/img_guia_vaca_circulo" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <!-- "Queso" blanco y "Data" dorado (el color de "Data" se pone en InicioFragment) -->
+                                <TextView
+                                    android:id="@+id/tvMarca"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="40dp"
+                                    android:fontFamily="@font/poppins_bold"
+                                    android:gravity="center_vertical"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:shadowColor="#66000000"
+                                    android:shadowDy="2"
+                                    android:shadowRadius="5"
+                                    android:text="QuesoData"
+                                    android:textColor="@color/white"
+                                    app:autoSizeMaxTextSize="30sp"
+                                    app:autoSizeMinTextSize="18sp"
+                                    app:autoSizeStepGranularity="1sp"
+                                    app:autoSizeTextType="uniform" />
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="22dp"
+                                    android:layout_marginTop="2dp"
+                                    android:alpha="0.9"
+                                    android:fontFamily="@font/poppins_semibold"
+                                    android:gravity="center_vertical"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="Tu negocio, en orden"
+                                    android:textColor="@color/white"
+                                    app:autoSizeMaxTextSize="14sp"
+                                    app:autoSizeMinTextSize="10sp"
+                                    app:autoSizeStepGranularity="0.5sp"
+                                    app:autoSizeTextType="uniform" />
+                            </LinearLayout>
+
+                            <!-- Engranaje: Configuración (Mi cuenta, contraseña, apariencia y cerrar sesión) -->
+                            <ImageView
+                                android:id="@+id/btnMenu"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="top"
+                                android:layout_marginStart="8dp"
+                                android:background="@drawable/bg_qd_boton_cabecera"
+                                android:contentDescription="Configuración"
+                                android:foreground="?attr/selectableItemBackgroundBorderless"
+                                android:padding="9dp"
+                                android:src="@drawable/ic_ajustes"
+                                app:tint="@color/white" />
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/tvSaludo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:layout_marginTop="14dp"
+                            android:maxWidth="240dp"
+                            android:shadowColor="#660F3D22"
+                            android:shadowDy="1"
+                            android:shadowRadius="4"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_qd_fecha"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="5dp">
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_qd_calendario" />
+                            <TextView
+                                android:id="@+id/tvFecha"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:fontFamily="@font/poppins_medium"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/white"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <!-- ===== RESUMEN DEL DÍA (sobre el borde de la cabecera) ===== -->
+                <LinearLayout
+                    style="@style/Queseria.Tarjeta"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="-34dp"
+                    android:background="@drawable/bg_card"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/Queseria.Rotulo"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="Resumen de hoy"
+                        android:textColor="@color/verde_oscuro" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/datoLeche"
+                            style="@style/Queseria.DatoInicio"
+                            android:layout_marginEnd="4dp"
+                            android:backgroundTint="@color/dato_azul">
+                            <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Leche recibida" />
+                            <TextView android:id="@+id/tvLeche" style="@style/Queseria.DatoInicio.Valor" />
+                            <TextView android:id="@+id/tvLecheDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/datoQueso"
+                            style="@style/Queseria.DatoInicio"
+                            android:layout_marginStart="4dp"
+                            android:backgroundTint="@color/dato_crema">
+                            <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Queso producido" />
+                            <TextView android:id="@+id/tvQueso" style="@style/Queseria.DatoInicio.Valor" />
+                            <TextView android:id="@+id/tvQuesoDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/datoVentas"
+                            style="@style/Queseria.DatoInicio"
+                            android:layout_marginEnd="4dp"
+                            android:backgroundTint="@color/dato_verde">
+                            <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Ventas del día" />
+                            <TextView android:id="@+id/tvVentas" style="@style/Queseria.DatoInicio.Valor" />
+                            <TextView android:id="@+id/tvVentasDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/datoPagar"
+                            style="@style/Queseria.DatoInicio"
+                            android:layout_marginStart="4dp"
+                            android:backgroundTint="@color/dato_turquesa">
+                            <TextView style="@style/Queseria.DatoInicio.Rotulo" android:text="Debes a ganaderos" />
+                            <TextView android:id="@+id/tvPagar" style="@style/Queseria.DatoInicio.Valor" />
+                            <TextView android:id="@+id/tvPagarDetalle" style="@style/Queseria.DatoInicio.Detalle" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ===== AVISOS ===== -->
+                <TextView
+                    android:id="@+id/tvError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_alerta_error"
+                    android:padding="14dp"
+                    android:textColor="@color/rojo_error"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/cardStockBajo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_alerta"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:visibility="gone">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_alerta"
+                        app:tint="@color/ambar_advertencia" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Stock bajo"
+                            android:textColor="@color/ambar_advertencia"
+                            android:textSize="15sp" />
+                        <TextView
+                            android:id="@+id/tvStockBajo"
+                            style="@style/Queseria.TextoSecundario"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/gris_texto_principal" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ===== MENÚ ===== -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="10dp">
+
+                    <TextView
+                        style="@style/Queseria.TituloSeccion"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="2dp"
+                        android:text="Hoy" />
+
+                    <!-- Registrar leche, Producción del día y Adelanto o descuento -->
+                    <LinearLayout
+                        android:id="@+id/filaHoy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:orientation="vertical" />
+
+                    <!-- Nueva venta, Inventario, Liquidación a ganaderos y Precios -->
+                    <LinearLayout
+                        android:id="@+id/contenedorPrincipal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:orientation="vertical" />
+
+                    <!-- Reportes: tarjeta ancha verde con barras de decoración -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardReportes"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_margin="6dp"
+                        android:contentDescription="Reportes"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:outlineAmbientShadowColor="@color/sombra"
+                        android:outlineSpotShadowColor="@color/sombra"
+                        app:cardCornerRadius="22dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_qd_reportes">
+
+                            <ImageView
+                                android:layout_width="120dp"
+                                android:layout_height="68dp"
+                                android:layout_gravity="bottom|end"
+                                android:layout_marginEnd="54dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/deco_qd_reportes" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="16dp">
+
+                                <ImageView
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:background="@drawable/bg_circulo"
+                                    android:backgroundTint="#2EFFFFFF"
+                                    android:importantForAccessibility="no"
+                                    android:padding="10dp"
+                                    android:src="@drawable/ic_qd_reportes" />
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:includeFontPadding="false"
+                                        android:text="Reportes"
+                                        android:textColor="@color/white"
+                                        android:textSize="16sp" />
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="3dp"
+                                        android:alpha="0.85"
+                                        android:maxWidth="170dp"
+                                        android:text="Ganancias, rendimiento y merma"
+                                        android:textColor="@color/white"
+                                        android:textSize="11.5sp" />
+                                </LinearLayout>
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/bg_circulo"
+                                    android:backgroundTint="@color/white"
+                                    android:importantForAccessibility="no"
+                                    android:padding="5dp"
+                                    android:src="@drawable/ic_qd_flecha"
+                                    app:tint="@color/qd_reportes_inicio" />
+                            </LinearLayout>
+                        </FrameLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        style="@style/Queseria.TituloSeccion"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="2dp"
+                        android:text="Más opciones" />
+
+                    <!-- Ganaderos, Clientes, Productos y Configuración (Mi cuenta, contraseña, apariencia y cerrar sesión) -->
+                    <LinearLayout
+                        android:id="@+id/contenedorMas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</FrameLayout>

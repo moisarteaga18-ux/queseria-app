@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra inferior de toda la app (guía de diseño): Inicio, Reportes, Ventas y Más.
+     La opción activa va en amarillo con una rayita debajo (MainActivity.marcarBarra). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@drawable/bg_barra_inferior"
+    android:elevation="8dp"
+    android:orientation="horizontal"
+    android:paddingHorizontal="6dp">
+
+    <LinearLayout android:id="@+id/navInicio" style="@style/Queseria.NavItem">
+        <ImageView android:id="@+id/icInicio" style="@style/Queseria.NavItem.Icono" android:src="@drawable/ic_qd_nav_inicio" />
+        <TextView android:id="@+id/txtInicio" style="@style/Queseria.NavItem.Texto" android:text="Inicio" />
+        <View android:id="@+id/rayaInicio" style="@style/Queseria.NavItem.Raya" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navReportes" style="@style/Queseria.NavItem">
+        <ImageView android:id="@+id/icReportes" style="@style/Queseria.NavItem.Icono" android:src="@drawable/ic_qd_reportes" />
+        <TextView android:id="@+id/txtReportes" style="@style/Queseria.NavItem.Texto" android:text="Reportes" />
+        <View android:id="@+id/rayaReportes" style="@style/Queseria.NavItem.Raya" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navVentas" style="@style/Queseria.NavItem">
+        <ImageView android:id="@+id/icVentas" style="@style/Queseria.NavItem.Icono" android:src="@drawable/ic_qd_nav_ventas" />
+        <TextView android:id="@+id/txtVentas" style="@style/Queseria.NavItem.Texto" android:text="Ventas" />
+        <View android:id="@+id/rayaVentas" style="@style/Queseria.NavItem.Raya" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/navMas" style="@style/Queseria.NavItem">
+        <ImageView android:id="@+id/icMas" style="@style/Queseria.NavItem.Icono" android:src="@drawable/ic_ajustes" />
+        <TextView android:id="@+id/txtMas" style="@style/Queseria.NavItem.Texto" android:text="Más" />
+        <View android:id="@+id/rayaMas" style="@style/Queseria.NavItem.Raya" />
+    </LinearLayout>
+</LinearLayout>

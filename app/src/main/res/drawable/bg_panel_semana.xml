@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Panel verde suave que rodea el selector de semana de los formularios -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient android:angle="270" android:endColor="@color/verde_muy_claro" android:startColor="@color/verde_muy_claro" />
+    <corners android:radius="22dp" />
+</shape>

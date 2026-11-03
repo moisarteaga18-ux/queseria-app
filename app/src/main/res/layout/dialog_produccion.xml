@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_fecha"
+            android:text="Fecha" />
+        <TextView
+            android:id="@+id/tvFecha"
+            style="@style/Queseria.CampoFecha" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cantina"
+            android:text="Litros de leche usados *" />
+        <EditText
+            android:id="@+id/etLitros"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvLecheDelDia"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_queso"
+            android:text="Kilos de queso producidos *" />
+        <EditText
+            android:id="@+id/etKg"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvRendimiento"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_producto"
+            android:text="Sumar al inventario de" />
+        <Spinner
+            android:id="@+id/spProducto"
+            style="@style/Queseria.Desplegable" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Observaciones" />
+        <EditText
+            android:id="@+id/etObservaciones"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textCapSentences|textMultiLine" />
+
+    </LinearLayout>
+</ScrollView>

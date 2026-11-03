@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fondo de la tarjeta "Reportes": verde oscuro en degradado -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="0"
+        android:endColor="@color/qd_reportes_fin"
+        android:startColor="@color/qd_reportes_inicio" />
+</shape>

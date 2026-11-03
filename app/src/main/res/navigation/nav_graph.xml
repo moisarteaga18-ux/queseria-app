@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_inicio">
+
+    <!-- Inicio es el menú principal: todas las pantallas se abren desde ahí -->
+
+    <fragment
+        android:id="@+id/nav_inicio"
+        android:name="com.queseria.app.ui.home.InicioFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_inicio" />
+
+    <fragment
+        android:id="@+id/nav_leche"
+        android:name="com.queseria.app.ui.home.LecheFragment"
+        android:label="Leche recibida"
+        tools:layout="@layout/fragment_lista" />
+
+    <!-- Misma pantalla que Leche, en modo producción -->
+    <fragment
+        android:id="@+id/nav_produccion"
+        android:name="com.queseria.app.ui.home.LecheFragment"
+        android:label="Producción del día"
+        tools:layout="@layout/fragment_lista">
+        <argument
+            android:name="modo"
+            android:defaultValue="produccion"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_ventas"
+        android:name="com.queseria.app.ui.home.VentasFragment"
+        android:label="Ventas"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_inventario"
+        android:name="com.queseria.app.ui.inventario.InventarioFragment"
+        android:label="Inventario"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_reportes"
+        android:name="com.queseria.app.ui.reportes.ReportesFragment"
+        android:label="Reportes"
+        tools:layout="@layout/fragment_reportes" />
+
+    <!-- ===== SEMANA Y CONFIGURACIÓN ===== -->
+
+    <fragment
+        android:id="@+id/nav_productos"
+        android:name="com.queseria.app.ui.productos.ProductosFragment"
+        android:label="Productos"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_clientes"
+        android:name="com.queseria.app.ui.clientes.ClientesFragment"
+        android:label="Clientes"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_cliente_detalle"
+        android:name="com.queseria.app.ui.clientes.ClienteDetalleFragment"
+        android:label="Cliente"
+        tools:layout="@layout/fragment_lista">
+        <argument
+            android:name="clienteId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_precios"
+        android:name="com.queseria.app.ui.home.PreciosFragment"
+        android:label="Precios"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_liquidaciones"
+        android:name="com.queseria.app.ui.liquidaciones.LiquidacionesFragment"
+        android:label="Liquidación a ganaderos"
+        tools:layout="@layout/fragment_lista" />
+
+    <!-- Ganaderos de una semana con lo que se le debe a cada uno -->
+    <fragment
+        android:id="@+id/nav_liquidacion_semana"
+        android:name="com.queseria.app.ui.liquidaciones.SemanaLiquidacionFragment"
+        android:label="Semana"
+        tools:layout="@layout/fragment_lista">
+        <argument
+            android:name="semana"
+            app:argType="integer" />
+        <argument
+            android:name="anio"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_liquidacion"
+        android:name="com.queseria.app.ui.liquidaciones.LiquidacionDetalleFragment"
+        android:label="Liquidación"
+        tools:layout="@layout/fragment_liquidacion" />
+
+    <fragment
+        android:id="@+id/nav_historial_ganadero"
+        android:name="com.queseria.app.ui.liquidaciones.HistorialGanaderoFragment"
+        android:label="Liquidaciones del ganadero"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_ganaderos"
+        android:name="com.queseria.app.ui.ganaderos.GanaderosFragment"
+        android:label="Ganaderos"
+        tools:layout="@layout/fragment_lista" />
+
+    <!-- ===== DETALLES DE REPORTES ===== -->
+
+    <fragment
+        android:id="@+id/nav_rendimiento"
+        android:name="com.queseria.app.ui.home.RendimientoFragment"
+        android:label="Rendimiento"
+        tools:layout="@layout/fragment_lista" />
+
+    <fragment
+        android:id="@+id/nav_ganancias"
+        android:name="com.queseria.app.ui.home.GananciasFragment"
+        android:label="Ganancias"
+        tools:layout="@layout/fragment_ganancias" />
+
+    <!-- Mi cuenta -->
+    <fragment
+        android:id="@+id/nav_perfil"
+        android:name="com.queseria.app.ui.cuenta.PerfilFragment"
+        android:label="Mi perfil"
+        tools:layout="@layout/fragment_perfil" />
+
+    <fragment
+        android:id="@+id/nav_contrasena"
+        android:name="com.queseria.app.ui.cuenta.ContrasenaFragment"
+        android:label="Cambiar contraseña"
+        tools:layout="@layout/fragment_contrasena" />
+
+</navigation>

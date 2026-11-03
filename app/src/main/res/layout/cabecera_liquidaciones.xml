@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cabecera de Pagos a ganaderos: selector de semana, precio del litro y totales -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp" />
+
+    <LinearLayout
+        android:id="@+id/panelSemana"
+        style="@style/Queseria.Tarjeta"
+        android:layout_marginTop="8dp">
+
+        <!-- Selector de semana -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnSemanaAnterior"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana anterior"
+                android:src="@drawable/ic_flecha_izquierda"
+                app:tint="@color/verde_oscuro" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvSemana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvRango"
+                    style="@style/Queseria.TextoSecundario" />
+                <TextView
+                    android:id="@+id/tvEstadoSemana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_etiqueta"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnSemanaSiguiente"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana siguiente"
+                android:src="@drawable/ic_flecha_derecha"
+                app:tint="@color/verde_oscuro" />
+        </LinearLayout>
+
+        <!-- Precio del litro de la semana -->
+        <LinearLayout
+            android:id="@+id/filaPrecio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_chip"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/Queseria.TextoSecundario"
+                    android:text="Precio del litro esta semana" />
+                <TextView
+                    android:id="@+id/tvPrecioLitro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/btnCambiarPrecio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cambiar"
+                android:textColor="@color/verde_principal"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Totales -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:id="@+id/tvTotalLitros" style="@style/Queseria.ValorGrande" android:textSize="18sp" />
+                <TextView style="@style/Queseria.TextoSecundario" android:text="recibidos" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView android:id="@+id/tvTotalPagar" style="@style/Queseria.ValorGrande" android:textSize="18sp" />
+                <TextView style="@style/Queseria.TextoSecundario" android:text="total a pagar" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvPendiente"
+                    style="@style/Queseria.ValorGrande"
+                    android:textColor="@color/ambar_advertencia"
+                    android:textSize="18sp" />
+                <TextView style="@style/Queseria.TextoSecundario" android:text="pendiente" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvAviso"
+            style="@style/Queseria.TextoSecundario"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/ambar_advertencia"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGenerar"
+            style="@style/Queseria.BotonPrimario"
+            android:layout_height="50dp"
+            android:layout_marginTop="14dp"
+            android:text="Generar liquidaciones"
+            android:visibility="gone"
+            app:icon="@drawable/ic_liquidacion"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvAyuda"
+        style="@style/Queseria.TextoSecundario"
+        android:layout_marginTop="10dp"
+        android:text="Toca un ganadero para ver su liquidación, enviarla o marcarla como pagada." />
+
+</LinearLayout>

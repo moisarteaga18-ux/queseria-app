@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reportes: ganancia de la semana, gráficos de las últimas 8 semanas, rendimiento, clientes e inventario -->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="28dp">
+
+            <TextView
+                android:id="@+id/tvError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_alerta_error"
+                android:padding="14dp"
+                android:textColor="@color/rojo_error"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <!-- ===== GANANCIA DE LA SEMANA ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_hero"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:outlineAmbientShadowColor="@color/sombra"
+                android:outlineSpotShadowColor="@color/sombra"
+                android:padding="20dp">
+                <TextView
+                    style="@style/Queseria.Rotulo"
+                    android:alpha="0.85"
+                    android:text="Ganancia de esta semana"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:id="@+id/tvGanancia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:includeFontPadding="false"
+                    android:text="—"
+                    android:textColor="@color/white"
+                    android:textSize="32sp" />
+                <TextView
+                    android:id="@+id/tvGananciaCambio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_etiqueta"
+                    android:backgroundTint="#26FFFFFF"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvGananciaDetalle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:alpha="0.85"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGanancias"
+                    style="@style/Queseria.BotonTexto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="0dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Comparar con la semana anterior"
+                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_flecha_derecha"
+                    app:iconGravity="end"
+                    app:iconTint="@color/white"
+                    app:rippleColor="#33FFFFFF" />
+            </LinearLayout>
+
+            <!-- ===== INGRESOS VS LECHE ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Ingresos y costo de la leche"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="16sp" />
+                <TextView
+                    style="@style/Queseria.TextoSecundario"
+                    android:text="Últimas 8 semanas" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:background="@drawable/bg_circulo"
+                        android:backgroundTint="@color/verde_principal" />
+                    <TextView
+                        style="@style/Queseria.TextoSecundario"
+                        android:layout_marginStart="6dp"
+                        android:text="Ventas"
+                        android:textSize="12sp" />
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_circulo"
+                        android:backgroundTint="@color/dorado" />
+                    <TextView
+                        style="@style/Queseria.TextoSecundario"
+                        android:layout_marginStart="6dp"
+                        android:text="Leche comprada"
+                        android:textSize="12sp" />
+                </LinearLayout>
+                <com.queseria.app.ui.common.Grafico
+                    android:id="@+id/graficoIngresos"
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- ===== GANANCIA POR SEMANA ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="14dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Ganancia por semana"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="16sp" />
+                <TextView
+                    style="@style/Queseria.TextoSecundario"
+                    android:text="Ventas menos el costo de la leche" />
+                <com.queseria.app.ui.common.Grafico
+                    android:id="@+id/graficoGanancia"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- ===== RENDIMIENTO ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Rendimiento de la leche"
+                            android:textColor="@color/verde_oscuro"
+                            android:textSize="16sp" />
+                        <TextView
+                            style="@style/Queseria.TextoSecundario"
+                            android:text="Libras de queso por lata de 20 L" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvRendimiento"
+                        style="@style/Queseria.ValorGrande"
+                        android:text="—"
+                        android:textSize="20sp" />
+                </LinearLayout>
+                <com.queseria.app.ui.common.Grafico
+                    android:id="@+id/graficoRendimiento"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp"
+                    android:layout_marginTop="8dp" />
+                <TextView
+                    android:id="@+id/tvMejorSemana"
+                    style="@style/Queseria.TextoSecundario"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/verde_exito" />
+                <TextView
+                    android:id="@+id/tvPeorSemana"
+                    style="@style/Queseria.TextoSecundario"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/ambar_advertencia" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRendimiento"
+                    style="@style/Queseria.BotonSecundario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Ver rendimiento por semana" />
+            </LinearLayout>
+
+            <!-- ===== MERMA DEL QUESO ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="14dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Merma del queso"
+                            android:textColor="@color/verde_oscuro"
+                            android:textSize="16sp" />
+                        <TextView
+                            style="@style/Queseria.TextoSecundario"
+                            android:text="% de lo producido · se calcula sola al cierre" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvMermaPromedio"
+                            style="@style/Queseria.ValorGrande"
+                            android:text="—"
+                            android:textColor="@color/ambar_advertencia"
+                            android:textSize="20sp" />
+                        <TextView
+                            style="@style/Queseria.TextoSecundario"
+                            android:text="promedio"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+                <com.queseria.app.ui.common.Grafico
+                    android:id="@+id/graficoMerma"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp"
+                    android:layout_marginTop="8dp" />
+                <LinearLayout
+                    android:id="@+id/contenedorMerma"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- ===== VENTAS POR CLIENTE ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="14dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Mejores clientes"
+                    android:textColor="@color/verde_oscuro"
+                    android:textSize="16sp" />
+                <TextView
+                    style="@style/Queseria.TextoSecundario"
+                    android:text="Ventas de los últimos 30 días" />
+                <LinearLayout
+                    android:id="@+id/contenedorClientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- ===== INVENTARIO ===== -->
+            <LinearLayout
+                style="@style/Queseria.Tarjeta"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_circulo"
+                    android:backgroundTint="@color/crema_suave"
+                    android:importantForAccessibility="no"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_inventario"
+                    app:tint="@color/verde_oscuro" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView style="@style/Queseria.Rotulo" android:text="Inventario a precio de venta" />
+                    <TextView
+                        android:id="@+id/tvInventarioValor"
+                        style="@style/Queseria.ValorGrande"
+                        android:layout_marginTop="2dp"
+                        android:text="$ 0" />
+                    <TextView
+                        android:id="@+id/tvInventarioDetalle"
+                        style="@style/Queseria.TextoSecundario"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

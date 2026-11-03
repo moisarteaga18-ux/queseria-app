@@ -1,0 +1,77 @@
+QuesoData - imágenes del diseño de inicio
+==========================================
+
+Las imágenes salen del diseño de la pantalla de inicio (diseno_inicio.png):
+se recortaron, se ampliaron x4 con IA (Real-ESRGAN), se les quitó el fondo
+de la tarjeta y se exportaron al doble del tamaño del diseño (calidad para
+pantallas xxxhdpi). Ver vista_previa.png.
+
+Al descomprimir el zip en la raíz del proyecto, los archivos quedan en:
+  app/src/main/res/drawable-nodpi/   ilustraciones (WebP con transparencia)
+  app/src/main/res/drawable/         íconos vectoriales (XML)
+
+
+ILUSTRACIONES (drawable-nodpi)
+------------------------------
+img_cabecera_campo.webp        Fondo de la cabecera (1682x938). Campo desenfocado a la
+                               izquierda (para poner encima saludo, fecha, etc.) y quesos
+                               con leche a la derecha. Usar con scaleType="centerCrop".
+img_logo_circulo.webp          Logo redondo de la cabecera (512x512, fondo transparente).
+
+Tarjetas principales (cada imagen va en la esquina inferior derecha de su tarjeta):
+img_nueva_venta_queso.webp     Queso en tabla con hojas.
+img_inventario_estante.webp    Estante de madera con quesos.
+img_liquidacion_cantina.webp   Cantina de leche con salpicadura y pasto.
+img_precios_quesos.webp        Bloques de queso con etiqueta de precio.
+
+Más opciones (esquina inferior derecha de cada tarjeta pequeña):
+img_ganaderos_leche.webp       Salpicadura de leche con pasto.
+img_clientes_apreton.webp      Apretón de manos.
+img_productos_queso.webp       Quesos con albahaca.
+img_configuracion_engranajes.webp  Engranajes verdes.
+img_cuenta_perfil.webp         Ícono de perfil con tarjeta.
+img_contrasena_escudo.webp     Escudo con candado.
+
+Cómo colocarlas: pegadas al borde derecho e inferior de la tarjeta, sin margen
+(los bordes derecho e inferior de cada imagen coinciden con el borde de la
+tarjeta). La tarjeta debe recortar su contenido con las esquinas redondeadas
+(MaterialCardView lo hace). Bordes izquierdo y superior ya vienen difuminados.
+
+
+COLORES DE FONDO DE CADA TARJETA (para que las imágenes se fundan igual que en el diseño)
+--------------------------------
+Nueva venta          verde #0B5A33, con degradado hacia #3E9A4A arriba a la derecha
+Inventario           #FEFCF7
+Liquidación          #EEF7FB
+Precios              #FEF8EB
+Reportes             verde #0F5128 (degradado de #0E481A a #12592D)
+Ganaderos            #F1FBF0
+Clientes             #F2F1FE
+Productos            #FEF2F1
+Configuración        #ECFAF7
+Mi cuenta            #EEF4FD
+Cambiar contraseña   #F6F0FB
+Fondo de la pantalla #FCFBF5
+
+Círculos de los íconos: Nueva venta #066F35, Inventario #276C16, Liquidación #0C6262,
+Precios #F9B605, Ganaderos #5BA54C, Clientes #625DC8, Productos #E27365,
+Configuración #158F85, Mi cuenta #4F88E0, Cambiar contraseña #9163E1.
+
+
+ÍCONOS VECTORIALES (drawable)
+-----------------------------
+Blancos por defecto; se pueden colorear con app:tint.
+Círculos de las tarjetas:
+  ic_qd_venta (carrito), ic_qd_inventario, ic_qd_liquidacion (mano con moneda),
+  ic_qd_precio ($), ic_qd_reportes (barras), ic_qd_ganadero (vaca),
+  ic_qd_clientes, ic_qd_productos (queso), ic_qd_configuracion (engranaje),
+  ic_qd_cuenta (billetera), ic_qd_candado
+Barra inferior:
+  ic_qd_nav_inicio, ic_qd_nav_ventas, ic_qd_nav_inventario, ic_qd_reportes, ic_qd_nav_cuenta
+Cabecera y botones:
+  ic_qd_campana, ic_qd_menu, ic_qd_calendario, ic_qd_flecha (botón >), ic_qd_hoja (hojita)
+Decoración:
+  deco_qd_reportes  barras y flecha en blanco translúcido para la tarjeta de Reportes
+
+Los íconos son de Material Design Icons (Pictogrammers), licencia Apache 2.0:
+ver LICENCIA_ICONOS.txt.

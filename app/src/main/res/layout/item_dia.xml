@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de la tabla de litros por día en la liquidación -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="7dp">
+
+    <TextView
+        android:id="@+id/tvDia"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/gris_texto_principal"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvEntregas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/gris_texto_secundario"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvLitros"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:gravity="end"
+        android:textColor="@color/gris_texto_principal"
+        android:textSize="14sp" />
+</LinearLayout>

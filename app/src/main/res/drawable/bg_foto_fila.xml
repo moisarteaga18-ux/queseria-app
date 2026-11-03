@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Recorte redondeado de la foto de una fila (queso en Ventas) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/crema" />
+    <corners android:radius="14dp" />
+</shape>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Barra inferior de toda la app (guía de diseño): verde oscuro con las esquinas de arriba redondeadas -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="90"
+        android:endColor="@color/qd_reportes_fin"
+        android:startColor="@color/qd_reportes_inicio" />
+    <corners android:topLeftRadius="24dp" android:topRightRadius="24dp" />
+</shape>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <!-- Calendario por semanas (viernes a jueves): semana arriba con flechas y sus 7 días -->
+        <TextView
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_fecha"
+            android:text="Día de la leche" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_panel_semana"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/btnSemanaAnterior"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_circulo_verde_suave"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana anterior"
+                android:src="@drawable/ic_flecha_izquierda"
+                app:tint="@color/verde_principal" />
+
+            <TextView
+                android:id="@+id/tvSemana"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tarjeta_semana"
+                android:elevation="2dp"
+                android:fontFamily="@font/poppins_bold"
+                android:gravity="center"
+                android:paddingVertical="12dp"
+                android:textColor="@color/verde_oscuro"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/btnSemanaSiguiente"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/bg_circulo_verde_suave"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Semana siguiente"
+                android:src="@drawable/ic_flecha_derecha"
+                app:tint="@color/verde_principal" />
+        </LinearLayout>
+
+        <!-- Los 7 días (vie a jue) con los litros ya registrados; se llenan desde el código -->
+        <LinearLayout
+            android:id="@+id/contenedorDias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal" />
+
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvDia"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_cantina"
+            android:text="Litros recibidos *" />
+        <EditText
+            android:id="@+id/etLitros"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="numberDecimal" />
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvLatas"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_ganadero"
+            android:text="Ganadero *" />
+        <Spinner
+            android:id="@+id/spGanadero"
+            style="@style/Queseria.Desplegable" />
+        <TextView
+            android:id="@+id/btnNuevoGanadero"
+            style="@style/Queseria.TextoSecundario"
+            android:layout_marginTop="6dp"
+            android:padding="4dp"
+            android:text="+ Agregar ganadero"
+            android:textColor="@color/verde_principal"
+            android:textStyle="bold" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Observaciones" />
+        <EditText
+            android:id="@+id/etObservaciones"
+            style="@style/Queseria.Input"
+            android:hint="Opcional"
+            android:inputType="textCapSentences|textMultiLine" />
+
+    </LinearLayout>
+</ScrollView>

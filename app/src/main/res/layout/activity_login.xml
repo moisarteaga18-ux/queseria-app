@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Inicio de sesión: logo completo de QuesoData arriba y el formulario en una tarjeta -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/beige_fondo"
+    android:fillViewport="true"
+    tools:context=".ui.auth.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="32dp">
+
+        <include
+            android:id="@+id/cabecera"
+            layout="@layout/cabecera_ilustrada"
+            android:layout_width="match_parent"
+            android:layout_height="236dp"
+            android:layout_marginStart="-24dp"
+            android:layout_marginEnd="-24dp"
+            android:layout_marginTop="-24dp" />
+
+        <ImageView
+            android:layout_marginTop="-8dp"
+            android:id="@+id/ivLogo"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="QuesoData, mi negocio en orden"
+            android:src="@drawable/logo_quesodata" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="¡Bienvenido de nuevo!"
+            android:textColor="@color/verde_oscuro"
+            android:textSize="20sp" />
+
+        <TextView
+            style="@style/Queseria.TextoSecundario"
+            android:layout_marginTop="2dp"
+            android:text="Ingresa para ver tu negocio" />
+
+        <LinearLayout
+            style="@style/Queseria.Tarjeta"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_card"
+            android:padding="20dp">
+
+            <TextView style="@style/Queseria.Etiqueta" android:layout_marginTop="0dp" android:drawableStart="@drawable/ic_campo_usuario"
+            android:text="Usuario" />
+            <EditText
+                android:id="@+id/etUsername"
+                style="@style/Queseria.Input"
+                android:autofillHints="username"
+                android:drawableStart="@drawable/ic_cliente"
+                android:drawablePadding="12dp"
+                android:hint="Tu usuario"
+                android:inputType="text" />
+
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_candado"
+            android:text="Contraseña" />
+            <EditText
+                android:id="@+id/etPassword"
+                style="@style/Queseria.Input"
+                android:autofillHints="password"
+                android:drawableStart="@drawable/ic_candado"
+                android:drawablePadding="12dp"
+                android:hint="Tu contraseña"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/tvOlvide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_medium"
+                android:padding="4dp"
+                android:text="¿Olvidaste tu contraseña?"
+                android:textColor="@color/verde_principal"
+                android:textSize="13sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                style="@style/Queseria.BotonPrimario"
+                android:layout_marginTop="24dp"
+                android:text="Iniciar sesión" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="14dp"
+                android:indeterminateTint="@color/verde_principal"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Queseria.TextoSecundario"
+                android:text="¿No tienes cuenta? "
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvIrARegistro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Regístrate"
+                android:textColor="@color/verde_principal"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
