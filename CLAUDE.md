@@ -280,7 +280,8 @@ Backend local: `cd C:\Users\Moises\queseria-backend && node src/index.js` (usa `
         con velo `velo_fondo`; tarjetas semitransparentes (`vidrio`, `bg_vidrio`) sin sombra y con borde claro.
         Compila y pasan las pruebas unitarias; falta verlo en el emulador.
 67. [x] Push del backend (5d0eb33, pedido por el usuario). Contra Render: `prueba_precios` 8/8. APK nuevo en el
-        Escritorio. Quedan en Atlas 2 usuarios `prueba_precios_*` (borrarlos con respaldo si el usuario lo aprueba).
+        Escritorio. Los 2 usuarios `prueba_precios_*` (y sus 3 precios) se borraron de Atlas el 3 nov 2026 (aprobado),
+        respaldo en `Respaldos QuesoData\borrado-usuarios-prueba-2026-11-03.json`. Quedan "moises el grande" y "moises arteaga".
 
 ## Plan (2 nov 2026) — Ventas/Producción por semana y diseño de toda la app
 Solo organización y diseño: sin cambiar fórmulas, cálculos, llamadas a la API, backend ni base de datos.
@@ -348,5 +349,6 @@ Se conserva "QuesoData" y "Tu negocio, en orden".
 - Los datos que había en Room (solo pruebas) no se migraron.
 - Dos precios del queso por semana: minorista (`precioPorKg`, el que usa la merma) y mayorista. La venta
   "libras" es la minorista. El precio de la venta se puede cambiar a mano.
-- El `.env` local del backend apunta a un cluster de Atlas que ya no existe; Render usa otra
-  `MONGODB_URI` en sus variables de entorno.
+- El `.env` local del backend conecta con el cluster de Atlas de producción (`cluster0.6q12wde`; verificado el
+  3 nov 2026). Cuidado: scripts locales sin `MONGODB_URI` propia tocan los datos reales.
+- README.md (público) con capturas en `docs/capturas/` (datos de prueba del emulador, nunca datos reales).
