@@ -9,7 +9,7 @@ una quesería: leche de ganaderos, producción, inventario, ventas, clientes y p
   (GitHub `moisarteaga18-ux/queseria-backend`, desplegado en `https://queseria-backend.onrender.com`).
   Todo se guarda en MongoDB: usuarios, leche, producción, precios, ventas, productos, inventario,
   clientes, ganaderos y pagos. Todas las rutas salvo `/api/auth` exigen JWT y filtran por `usuarioId`.
-- **App**: Retrofit + JWT en `api/RetrofitClient.kt`, contrato en `api/QueseriaApi.kt`, modelos en
+- **App** (GitHub `moisarteaga18-ux/queseria-app`, público): Retrofit + JWT en `api/RetrofitClient.kt`, contrato en `api/QueseriaApi.kt`, modelos en
   `models/`. No hay base de datos local (solo la sesión en SharedPreferences).
 - La URL del backend sale de `BuildConfig.API_URL`. Por defecto es Render; para probar contra un
   backend local en el emulador: `./gradlew assembleDebug -PapiUrl=http://10.0.2.2:3000/api/`.
