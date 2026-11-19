@@ -15,3 +15,6 @@
 local.properties
 .kotlin
 /.idea
+
+# Informe de calidad: solo local, nunca se sube (el repositorio es público)
+informe_calidad.md

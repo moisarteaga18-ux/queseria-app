@@ -207,9 +207,9 @@ fun Fragment.abrirPrecioLeche(semana: Semana, precioActual: Double?, alGuardar: 
     f.tvSemana.text = "Semana ${semana.numero}: ${semana.texto()} (viernes a jueves) · aplica a todos los ganaderos"
     precioActual?.takeIf { it > 0 }?.let { f.etPrecio.setText(Math.round(it).toString()) }
     mostrarFormulario("Precio del litro", f.root, foco = f.etPrecio) { dialogo ->
-        val precio = Formato.leerNumero(f.etPrecio.text)
-        if (precio == null || precio <= 0) {
-            f.etPrecio.error = "Escribe cuánto pagas por litro"
+        val (precio, error) = Formato.validarPositivo(f.etPrecio.text, "Escribe cuánto pagas por litro", "El precio del litro")
+        if (precio == null) {
+            f.etPrecio.error = error
             return@mostrarFormulario false
         }
         // Si la semana ya tiene liquidaciones pagadas, el backend pide confirmación

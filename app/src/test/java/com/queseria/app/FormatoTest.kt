@@ -35,6 +35,27 @@ class FormatoTest {
     }
 
     @Test
+    fun noLeeNumerosInfinitos() {
+        assertNull(Formato.leerNumero("1e400"))
+        assertNull(Formato.leerNumero("Infinity"))
+        assertNull(Formato.leerNumero("NaN"))
+    }
+
+    @Test
+    fun validaNumerosMayoresQueCero() {
+        // Correcto: devuelve el valor y ningún error
+        assertEquals(12.5 to null, Formato.validarPositivo("12,5", "Escribe los litros", "Los litros", plural = true))
+        // Vacío: el mensaje de "falta"
+        assertEquals(null to "Escribe los litros", Formato.validarPositivo("  ", "Escribe los litros", "Los litros", plural = true))
+        // No es número
+        assertEquals(null to "Escribe un número válido", Formato.validarPositivo("abc", "Ingresa el precio", "El precio"))
+        // Cero o negativo (defecto D-17), en plural y en singular
+        assertEquals(null to "Los litros deben ser mayores que 0", Formato.validarPositivo("0", "x", "Los litros", plural = true))
+        assertEquals(null to "Los kilos deben ser mayores que 0", Formato.validarPositivo("-5", "x", "Los kilos", plural = true))
+        assertEquals(null to "El precio debe ser mayor que 0", Formato.validarPositivo("-9000", "x", "El precio"))
+    }
+
+    @Test
     fun extraeFechaDeTextoIso() {
         assertEquals("2026-04-28", Formato.soloFecha("2026-04-28T05:00:00.000Z"))
         assertEquals("2026-04-28", Formato.soloFecha("2026-04-28"))

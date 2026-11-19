@@ -254,10 +254,10 @@ class LecheFragment : Fragment() {
 
         val titulo = if (existente == null) "Registrar leche" else "Corregir registro de leche"
         mostrarFormulario(titulo, f.root, foco = f.etLitros.takeIf { existente == null }) { dialogo ->
-            val litros = Formato.leerNumero(f.etLitros.text)
+            val (litros, errorLitros) = Formato.validarPositivo(f.etLitros.text, "Escribe cuántos litros llegaron", "Los litros", plural = true)
             val ganadero = ganaderoElegido()
-            if (litros == null || litros <= 0) {
-                f.etLitros.error = "Escribe cuántos litros llegaron"
+            if (litros == null) {
+                f.etLitros.error = errorLitros
                 return@mostrarFormulario false
             }
             if (ganadero == null) {
@@ -390,14 +390,14 @@ class LecheFragment : Fragment() {
 
         val titulo = if (existente == null) "Registrar producción" else "Corregir producción"
         mostrarFormulario(titulo, f.root, foco = if (existente == null) f.etKg else null) { dialogo ->
-            val litros = Formato.leerNumero(f.etLitros.text)
-            val kg = Formato.leerNumero(f.etKg.text)
-            if (litros == null || litros <= 0) {
-                f.etLitros.error = "Escribe cuántos litros de leche usaste"
+            val (litros, errorLitros) = Formato.validarPositivo(f.etLitros.text, "Escribe cuántos litros de leche usaste", "Los litros", plural = true)
+            val (kg, errorKg) = Formato.validarPositivo(f.etKg.text, "Escribe cuántos kilos de queso salieron", "Los kilos", plural = true)
+            if (litros == null) {
+                f.etLitros.error = errorLitros
                 return@mostrarFormulario false
             }
-            if (kg == null || kg <= 0) {
-                f.etKg.error = "Escribe cuántos kilos de queso salieron"
+            if (kg == null) {
+                f.etKg.error = errorKg
                 return@mostrarFormulario false
             }
             val producto = productos.getOrNull(f.spProducto.selectedItemPosition - 1)

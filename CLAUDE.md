@@ -1,5 +1,12 @@
 # QuesoData — App Android
 
+## REGLA DE DATOS REALES (seguirla siempre)
+- El `.env` local está conectado a la base de datos real de producción.
+- Nunca crear, modificar ni borrar datos reales sin preguntar antes al usuario y mostrarle qué se va a cambiar.
+- Para pruebas usar siempre MongoDB en memoria o una base de pruebas separada, nunca la de producción.
+- Si una prueba necesita la base real, solo se pueden leer datos, no escribir.
+- Si se crean usuarios o datos de prueba, borrarlos al terminar con respaldo y avisar al usuario.
+
 "Mi negocio, en orden". App Android (Kotlin, XML + ViewBinding, Navigation Component) para gestionar
 una quesería: leche de ganaderos, producción, inventario, ventas, clientes y pagos.
 
@@ -24,6 +31,9 @@ una quesería: leche de ganaderos, producción, inventario, ventas, clientes y p
 ```
 
 Backend local: `cd C:\Users\Moises\queseria-backend && node src/index.js` (usa `.env`).
+
+Pruebas: app `./gradlew testDebugUnitTest`; backend `cd C:\Users\Moises\queseria-backend && npm test`
+(MongoDB temporal en memoria, nunca la base real).
 
 ## Plan (requerimientos de octubre 2026)
 
@@ -149,7 +159,7 @@ Backend local: `cd C:\Users\Moises\queseria-backend && node src/index.js` (usa `
         Liquidaciones (`precioleches`) y Precios mostraba `costoLitroLeche` de `precios` (vacío).
 30. [x] `Leche.proveedor` eliminado (el nombre sale del ganadero: `nombreGanadero` en `GET /api/leche`);
         `ganaderoId` obligatorio. Se quitó la asignación automática por nombre de `liquidaciones.js`.
-31. [ ] Migración `scripts/migrar-limpieza-2026-10.js` (simulación por defecto; `--aplicar` guarda
+31. [x] Migración `scripts/migrar-limpieza-2026-10.js` (simulación por defecto; `--aplicar` guarda
         respaldo JSON en `scripts/`, fuera de git): borra `pagos` vacía, pasa `costoLitroLeche` a
         `precioleches` (si ya hay precio ahí, gana ese) y lo quita, asigna la leche con solo `proveedor`
         al ganadero del mismo nombre (o crea el ganadero; si hay dos con el mismo nombre no la toca) y
@@ -322,6 +332,27 @@ Se conserva "QuesoData" y "Tu negocio, en orden".
         resumen; "QuesoData" (un texto, "Data" dorado por código) y "Tu negocio, en orden" en una línea con autoSize;
         tarjetas grandes en una columna si el ancho es < 360 dp. Probado en emulador a 320 dp, 411 dp y 720 dp.
 
+## Plan (18 nov 2026) — Plan de Calidad: pruebas versionadas, D-17 y respaldo programado
+Informe: `informe_calidad.md` (raíz de la app, copia en el Escritorio), para la materia Aseguramiento de la Calidad del
+Software. Es solo local: está en `.gitignore` y nunca se sube (el repositorio es público).
+
+### Parte 17 — Calidad
+78. [x] Pruebas automáticas del backend en el repositorio (`test/`, `npm test` = `node --test`): MongoDB temporal en
+        memoria (`mongodb-memory-server` 11.3.0, devDependency; binario 7.0.14 fijado en `package.json` → `config`, con
+        `disablePostinstall` para que `npm install`/Render no descargue MongoDB; las pruebas lo bajan la primera vez).
+        `test/ayuda.js` borra `MONGODB_URI`, no carga el `.env` y aborta si la URI no es 127.0.0.1. La app Express se
+        separó en `src/app.js` (sin conexión ni puerto); `src/index.js` conecta y escucha. `api.test.js` (99 casos, con
+        fechas de la última semana cerrada) + `validacion.test.js` (35) = 134/134. Los scripts `prueba_*` anteriores se
+        perdieron (estaban en carpetas temporales).
+79. [x] D-17 corregido: `utils/validar.js` (`positivo`, `positivoOpcional`) en leche, producción, ventas, precios y precio
+        del litro (POST y PUT): faltante, no numérico, infinito, 0 o negativo → 400 con mensaje claro ("Los litros usados
+        deben ser mayores que 0"). Modelos con `decimal({ positivo: true })` como última defensa (en Atlas no había valores
+        ≤ 0, verificado solo leyendo). App: `Formato.validarPositivo` en los formularios y `leerNumero` rechaza infinitos;
+        `FormatoTest` 7 (app 13/13).
+80. [x] Respaldo programado: tarea "QuesoData - Respaldo semanal" (jueves 8 p. m., usuario actual, solo con sesión
+        iniciada, se ejecuta al encender si se perdió la hora). `respaldo-semanal.cmd` pasó a CRLF (`.gitattributes`):
+        con LF, cmd mostraba "em no se reconoce". Respaldos del 18 nov 2026 (manual y prueba de la tarea, resultado 0).
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.
@@ -351,4 +382,6 @@ Se conserva "QuesoData" y "Tu negocio, en orden".
   "libras" es la minorista. El precio de la venta se puede cambiar a mano.
 - El `.env` local del backend conecta con el cluster de Atlas de producción (`cluster0.6q12wde`; verificado el
   3 nov 2026). Cuidado: scripts locales sin `MONGODB_URI` propia tocan los datos reales.
+- Litros, kilos, cantidades vendidas y precios deben ser mayores que 0; lo valida el servidor (`utils/validar.js`)
+  y también la app (`Formato.validarPositivo`).
 - README.md (público) con capturas en `docs/capturas/` (datos de prueba del emulador, nunca datos reales).

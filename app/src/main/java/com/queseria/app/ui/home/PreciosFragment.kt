@@ -161,13 +161,12 @@ class PreciosFragment : Fragment() {
 
         val titulo = if (existente == null) "Precios de la semana" else "Corregir precios"
         mostrarFormulario(titulo, f.root) { dialogo ->
-            /** Lee un precio opcional: vacío = null; inválido = marca el error y devuelve -1. */
+            /** Lee un precio opcional: vacío = null; inválido (no número, 0 o negativo) = marca el error y devuelve -1. */
             fun leer(campo: android.widget.EditText): Double? {
-                val texto = campo.text.toString().trim()
-                if (texto.isEmpty()) return null
-                val valor = Formato.leerNumero(texto)
-                if (valor == null || valor <= 0) {
-                    campo.error = "Precio inválido"
+                if (campo.text.isNullOrBlank()) return null
+                val (valor, error) = Formato.validarPositivo(campo.text, "", "El precio")
+                if (valor == null) {
+                    campo.error = error
                     return -1.0
                 }
                 return valor

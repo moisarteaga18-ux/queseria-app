@@ -315,14 +315,14 @@ class VentasFragment : Fragment() {
                 toast(if (listaClientes.isEmpty()) "Primero agrega el cliente con «+ Agregar cliente»" else "Elige a qué cliente le vendes")
                 return@mostrarFormulario false
             }
-            val cantidad = Formato.leerNumero(f.etCantidad.text)
-            val precio = Formato.leerNumero(f.etPrecio.text)
-            if (cantidad == null || cantidad <= 0) {
-                f.etCantidad.error = "Ingresa la cantidad"
+            val (cantidad, errorCantidad) = Formato.validarPositivo(f.etCantidad.text, "Ingresa la cantidad", "La cantidad")
+            val (precio, errorPrecio) = Formato.validarPositivo(f.etPrecio.text, "Ingresa el precio", "El precio")
+            if (cantidad == null) {
+                f.etCantidad.error = errorCantidad
                 return@mostrarFormulario false
             }
-            if (precio == null || precio <= 0) {
-                f.etPrecio.error = "Ingresa el precio"
+            if (precio == null) {
+                f.etPrecio.error = errorPrecio
                 return@mostrarFormulario false
             }
             val unidad = if (enLibras()) Unidad.LIBRAS else Unidad.KG

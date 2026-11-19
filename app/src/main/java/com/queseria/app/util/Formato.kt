@@ -89,11 +89,24 @@ object Formato {
         return formatoIso.format(cal.time)
     }
 
-    /** Lee un número que el usuario escribió, aceptando coma o punto decimal. */
     /** Número para poner en un campo de texto (sin separador de miles): 1250.0 → "1250", 12.5 → "12.5". */
     fun campo(valor: Double): String =
         java.math.BigDecimal.valueOf(Math.round(valor * 100) / 100.0).stripTrailingZeros().toPlainString()
 
+    /** Lee un número que el usuario escribió, aceptando coma o punto decimal (null si no es un número finito). */
     fun leerNumero(texto: CharSequence?): Double? =
-        texto?.toString()?.trim()?.replace(',', '.')?.toDoubleOrNull()
+        texto?.toString()?.trim()?.replace(',', '.')?.toDoubleOrNull()?.takeIf { it.isFinite() }
+
+    /**
+     * Valida un campo que debe ser un número mayor que 0 (litros, kilos, cantidad, precio).
+     * Devuelve (valor, null) si está bien, o (null, mensaje) para mostrar en el campo:
+     * vacío → [siFalta]; no es número → "Escribe un número válido"; 0 o negativo → "[nombre] debe(n) ser mayor(es) que 0".
+     * El backend aplica la misma regla (utils/validar.js).
+     */
+    fun validarPositivo(texto: CharSequence?, siFalta: String, nombre: String, plural: Boolean = false): Pair<Double?, String?> {
+        if (texto.isNullOrBlank()) return null to siFalta
+        val valor = leerNumero(texto) ?: return null to "Escribe un número válido"
+        if (valor <= 0) return null to "$nombre ${if (plural) "deben ser mayores" else "debe ser mayor"} que 0"
+        return valor to null
+    }
 }
