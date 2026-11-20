@@ -467,7 +467,9 @@ Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
         "Deshacer" la recupera con su número. Corregido en la prueba: la columna Días ocupaba dos líneas ("20 – 26 nov"),
         el Valor de los descuentos quedaba oculto en la tarjeta (va antes del Detalle) y al volver de un detalle la
         pestaña marcada no era la que se veía. 15 capturas en `Escritorio\Capturas QuesoData 2026-11-20`; APK en el
-        Escritorio (Render). Sin subir a GitHub: la papelera necesita el push del servidor para funcionar en el teléfono.
+        Escritorio (Render).
+95. [x] Push (aprobado por el usuario): servidor ef0ca44 y app 4fbdafc. Render publicó la versión nueva (/api/papelera
+        responde 401 sin sesión) y en Atlas se creó la colección vacía `papelera` con su índice TTL (verificado solo leyendo).
 
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
