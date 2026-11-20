@@ -1,5 +1,6 @@
 package com.queseria.app.ui.liquidaciones
 
+import com.queseria.app.offline.necesitaInternet
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -246,6 +247,7 @@ class LiquidacionDetalleFragment : Fragment() {
 
     private fun generar() {
         val l = liq ?: return
+        if (necesitaInternet("Generar la liquidación", "el número consecutivo lo da el servidor, así no se repite")) return
         binding.btnPrincipal.isEnabled = false // evita generar dos veces con un doble toque
         conApi({ RetrofitClient.api.generarLiquidacion(GenerarLiquidacionRequest(l.ganaderoId, l.semana, l.anio)) },
             alFallar = { binding.btnPrincipal.isEnabled = true }) { nueva ->
@@ -291,6 +293,7 @@ class LiquidacionDetalleFragment : Fragment() {
     }
 
     private fun marcarPagado() {
+        if (necesitaInternet("Marcar la liquidación como pagada", "el pago queda guardado en el servidor como comprobante")) return
         val l = liq ?: return
         val id = l.id ?: return
         val f = DialogPagarBinding.inflate(layoutInflater)
@@ -327,6 +330,7 @@ class LiquidacionDetalleFragment : Fragment() {
     }
 
     private fun deshacerPago() {
+        if (necesitaInternet("Deshacer el pago", "la liquidación se recalcula en el servidor")) return
         val id = liq?.id ?: return
         confirmar("Deshacer pago", "La liquidación vuelve a quedar pendiente y se recalcula con los datos actuales.", textoSi = "Deshacer") {
             conApi({ RetrofitClient.api.deshacerPagoLiquidacion(id) }) {
@@ -337,6 +341,7 @@ class LiquidacionDetalleFragment : Fragment() {
     }
 
     private fun anular() {
+        if (necesitaInternet("Anular la liquidación", "el número consecutivo lo da el servidor, así no se repite")) return
         val l = liq ?: return
         val id = l.id ?: return
         confirmar(

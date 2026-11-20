@@ -31,6 +31,14 @@ import com.queseria.app.ui.common.guardarEnApi
 import com.queseria.app.ui.common.manejarError
 import com.queseria.app.ui.common.mostrarFormulario
 import com.queseria.app.ui.common.toast
+import com.queseria.app.offline.Pendiente
+import com.queseria.app.offline.Pendientes
+import com.queseria.app.offline.comoVenta
+import com.queseria.app.offline.guardarOEnCola
+import com.queseria.app.offline.mostrarPendiente
+import com.queseria.app.offline.nuevoIdLocal
+import com.queseria.app.offline.pendiente
+import com.queseria.app.offline.pendientesDe
 import com.queseria.app.ui.ventas.TipoVenta
 import com.queseria.app.ui.ventas.Unidad
 import com.queseria.app.ui.ventas.filaVenta
@@ -65,9 +73,13 @@ class VentasFragment : Fragment() {
         fechaDe = { Formato.soloFecha(it.fecha) },
         subtotal = { del -> "${Formato.moneda(del.sumOf { it.total })} · ${Formato.kg(del.sumOf { Formato.aKg(it.cantidad, it.unidad) })}" },
         aFila = { filaVenta(it) },
-        alTocar = { abrirFormulario(it) },
-        alMantener = { eliminar(it) }
+        // Una venta hecha sin internet que no ha subido: se muestra su estado (no se edita ni se borra aquí)
+        alTocar = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v) },
+        alMantener = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminar(v) }
     )
+
+    /** Ventas de la semana que llegaron del servidor (o de lo guardado en el teléfono). */
+    private var ventasServidor: List<Venta> = emptyList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -85,6 +97,9 @@ class VentasFragment : Fragment() {
         // Semana de viernes a jueves (por defecto la actual); cambiarla vuelve a cargar
         navegador = NavegadorSemana(cabecera.semana) { cargar() }
         cargar()
+        // Cuando se sube (o se rechaza) una venta hecha sin internet, la lista se actualiza
+        var primera = true
+        Pendientes.cambios.observe(viewLifecycleOwner) { if (primera) primera = false else cargar() }
 
         // Desde Inicio → "Nueva venta" se abre el formulario directamente
         if (arguments?.getBoolean(InicioFragment.ARG_NUEVO) == true) {
@@ -103,8 +118,16 @@ class VentasFragment : Fragment() {
             binding.tvVacio.visibility = View.VISIBLE
         }) {
             // Si mientras cargaba se eligió otra semana, esta respuesta ya no sirve
-            if (semana == navegador.semana) mostrar(semana, it.orEmpty())
+            if (semana == navegador.semana) { ventasServidor = it.orEmpty(); mostrar(semana, conPendientes(semana)) }
         }
+    }
+
+    /** Las del servidor más las hechas sin internet de esa semana (marcadas «Pendiente» o «No se subió»). */
+    private fun conPendientes(semana: Semana): List<Venta> {
+        val enServidor = ventasServidor.mapNotNull { it.idLocal }.toSet()
+        val locales = pendientesDe(Pendiente.VENTA, enServidor).map { it.comoVenta() }
+            .filter { semana.contiene(LocalDate.parse(Formato.soloFecha(it.fecha))) }
+        return ventasServidor + locales
     }
 
     private fun mostrar(semana: Semana, ventas: List<Venta>) {
@@ -344,8 +367,12 @@ class VentasFragment : Fragment() {
             )
             val id = existente?.id
             if (id == null) {
-                guardarEnApi(dialogo, "Listo: venta de ${Formato.moneda(cantidad * precio)}", {
-                    RetrofitClient.api.crearVenta(request)
+                // Lleva idLocal: sin internet queda en el teléfono y al subirse no se duplica
+                val nueva = request.copy(idLocal = nuevoIdLocal())
+                val enCola = pendiente(Pendiente.VENTA, nueva.idLocal!!, nueva, fecha,
+                    "venta de ${Formato.moneda(cantidad * precio)} a ${cliente.nombre} (${Formato.fechaLegible(fecha)})", cliente.nombre)
+                guardarOEnCola(dialogo, "Listo: venta de ${Formato.moneda(cantidad * precio)}", enCola, {
+                    RetrofitClient.api.crearVenta(nueva)
                 }) { cargar() }
             } else {
                 // productoId "" = ya no descuenta inventario (null no cambiaría nada)

@@ -2,6 +2,7 @@ package com.queseria.app.ui.ventas
 
 import com.queseria.app.R
 import com.queseria.app.models.Venta
+import com.queseria.app.offline.etiqueta
 import com.queseria.app.ui.common.Fila
 import com.queseria.app.util.Formato
 
@@ -44,5 +45,8 @@ fun filaVenta(v: Venta, mostrarCliente: Boolean = true) = Fila(
     colorIcono = if (v.tipoVenta == TipoVenta.MAYORISTA) R.color.azul_info else R.color.verde_principal,
     // Foto del queso (guía de diseño): rueda para minorista, bloques para mayorista
     imagen = if (v.tipoVenta == TipoVenta.MAYORISTA) R.drawable.img_guia_queso_cubos else R.drawable.img_guia_queso_redondo,
-    valorEnPildora = true
+    valorEnPildora = true,
+    // Hecha sin internet: «Pendiente» (todavía no sube) o «No se subió» (el servidor la rechazó)
+    etiqueta = v.pendiente?.etiqueta,
+    colorEtiqueta = if (v.pendiente?.rechazado == true) R.color.rojo_error else R.color.ambar_advertencia
 )

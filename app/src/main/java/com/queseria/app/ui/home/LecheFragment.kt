@@ -28,6 +28,16 @@ import com.queseria.app.models.Producto
 import com.queseria.app.ui.common.Fila
 import com.queseria.app.ui.common.FilaAdapter
 import com.queseria.app.ui.common.ListaPorDias
+import com.queseria.app.offline.Pendiente
+import com.queseria.app.offline.Pendientes
+import com.queseria.app.offline.comoLeche
+import com.queseria.app.offline.comoProduccion
+import com.queseria.app.offline.etiqueta
+import com.queseria.app.offline.guardarOEnCola
+import com.queseria.app.offline.mostrarPendiente
+import com.queseria.app.offline.nuevoIdLocal
+import com.queseria.app.offline.pendiente
+import com.queseria.app.offline.pendientesDe
 import com.queseria.app.ui.common.NavegadorSemana
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.confirmar
@@ -79,14 +89,19 @@ class LecheFragment : Fragment() {
                 subtitulo = Formato.fechaLegible(l.fecha),
                 detalle = if (sinGanadero) "Toca para elegir el ganadero (si no, no entra en su liquidación)" else l.observaciones,
                 valor = Formato.litros(l.litros),
-                etiqueta = if (sinGanadero) "Asignar" else "${Formato.numero(l.litros / LITROS_POR_LATA, 1)} latas",
-                colorEtiqueta = if (sinGanadero) R.color.ambar_advertencia else R.color.gris_texto_secundario,
+                etiqueta = l.pendiente?.etiqueta ?: if (sinGanadero) "Asignar" else "${Formato.numero(l.litros / LITROS_POR_LATA, 1)} latas",
+                colorEtiqueta = when {
+                    l.pendiente?.rechazado == true -> R.color.rojo_error
+                    l.pendiente != null || sinGanadero -> R.color.ambar_advertencia
+                    else -> R.color.gris_texto_secundario
+                },
                 icono = R.drawable.ic_ganadero,
                 colorIcono = if (sinGanadero) R.color.ambar_advertencia else R.color.verde_principal
             )
         },
-        alTocar = { abrirFormularioLeche(it) },
-        alMantener = { eliminarLeche(it) }
+        // Hecho sin internet y sin subir: se muestra su estado (no se corrige ni se borra aquí)
+        alTocar = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioLeche(l) },
+        alMantener = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminarLeche(l) }
     )
 
     // Producción de la semana agrupada por día (viernes a jueves), con el subtotal de cada día
@@ -99,14 +114,18 @@ class LecheFragment : Fragment() {
                 subtitulo = "${Formato.litros(p.litrosUsados)} → ${Formato.kg(p.kgProducidos)}",
                 detalle = p.observaciones,
                 valor = Formato.kg(p.kgProducidos),
-                etiqueta = "${Formato.numero(librasPorLata(p.litrosUsados, p.kgProducidos))} lb/lata",
-                colorEtiqueta = R.color.azul_info,
+                etiqueta = p.pendiente?.etiqueta ?: "${Formato.numero(librasPorLata(p.litrosUsados, p.kgProducidos))} lb/lata",
+                colorEtiqueta = when {
+                    p.pendiente?.rechazado == true -> R.color.rojo_error
+                    p.pendiente != null -> R.color.ambar_advertencia
+                    else -> R.color.azul_info
+                },
                 icono = R.drawable.ic_produccion,
                 colorIcono = R.color.azul_info
             )
         },
-        alTocar = { abrirFormularioProduccion(it) },
-        alMantener = { eliminarProduccion(it) }
+        alTocar = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioProduccion(p) },
+        alMantener = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminarProduccion(p) }
     )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -135,6 +154,10 @@ class LecheFragment : Fragment() {
             cargar()
         }
 
+        // Cuando se sube (o se rechaza) un registro hecho sin internet, la lista se actualiza
+        var primera = true
+        Pendientes.cambios.observe(viewLifecycleOwner) { if (primera) primera = false else cargar() }
+
         // Desde el menú de Inicio se abre el formulario directamente
         if (arguments?.getBoolean(InicioFragment.ARG_NUEVO) == true) {
             arguments?.remove(InicioFragment.ARG_NUEVO)
@@ -145,7 +168,10 @@ class LecheFragment : Fragment() {
     private fun cargar() {
         if (enLeche) {
             conApi({ RetrofitClient.api.getLeche(limit = 60) }, binding.swipeRefresh) {
-                leche = it.orEmpty()
+                val servidor = it.orEmpty()
+                // Más los hechos sin internet que todavía no llegan (arriba, son los más nuevos)
+                val locales = pendientesDe(Pendiente.LECHE, servidor.mapNotNull { l -> l.idLocal }.toSet()).map { p -> p.comoLeche() }
+                leche = (locales + servidor).sortedByDescending { l -> Formato.soloFecha(l.fecha) }
                 adapterLeche.actualizar(leche)
                 mostrar()
             }
@@ -154,8 +180,10 @@ class LecheFragment : Fragment() {
             val semana = navegador?.semana ?: return
             conApi({ RetrofitClient.api.getProduccion(limit = 1000) }, binding.swipeRefresh) { lista ->
                 if (semana != navegador?.semana) return@conApi
-                produccion = lista.orEmpty()
-                produccionSemana = produccion.filter { semana.contiene(LocalDate.parse(Formato.soloFecha(it.fecha))) }
+                val servidor = lista.orEmpty()
+                val locales = pendientesDe(Pendiente.PRODUCCION, servidor.mapNotNull { p -> p.idLocal }.toSet()).map { p -> p.comoProduccion() }
+                produccion = servidor
+                produccionSemana = (servidor + locales).filter { semana.contiene(LocalDate.parse(Formato.soloFecha(it.fecha))) }
                 mostrar()
             }
         }
@@ -274,8 +302,12 @@ class LecheFragment : Fragment() {
             val id = existente?.id
             val cuando = Semana.diaLargo(selector.dia)
             if (id == null) {
-                guardarConConfirmacion(dialogo, "Listo: ${Formato.litros(litros)} de ${ganadero.nombre} el $cuando", { confirmar ->
-                    RetrofitClient.api.crearLeche(request.copy(observaciones = request.observaciones?.ifEmpty { null }, confirmar = confirmar.takeIf { it }))
+                // Lleva idLocal: sin internet queda en el teléfono y al subirse no se duplica
+                val nuevo = request.copy(observaciones = request.observaciones?.ifEmpty { null }, idLocal = nuevoIdLocal())
+                val enCola = pendiente(Pendiente.LECHE, nuevo.idLocal!!, nuevo, fecha,
+                    "${Formato.litros(litros)} de ${ganadero.nombre} el ${cuando.replaceFirstChar { it.lowercase() }}", ganadero.nombre)
+                guardarOEnCola(dialogo, "Listo: ${Formato.litros(litros)} de ${ganadero.nombre} el $cuando", enCola, { confirmar ->
+                    RetrofitClient.api.crearLeche(nuevo.copy(confirmar = confirmar.takeIf { it }))
                 }) { cargar() }
             } else {
                 guardarConConfirmacion(dialogo, "Registro corregido: ${Formato.litros(litros)} de ${ganadero.nombre}", { confirmar ->
@@ -412,7 +444,10 @@ class LecheFragment : Fragment() {
                 if (existente?.id == null) {
                     val mensaje = if (producto != null) "Listo: ${Formato.kg(kg)} de ${producto.nombre} sumados al inventario"
                     else "Listo: producción de ${Formato.kg(kg)} registrada"
-                    guardarEnApi(dialogo, mensaje, { RetrofitClient.api.crearProduccion(request) }) { cargar() }
+                    val nueva = request.copy(idLocal = nuevoIdLocal())
+                    val enCola = pendiente(Pendiente.PRODUCCION, nueva.idLocal!!, nueva, fecha,
+                        "producción de ${Formato.kg(kg)} del ${Formato.fechaLegible(fecha)}", producto?.nombre)
+                    guardarOEnCola(dialogo, mensaje, enCola, { RetrofitClient.api.crearProduccion(nueva) }) { cargar() }
                 } else {
                     // productoId "" = ya no se suma al inventario (null no cambiaría nada)
                     guardarEnApi(dialogo, "Producción corregida: ${Formato.kg(kg)}", {

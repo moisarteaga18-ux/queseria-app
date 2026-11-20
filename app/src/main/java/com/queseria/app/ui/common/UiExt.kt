@@ -73,7 +73,7 @@ fun <T> Fragment.guardarEnApi(
     guardarDesdeDialogo(dialogo, {
         when (val r = llamarApi(llamada)) {
             is Resultado.Exito -> { dato = r.data; toast(mensajeExito); true }
-            is Resultado.Error -> { manejarError(r); false }
+            is Resultado.Error -> { avisarNoGuardado(r); false }
         }
     }) { alGuardar(dato) }
 }
@@ -97,9 +97,24 @@ fun <T> Fragment.guardarConConfirmacion(
         }
         when (r) {
             is Resultado.Exito -> { dato = r.data; toast(mensajeExito); true }
-            is Resultado.Error -> { if (!r.requiereConfirmacion) manejarError(r); false }
+            is Resultado.Error -> { if (!r.requiereConfirmacion) avisarNoGuardado(r); false }
         }
     }) { alGuardar(dato) }
+}
+
+/**
+ * Error al guardar. Sin conexión lo dice claramente (esto no se guarda en el teléfono: solo leche,
+ * producción y ventas se pueden registrar sin internet); los demás errores, como siempre.
+ */
+fun Fragment.avisarNoGuardado(r: Resultado.Error) {
+    if (!r.sinConexion) return manejarError(r)
+    val ctx = context ?: return
+    AlertDialog.Builder(ctx)
+        .setTitle("Sin internet")
+        .setMessage("No se guardó: esto necesita conexión con el servidor.\nSin internet solo se pueden registrar leche, " +
+            "producción y ventas. Vuelve a intentarlo cuando tengas conexión.")
+        .setPositiveButton("Entendido", null)
+        .show()
 }
 
 /** Diálogo Sí/Cancelar que se puede esperar desde una corrutina: true si el usuario aceptó. */

@@ -11,6 +11,24 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <!-- "Sin internet · datos guardados del 19 nov, 9:40 p. m." y lo que falta por subir (toca = ver la lista) -->
+    <TextView
+        android:id="@+id/tvSinInternet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/aviso_sin_internet"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center_vertical"
+        android:minHeight="36dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_alerta"
+        app:drawableTint="@color/white" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"

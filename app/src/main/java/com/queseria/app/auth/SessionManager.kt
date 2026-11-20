@@ -12,6 +12,8 @@ import com.queseria.app.api.RetrofitClient
  */
 class SessionManager(context: Context) {
 
+    private val contexto = context.applicationContext
+
     private val prefs: SharedPreferences = context.getSharedPreferences(
         PREF_NAME,
         Context.MODE_PRIVATE
@@ -71,6 +73,9 @@ class SessionManager(context: Context) {
      */
     fun cerrarSesion() {
         prefs.edit().clear().apply()
+        // Las consultas guardadas son de esta cuenta. Los registros sin subir NO se borran: esperan a que
+        // esa cuenta vuelva a entrar (offline/Pendientes.kt).
+        com.queseria.app.offline.CacheInterceptor.borrar(contexto)
         RetrofitClient.authToken = null
     }
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -16,6 +17,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.queseria.app.auth.SessionManager
 import com.queseria.app.databinding.ActivityMainBinding
+import com.queseria.app.offline.Conexion
+import com.queseria.app.offline.Pendientes
+import com.queseria.app.offline.Sincronizador
+import com.queseria.app.offline.mostrarListaPendientes
+import com.queseria.app.offline.mostrarPendiente
+import com.queseria.app.offline.textoHora
 import com.queseria.app.ui.auth.LoginActivity
 import com.queseria.app.util.Tema
 
@@ -73,6 +80,52 @@ class MainActivity : AppCompatActivity() {
         binding.barraInferior.navReportes.setOnClickListener { ir(R.id.nav_reportes) }
         binding.barraInferior.navVentas.setOnClickListener { ir(R.id.nav_ventas) }
         binding.barraInferior.navMas.setOnClickListener { abrirMas() }
+
+        // Sin internet: aviso arriba con la hora de los datos guardados y lo que falta por subir
+        Conexion.estado.observe(this) { mostrarAvisoConexion() }
+        Pendientes.cambios.observe(this) { mostrarAvisoConexion() }
+        binding.tvSinInternet.setOnClickListener { mostrarListaPendientes() }
+        Sincronizador.resumen.observe(this) { r -> r?.let { avisarSubida(it); Sincronizador.consumir() } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Al volver a la app se intenta subir lo que se registró sin internet
+        Sincronizador.subir(this)
+    }
+
+    private fun mostrarAvisoConexion() {
+        val estado = Conexion.estado.value ?: Conexion.Estado(false)
+        val mios = Pendientes.de(this, sessionManager.obtenerUsername())
+        val rechazados = mios.count { it.rechazado }
+        val porSubir = mios.size - rechazados
+        val partes = mutableListOf<String>()
+        if (estado.sinInternet) {
+            partes += "Sin internet" + (estado.datosDel?.let { " · datos guardados del ${textoHora(it)}" } ?: "")
+        }
+        if (porSubir > 0) partes += "$porSubir ${if (porSubir == 1) "registro" else "registros"} por subir"
+        if (rechazados > 0) partes += "$rechazados no se ${if (rechazados == 1) "pudo" else "pudieron"} subir (toca para ver)"
+        binding.tvSinInternet.text = partes.joinToString(" · ")
+        binding.tvSinInternet.visibility = if (partes.isEmpty()) View.GONE else View.VISIBLE
+        binding.tvSinInternet.setBackgroundColor(getColor(if (rechazados > 0) R.color.rojo_error else R.color.aviso_sin_internet))
+    }
+
+    /** Resultado de subir lo registrado sin internet. Los rechazados se nombran uno por uno (no se borran). */
+    private fun avisarSubida(r: Sincronizador.Resumen) {
+        if (r.subidos > 0) {
+            Toast.makeText(this, "Se ${if (r.subidos == 1) "subió 1 registro hecho" else "subieron ${r.subidos} registros hechos"} sin internet", Toast.LENGTH_LONG).show()
+        }
+        if (r.rechazados.isEmpty()) return
+        val lista = r.rechazados.joinToString("\n\n") { "• ${it.descripcion.replaceFirstChar { c -> c.uppercase() }}:\n  ${it.error}" }
+        AlertDialog.Builder(this)
+            .setTitle(if (r.rechazados.size == 1) "Un registro no se pudo subir" else "${r.rechazados.size} registros no se pudieron subir")
+            .setMessage((if (r.rechazados.size == 1) "El servidor no lo aceptó. Sigue guardado en el teléfono (no se borró):"
+                else "El servidor no los aceptó. Siguen guardados en el teléfono (no se borraron):") + "\n\n$lista")
+            .setPositiveButton("Ver") { _, _ ->
+                if (r.rechazados.size == 1) mostrarPendiente(r.rechazados.first()) else mostrarListaPendientes()
+            }
+            .setNegativeButton("Cerrar", null)
+            .show()
     }
 
     override fun onSupportNavigateUp(): Boolean {

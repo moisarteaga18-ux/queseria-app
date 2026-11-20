@@ -46,4 +46,5 @@
     <color name="vidrio_borde">#33FFFFFF</color>
     <color name="velo_fondo">#B3101512</color>
 
+    <color name="aviso_sin_internet">#6B5520</color>
 </resources>

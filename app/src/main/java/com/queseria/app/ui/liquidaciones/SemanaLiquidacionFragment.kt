@@ -1,5 +1,6 @@
 package com.queseria.app.ui.liquidaciones
 
+import com.queseria.app.offline.necesitaInternet
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -178,6 +179,7 @@ class SemanaLiquidacionFragment : Fragment() {
     }
 
     private fun generarSemana() {
+        if (necesitaInternet("Generar las liquidaciones", "el número consecutivo lo da el servidor, así no se repite")) return
         conApi({ RetrofitClient.api.generarLiquidacionesSemana(SemanaRequest(semana.numero, semana.anio)) }) { lista ->
             val n = lista.orEmpty().size
             toast(if (n == 1) "Listo: 1 liquidación generada" else "Listo: $n liquidaciones generadas")

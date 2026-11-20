@@ -1,5 +1,6 @@
 package com.queseria.app.ui.cuenta
 
+import com.queseria.app.offline.necesitaInternet
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -61,6 +62,7 @@ class ContrasenaFragment : Fragment() {
             repetir != nueva -> return error(binding.etRepetir, "No coincide con la contraseña nueva")
         }
 
+        if (necesitaInternet("Cambiar la contraseña", "la contraseña se cambia en el servidor y cierra las sesiones de los otros teléfonos")) return
         binding.btnGuardar.isEnabled = false
         binding.btnGuardar.text = "Cambiando…"
         viewLifecycleOwner.lifecycleScope.launch {

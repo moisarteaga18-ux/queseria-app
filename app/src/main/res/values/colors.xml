@@ -99,4 +99,6 @@
     <color name="vidrio_borde">#E6FFFFFF</color>
     <color name="velo_fondo">#A6FCFBF5</color>
 
+    <!-- Aviso superior sin internet -->
+    <color name="aviso_sin_internet">#5B4A1E</color>
 </resources>

@@ -1,6 +1,9 @@
 package com.queseria.app.api
 
+import android.content.Context
 import com.queseria.app.BuildConfig
+import com.queseria.app.offline.CacheInterceptor
+import okhttp3.Request
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,17 +41,39 @@ object RetrofitClient {
         level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
     }
 
-    // Cliente HTTP con timeouts y los interceptores configurados
+    /** Contexto de la app (para la carpeta de consultas guardadas); se fija en QuesoDataApp. */
+    @Volatile
+    private var contexto: Context? = null
+
+    fun iniciar(context: Context) {
+        contexto = context.applicationContext
+    }
+
+    // Consultas guardadas en el teléfono para verlas sin internet (ver offline/Conexion.kt). Va primero
+    // para envolver a los demás: si la conexión falla, responde con lo guardado.
+    private val cacheInterceptor = CacheInterceptor { CacheInterceptor.carpeta(contexto!!) }
+
+    // Cliente HTTP con timeouts y los interceptores configurados. Conectar: 20 s (sin internet no se
+    // espera un minuto); leer: 60 s (Render gratis tarda en despertar).
     private val httpClient = OkHttpClient.Builder()
+        .addInterceptor(cacheInterceptor)
         .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(60, TimeUnit.SECONDS)
+        .connectTimeout(20, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
     // Instancia de Retrofit que se crea solo cuando se necesita (lazy)
     // Esto convierte la interface QueseriaApi en un objeto que sí hace las llamadas HTTP
+    /** Pregunta al servidor si responde (GET / del backend, sin datos). true = hay conexión. */
+    fun probar(): Boolean = try {
+        val raiz = BASE_URL.removeSuffix("/").removeSuffix("api")
+        httpClient.newCall(Request.Builder().url(raiz).build()).execute().use { it.isSuccessful }
+    } catch (_: Exception) {
+        false
+    }
+
     val api: QueseriaApi by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

@@ -375,21 +375,38 @@ No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo le
         cerradas; el valor de la merma baja porque usa el precio promedio real de venta. Los valores no se anotan aquí
         (el repositorio es público).
 
-### Parte 19 — Sin internet (pendiente)
-84. [ ] Caché de lecturas (inicio, ganancias, reportes, leche, producción, ventas, ganaderos, clientes) + aviso superior
-        "Sin internet · datos guardados del …"; cola de leche/producción/ventas con id del cliente (idempotente, el servidor
-        no duplica), marcados "pendiente"; rechazados se avisan y nunca se borran; liquidación y contraseña dicen que
-        necesitan internet. Probar con backend local + emulador en modo avión.
+### Parte 19 — Sin internet
+84. [x] Backend: `idLocal` (UUID del teléfono) en Leche, Produccion y Venta, con índice único parcial
+        {usuarioId, idLocal} (`utils/idLocal.js`). POST con un idLocal ya guardado → 200 `repetido: true` con el mismo
+        registro (también si llegan varios a la vez: E11000 → devuelve el guardado); el inventario se mueve una sola vez.
+        idLocal raro → 400. `test/sinInternet.test.js` 9/9; total 168/168. Al subir a Render, Mongoose crea los 3 índices
+        nuevos en Atlas (no cambia datos).
+85. [x] App `offline/`: `CacheInterceptor` (primer interceptor de OkHttp) guarda cada GET 200 en
+        `filesDir/consultas_guardadas` y sin conexión responde con lo guardado (las consultas con `fecha` también se guardan
+        sin ella; las de semana/rango solo exactas). Se borra al cerrar sesión. `Conexion` (estado) → aviso superior en
+        `activity_main` ("Sin internet · datos guardados del 20 nov, 3:52 a. m. · N registros por subir"; rojo si hay
+        rechazados; tocar = lista). `Pendientes` (archivo `registros_por_subir.json`, por usuario, no se borra al cerrar
+        sesión) + `Sincronizador` (al volver la red, al abrir la app y cuando el servidor vuelve a responder; Mutex;
+        5xx/401/429/sin conexión = reintentar luego; 4xx = rechazado con su mensaje, nunca se borra; «Reintentar» o
+        «Guardar igual» si la semana está pagada). Formularios nuevos de leche, producción y ventas usan `guardarOEnCola`;
+        las listas muestran los pendientes con etiqueta «Pendiente» / «No se subió». Lo demás sin conexión dice
+        "No se guardó: esto necesita conexión" (`avisarNoGuardado`); liquidación (generar, pagar, deshacer, anular) y
+        contraseña avisan antes (`necesitaInternet`). Conectar: 20 s. `SinInternetTest` 5; app 18/18.
+86. [x] Probado (backend local + MongoDB temporal 127.0.0.1:27999 + emulador en modo avión): Inicio, Ventas, Producción,
+        Leche, Ganaderos, Clientes, Inventario, Reportes y Ganancias se ven sin internet; venta 10 lb, venta 80 kg, leche
+        95 L y producción 9,5 kg guardadas como pendientes; contraseña → "Necesita internet". Al quitar el modo avión
+        subieron solos (42→43 leche, 21→22 producción, 42→43 ventas) y la de 80 kg fue rechazada ("Solo hay 79 kg"),
+        nombrada en el aviso y conservada; «Reintentar» la subió (44 ventas, stock 8,5 kg). Reabrir la app: sin duplicados.
 
 ### Parte 20 — Diseño de Ganancias y Reportes (pendiente)
-85. [ ] Según `Downloads/diseno_ganancias_reportes.png` (no copiar la imagen entera: tiene números del negocio). Fondo casi negro
+87. [ ] Según `Downloads/diseno_ganancias_reportes.png` (no copiar la imagen entera: tiene números del negocio). Fondo casi negro
         verdoso, tarjetas de vidrio oscuro con borde neón (leche azul, merma roja), cabecera con foto recortada, barra inferior
         flotante oscura. Ilustraciones recortadas con borde difuminado. Sin botones decorativos.
 
 ### Parte 21 — Leche y Ventas como tabla tipo Excel (pendiente)
-86. [ ] Encabezado verde fijo, rejilla, filas alternas, números a la derecha, fila de totales, primera columna fija con
+88. [ ] Encabezado verde fijo, rejilla, filas alternas, números a la derecha, fila de totales, primera columna fija con
         desplazamiento horizontal, por semana, tocar = editar, pendientes marcados.
-87. [ ] Al terminar: todas las pruebas, capturas en el emulador (Ganancias, Reportes, Leche, Ventas), APK en el Escritorio (Render).
+89. [ ] Al terminar: todas las pruebas, capturas en el emulador (Ganancias, Reportes, Leche, Ventas), APK en el Escritorio (Render).
 
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
@@ -402,6 +419,8 @@ No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo le
 - El valor de la merma se muestra como pérdida informativa y NO se resta otra vez de la ganancia:
   es queso que no se vendió (ya falta en los ingresos) y su leche ya está en el costo.
 - El promedio de merma usa solo semanas completas.
+- Sin internet solo se registran leche, producción y ventas (cola en el teléfono con idLocal); lo demás necesita conexión.
+  Un registro rechazado por el servidor nunca se borra solo: el usuario lo reintenta.
 - Una liquidación pendiente se recalcula sola; al pagarla queda congelada como comprobante.
   Los PDF no se guardan: se generan en el teléfono con los datos guardados en MongoDB.
 - El costo del litro (Ganancias, Reportes, liquidaciones, Precios) sale solo de `precioleches`; sin

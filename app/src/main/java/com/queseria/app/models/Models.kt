@@ -92,7 +92,11 @@ data class Leche(
     val ganaderoId: String? = null,
     // Nombre actual del ganadero (lo agrega el backend)
     val nombreGanadero: String? = null,
-    val observaciones: String? = null
+    val observaciones: String? = null,
+    /** Lo devuelve el servidor si el registro se hizo sin internet. */
+    val idLocal: String? = null,
+    /** Registro hecho sin internet que todavía no llega al servidor (no viene en el JSON). */
+    @Transient val pendiente: com.queseria.app.offline.Pendiente? = null
 )
 
 data class LecheRequest(
@@ -101,7 +105,9 @@ data class LecheRequest(
     val observaciones: String? = null,
     val fecha: String? = null,
     // true = el usuario aceptó cambiar una semana ya pagada
-    val confirmar: Boolean? = null
+    val confirmar: Boolean? = null,
+    /** Identificador que pone el teléfono: si el pedido llega dos veces, el servidor no lo duplica. */
+    val idLocal: String? = null
 )
 
 /** Un día en GET /api/leche/dias: litros recibidos (total y por ganadero) y usados en producción. */
@@ -126,7 +132,11 @@ data class Produccion(
     val kgProducidos: Double,
     val rendimiento: Double? = null,
     val observaciones: String? = null,
-    val productoId: String? = null
+    val productoId: String? = null,
+    /** Lo devuelve el servidor si el registro se hizo sin internet. */
+    val idLocal: String? = null,
+    /** Registro hecho sin internet que todavía no llega al servidor (no viene en el JSON). */
+    @Transient val pendiente: com.queseria.app.offline.Pendiente? = null
 )
 
 data class ProduccionRequest(
@@ -135,7 +145,9 @@ data class ProduccionRequest(
     val observaciones: String? = null,
     val fecha: String? = null,
     // Producto al que se suma el queso en el inventario (opcional)
-    val productoId: String? = null
+    val productoId: String? = null,
+    /** Identificador que pone el teléfono: si el pedido llega dos veces, el servidor no lo duplica. */
+    val idLocal: String? = null
 )
 
 // ========================================
@@ -182,7 +194,11 @@ data class Venta(
     // "kg" o "libras"
     val unidad: String,
     val precioUnitario: Double,
-    val totalVenta: Double? = null
+    val totalVenta: Double? = null,
+    /** Lo devuelve el servidor si el registro se hizo sin internet. */
+    val idLocal: String? = null,
+    /** Registro hecho sin internet que todavía no llega al servidor (no viene en el JSON). */
+    @Transient val pendiente: com.queseria.app.offline.Pendiente? = null
 )
 
 data class VentaRequest(
@@ -194,7 +210,9 @@ data class VentaRequest(
     val cantidad: Double,
     val unidad: String,
     val precioUnitario: Double,
-    val fecha: String? = null
+    val fecha: String? = null,
+    /** Identificador que pone el teléfono: si el pedido llega dos veces, el servidor no lo duplica. */
+    val idLocal: String? = null
 )
 
 // ========================================

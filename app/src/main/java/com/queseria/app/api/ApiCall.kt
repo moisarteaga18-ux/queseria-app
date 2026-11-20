@@ -17,12 +17,17 @@ sealed class Resultado<out T> {
         val mensaje: String,
         val codigo: Int? = null,
         /** El cambio afecta una liquidación ya pagada: hay que preguntar y reenviar con confirmar = true. */
-        val requiereConfirmacion: Boolean = false
+        val requiereConfirmacion: Boolean = false,
+        /** No hubo conexión con el servidor (sin internet, o el servidor no respondió a tiempo). */
+        val sinConexion: Boolean = false
     ) : Resultado<Nothing>() {
         /** El token expiró o no es válido: hay que volver al login. */
         val sesionExpirada: Boolean get() = codigo == 401
     }
 }
+
+/** Mensaje cuando no se pudo hablar con el servidor. */
+const val SIN_INTERNET = "Sin internet: no se pudo conectar con el servidor"
 
 /**
  * Ejecuta una llamada de [QueseriaApi] en el hilo de IO y la convierte en [Resultado].
@@ -42,6 +47,9 @@ suspend fun <T> llamarApi(llamada: suspend () -> Response<ApiResponse<T>>): Resu
     } catch (e: CancellationException) {
         // La pantalla se cerró mientras esperaba: no es un error, hay que dejar que la corrutina termine
         throw e
+    } catch (e: java.io.IOException) {
+        // Sin internet, sin respuesta a tiempo o conexión cortada: el pedido pudo llegar o no
+        Resultado.Error(SIN_INTERNET, sinConexion = true)
     } catch (e: Exception) {
         Resultado.Error("Error de conexión: ${e.message ?: "sin respuesta del servidor"}")
     }
