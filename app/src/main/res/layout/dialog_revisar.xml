@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Revisar antes de actuar (ui/common/Seguridad.kt): el registro que se va a borrar o los cambios que se van
+     a guardar ("Litros: 40 → 45"), la pregunta y dos botones uno debajo del otro. Al borrar, el resaltado es
+     "Cancelar" y el de borrar va en rojo, abajo. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="22dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="@color/gris_texto_principal"
+            android:textSize="19sp" />
+
+        <!-- Filas "dato: valor" (o "campo: antes → después") -->
+        <LinearLayout
+            android:id="@+id/contenedorDatos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_chip"
+            android:backgroundTint="@color/beige_fondo"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp" />
+
+        <TextView
+            android:id="@+id/tvAviso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/ambar_advertencia"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvPregunta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="@color/gris_texto_principal"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrincipal"
+            style="@style/Queseria.BotonGuardar"
+            android:layout_width="match_parent"
+            android:layout_marginTop="18dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSecundario"
+            style="@style/Queseria.BotonCancelar"
+            android:layout_width="match_parent"
+            android:layout_marginTop="14dp" />
+    </LinearLayout>
+</ScrollView>

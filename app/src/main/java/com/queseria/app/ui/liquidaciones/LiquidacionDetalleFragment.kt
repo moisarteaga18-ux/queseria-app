@@ -32,6 +32,9 @@ import com.queseria.app.models.Liquidacion
 import com.queseria.app.models.PagarLiquidacionRequest
 import com.queseria.app.models.TipoDescuento
 import com.queseria.app.ui.common.conApi
+import com.queseria.app.ui.common.Dato
+import com.queseria.app.ui.common.borrarConDeshacer
+import com.queseria.app.ui.common.confirmarBorrado
 import com.queseria.app.ui.common.tablaDescuentosLiquidacion
 import com.queseria.app.ui.common.confirmar
 import com.queseria.app.ui.common.elegirFecha
@@ -158,6 +161,11 @@ class LiquidacionDetalleFragment : Fragment() {
         binding.tvPasoEnviar.text = if (l.pagada) "Enviar el comprobante" else "Enviar al ganadero"
         binding.filaEnviar.visibility = if (l.generada) View.VISIBLE else View.GONE
         binding.btnVerPdf.visibility = if (l.generada) View.VISIBLE else View.GONE
+        // Anular va aparte (abajo, en rojo y separado por una línea): solo una liquidación generada y sin pagar
+        val sePuedeAnular = l.generada && !l.pagada
+        binding.separadorAnular.visibility = if (sePuedeAnular) View.VISIBLE else View.GONE
+        binding.btnAnular.visibility = if (sePuedeAnular) View.VISIBLE else View.GONE
+        binding.btnAnular.setOnClickListener { anular() }
         when {
             !l.generada && !l.tienePrecio -> {
                 binding.btnPrincipal.visibility = View.VISIBLE
@@ -178,10 +186,7 @@ class LiquidacionDetalleFragment : Fragment() {
                 binding.btnPrincipal.text = "Marcar como pagado"
                 binding.btnPrincipal.isEnabled = true
                 binding.btnPrincipal.setOnClickListener { marcarPagado() }
-                binding.btnSecundario.visibility = View.VISIBLE
-                binding.btnSecundario.text = "Anular liquidación"
-                binding.btnSecundario.setTextColor(color(R.color.rojo_error))
-                binding.btnSecundario.setOnClickListener { anular() }
+                binding.btnSecundario.visibility = View.GONE
             }
             else -> {
                 binding.btnPrincipal.visibility = View.GONE
@@ -260,13 +265,18 @@ class LiquidacionDetalleFragment : Fragment() {
         abrirFormularioDescuento(l.ganaderoId, l.nombreGanadero, semana) { cargar() }
     }
 
+    /** Tocar un descuento: se ve el registro y se puede borrar (en rojo; el botón resaltado es Cancelar). */
     private fun eliminarDescuento(d: LineaDescuento) {
         val id = d.descuentoId ?: return
-        confirmar("Eliminar descuento", "¿Quitar ${TipoDescuento.legible(d.tipo).lowercase()} de ${Formato.moneda(d.valor)}?") {
-            conApi({ RetrofitClient.api.eliminarDescuento(id) }) {
-                toast("Descuento eliminado")
-                cargar()
-            }
+        val l = liq ?: return
+        confirmarBorrado(TipoDescuento.legible(d.tipo), listOfNotNull(
+            Dato("Fecha", d.fecha?.let { Formato.fechaLegible(it) } ?: "—"),
+            Dato("Ganadero", l.nombreGanadero),
+            d.litros?.takeIf { d.tipo == TipoDescuento.LECHE_RECHAZADA }?.let { Dato("Cantidad", Formato.litros(it)) },
+            d.descripcion?.let { Dato("Detalle", it) },
+            Dato("Valor", "−${Formato.moneda(d.valor)}")
+        ), aviso = "Al borrarlo, la liquidación de la semana ${l.semana} vuelve a sumar ese valor.") {
+            borrarConDeshacer("${TipoDescuento.legible(d.tipo)} borrado", { RetrofitClient.api.eliminarDescuento(id) }) { cargar() }
         }
     }
 
@@ -325,19 +335,21 @@ class LiquidacionDetalleFragment : Fragment() {
         }
     }
 
+    /** Anular: muestra la liquidación y pregunta (Cancelar resaltado). Queda en la Papelera: "Deshacer" la recupera con su número. */
     private fun anular() {
         if (necesitaInternet("Anular la liquidación", "el número consecutivo lo da el servidor, así no se repite")) return
         val l = liq ?: return
         val id = l.id ?: return
-        confirmar(
-            "Anular liquidación",
-            "¿Anular la liquidación ${LiquidacionPdf.numeroTexto(l.numero)}? Su número no se vuelve a usar. La leche y los descuentos no se borran.\n\n" +
-                "No se volverá a generar sola: si la necesitas, ábrela de nuevo y toca «Generar liquidación».",
-            textoSi = "Anular"
-        ) {
-            conApi({ RetrofitClient.api.anularLiquidacion(id) }) {
-                toast("Liquidación anulada")
-                findNavController().navigateUp()
+        confirmarBorrado("Anular liquidación ${LiquidacionPdf.numeroTexto(l.numero)}", listOf(
+            Dato("Semana", "${l.semana} · ${Semana(LocalDate.parse(Formato.soloFecha(l.fechaInicio))).texto()}"),
+            Dato("Ganadero", l.nombreGanadero),
+            Dato("Litros", Formato.litros(l.litros)),
+            Dato("Total", Formato.moneda(l.total))
+        ), aviso = "La leche y los descuentos no se borran. No se volverá a generar sola: si la necesitas, " +
+            "recupérala de la Papelera o ábrela de nuevo y toca «Generar liquidación».",
+            pregunta = "¿Seguro que quieres anularla?", textoBorrar = "Sí, anular") {
+            borrarConDeshacer("Liquidación ${LiquidacionPdf.numeroTexto(l.numero)} anulada", { RetrofitClient.api.anularLiquidacion(id) }) {
+                if (view != null) findNavController().navigateUp()
             }
         }
     }

@@ -44,7 +44,7 @@ import java.util.Calendar
  * Inicio = menú principal de la app (diseño de imagenes_quesodata).
  * Cabecera con la foto del campo, saludo y fecha; el resumen del día (leche, queso, ventas y lo que
  * se debe a los ganaderos); accesos de hoy (con Adelanto o descuento); tarjetas grandes con ilustración;
- * Reportes; "Más opciones" y la barra inferior. Tarjetas crema con sombra (guía de diseño). Configuración reúne Mi cuenta, Cambiar contraseña, Apariencia y Cerrar sesión.
+ * Reportes; "Más opciones" y la barra inferior. Tarjetas crema con sombra (guía de diseño). Configuración reúne Mi cuenta, Cambiar contraseña, Papelera, Apariencia y Cerrar sesión.
  */
 class InicioFragment : Fragment() {
 
@@ -106,7 +106,7 @@ class InicioFragment : Fragment() {
         )
     }
 
-    // Más opciones (tarjetas pequeñas). Configuración reúne Mi cuenta, Cambiar contraseña, Apariencia y Cerrar sesión.
+    // Más opciones (tarjetas pequeñas). Configuración reúne Mi cuenta, Cambiar contraseña, Papelera, Apariencia y Cerrar sesión.
     private val masOpciones by lazy {
         listOf(
             Opcion("Ganaderos", "", R.drawable.ic_qd_ganadero, R.id.nav_ganaderos,
@@ -127,6 +127,8 @@ class InicioFragment : Fragment() {
             Opcion("Mi cuenta", "Datos del negocio, teléfono y NIT", R.drawable.ic_qd_cuenta, R.id.nav_perfil, R.color.qd_c_cuenta),
             Opcion("Cambiar contraseña", "Cierra la sesión en los otros teléfonos", R.drawable.ic_qd_candado, R.id.nav_contrasena,
                 R.color.qd_c_contrasena),
+            Opcion("Papelera", "Recuperar lo borrado en los últimos 30 días", R.drawable.ic_eliminar, R.id.nav_papelera,
+                R.color.qd_c_configuracion),
             Opcion("Apariencia", "Modo claro, oscuro o igual que el teléfono", R.drawable.ic_qd_configuracion, null,
                 R.color.qd_c_configuracion, accion = { (activity as? MainActivity)?.elegirTema() }),
             Opcion("Cerrar sesión", "Salir de la cuenta en este teléfono", R.drawable.ic_salida, null,

@@ -22,6 +22,8 @@ import com.queseria.app.ui.common.dp
 import com.queseria.app.ui.common.tablaPrecios
 import com.queseria.app.ui.common.elegirFecha
 import com.queseria.app.ui.common.guardarConConfirmacion
+import com.queseria.app.ui.common.Cambio
+import com.queseria.app.ui.common.confirmarCambios
 import com.queseria.app.ui.common.manejarError
 import com.queseria.app.ui.common.mostrarFormulario
 import com.queseria.app.util.Formato
@@ -171,9 +173,24 @@ class PreciosFragment : Fragment() {
                 semana.numero, semana.anio,
                 precioPorKg = precioKg, precioMayoristaPorKg = mayorista, precioLitro = litro
             )
-            guardarConConfirmacion(dialogo, "Precios de la semana ${semana.numero} guardados", { confirmar ->
-                RetrofitClient.api.guardarPrecioSemana(request.copy(confirmar = confirmar.takeIf { it }))
-            }) { cargar() }
+            val guardar = {
+                guardarConConfirmacion(dialogo, "Precios de la semana ${semana.numero} guardados", { confirmar ->
+                    RetrofitClient.api.guardarPrecioSemana(request.copy(confirmar = confirmar.takeIf { it }))
+                }) { cargar() }
+            }
+            // La semana ya tenía precios: antes de guardar se muestra qué cambia (vacío = se deja el que estaba)
+            val antes = precioDe(semana)
+            if (antes == null) guardar()
+            else {
+                fun texto(v: Double?) = v?.let { Formato.moneda(it) } ?: "sin definir"
+                confirmarCambios(listOf(
+                    Cambio("Minorista kg", texto(antes.precioPorKg), texto(precioKg ?: antes.precioPorKg)),
+                    Cambio("Mayorista kg", texto(antes.precioMayoristaPorKg), texto(mayorista ?: antes.precioMayoristaPorKg)),
+                    Cambio("Litro leche", texto(antes.precioLitro), texto(litro ?: antes.precioLitro))
+                ), aviso = if (litro != null && litro != antes.precioLitro)
+                    "El precio del litro cambia lo que se paga a los ganaderos esa semana (las liquidaciones pendientes se recalculan solas)." else null
+                ) { guardar() }
+            }
             false
         }
     }

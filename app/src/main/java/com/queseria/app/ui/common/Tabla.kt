@@ -34,7 +34,6 @@ class Tabla<T>(
     private val marca: (T) -> Marca = { Marca.NINGUNA },
     private val nota: (T) -> String? = { null },
     private val alTocar: ((T) -> Unit)? = null,
-    private val alMantener: ((T) -> Unit)? = null,
     /** Color de una celda (columna i) según el dato: estados, negativos… null = el normal. */
     private val colorCelda: (T, Int) -> Int? = { _, _ -> null }
 ) : RecyclerView.Adapter<Tabla.Holder>() {
@@ -181,13 +180,11 @@ class Tabla<T>(
         // Tocar = abrir (para corregir). Borrar NO se hace desde la lista: va aparte, dentro del registro.
         val accion = alTocar
         val tocar = if (elemento == null || accion == null) null else View.OnClickListener { accion(elemento) }
-        val m2 = alMantener
-        val mantener = if (elemento == null || m2 == null) null else View.OnLongClickListener { m2(elemento); true }
         listOf(fila.celdas[0], fila.contenido).forEach {
             it.setOnClickListener(tocar)
-            it.setOnLongClickListener(mantener)
+            it.setOnLongClickListener(null)
             it.isClickable = tocar != null
-            it.isLongClickable = mantener != null
+            it.isLongClickable = false
         }
         // La fila nueva o reciclada queda corrida igual que las demás
         fila.desplazable.doOnLayout { mover(fila.desplazable, desplazamiento) }

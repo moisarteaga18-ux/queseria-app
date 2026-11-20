@@ -381,6 +381,28 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp" />
 
+            <!-- Anular: aparte, en rojo y lejos de "Marcar como pagado" (con una línea en medio) -->
+            <View
+                android:id="@+id/separadorAnular"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="36dp"
+                android:background="@color/gris_borde"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnular"
+                style="@style/Queseria.BotonBorrar"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="24dp"
+                android:paddingHorizontal="20dp"
+                android:text="Anular liquidación"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

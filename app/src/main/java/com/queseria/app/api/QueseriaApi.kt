@@ -66,7 +66,7 @@ interface QueseriaApi {
     suspend fun eliminarLeche(
         @Path("id") id: String,
         @Query("confirmar") confirmar: Boolean? = null
-    ): Response<ApiResponse<Any>>
+    ): Response<ApiResponse<Borrado>>
 
     // ========================================
     // PRODUCCIÓN
@@ -85,7 +85,7 @@ interface QueseriaApi {
     suspend fun actualizarProduccion(@Path("id") id: String, @Body request: ProduccionRequest): Response<ApiResponse<Produccion>>
 
     @DELETE("produccion/{id}")
-    suspend fun eliminarProduccion(@Path("id") id: String): Response<ApiResponse<Any>>
+    suspend fun eliminarProduccion(@Path("id") id: String): Response<ApiResponse<Borrado>>
 
     // ========================================
     // PRECIOS
@@ -121,7 +121,7 @@ interface QueseriaApi {
     suspend fun actualizarVenta(@Path("id") id: String, @Body request: VentaRequest): Response<ApiResponse<Venta>>
 
     @DELETE("ventas/{id}")
-    suspend fun eliminarVenta(@Path("id") id: String): Response<ApiResponse<Any>>
+    suspend fun eliminarVenta(@Path("id") id: String): Response<ApiResponse<Borrado>>
 
     // ========================================
     // RESUMEN / GANANCIAS
@@ -283,7 +283,7 @@ interface QueseriaApi {
     suspend fun deshacerPagoLiquidacion(@Path("id") id: String): Response<ApiResponse<Liquidacion>>
 
     @DELETE("liquidaciones/{id}")
-    suspend fun anularLiquidacion(@Path("id") id: String): Response<ApiResponse<Any>>
+    suspend fun anularLiquidacion(@Path("id") id: String): Response<ApiResponse<Borrado>>
 
     // ========================================
     // DESCUENTOS AL GANADERO (adelantos, préstamos, leche rechazada)
@@ -300,7 +300,7 @@ interface QueseriaApi {
     suspend fun crearDescuento(@Body request: DescuentoRequest): Response<ApiResponse<Descuento>>
 
     @DELETE("descuentos/{id}")
-    suspend fun eliminarDescuento(@Path("id") id: String): Response<ApiResponse<Any>>
+    suspend fun eliminarDescuento(@Path("id") id: String): Response<ApiResponse<Borrado>>
 
     // ========================================
     // MERMA DEL QUESO (se calcula sola al cierre de cada semana)
@@ -316,4 +316,15 @@ interface QueseriaApi {
         @Path("semana") semana: Int,
         @Body request: CierreRequest
     ): Response<ApiResponse<MermaResumen>>
+
+    // ========================================
+    // PAPELERA (lo borrado se puede recuperar durante 30 días)
+    // ========================================
+
+    @GET("papelera")
+    suspend fun getPapelera(): Response<ApiResponse<List<EntradaPapelera>>>
+
+    /** Vuelve a crear lo borrado (también es el "Deshacer"). Leche de una semana pagada: 409 hasta confirmar. */
+    @POST("papelera/{id}/restaurar")
+    suspend fun restaurarPapelera(@Path("id") id: String, @Body request: ConfirmarRequest): Response<ApiResponse<Any>>
 }

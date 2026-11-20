@@ -41,7 +41,6 @@ private fun plural(n: Int, uno: String, varios: String) = "$n ${if (n == 1) uno 
 fun tablaVentas(
     porSemana: Boolean,
     conCliente: Boolean = true,
-    alMantener: ((Venta) -> Unit)? = null,
     alTocar: ((Venta) -> Unit)? = null
 ): Tabla<Venta> {
     val columnas = listOfNotNull(
@@ -66,8 +65,7 @@ fun tablaVentas(
         },
         marca = { v -> marcaPendiente(v.pendiente) },
         nota = { v -> v.pendiente?.etiqueta },
-        alTocar = alTocar,
-        alMantener = alMantener
+        alTocar = alTocar
     )
 }
 

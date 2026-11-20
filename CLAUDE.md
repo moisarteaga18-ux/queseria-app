@@ -441,6 +441,27 @@ Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
         descuentos) y descuentos del detalle de la liquidación. Tocar una fila abre lo mismo que antes; un adelanto abre
         la liquidación de su semana. El PDF no cambia. App 18/18.
 
+### Parte 23 — Seguridad al modificar o borrar + papelera
+91. [x] Backend: colección nueva `papelera` (`models.Papelera`, índice TTL en `expiraEn` = 30 días; no cambia las demás).
+        `utils/papelera.js`: `borrarConPapelera` guarda la copia (con su _id y un `resumen` fecha/nombre/cantidad/valor) y luego
+        borra; leche, producción, ventas, descuentos y anular liquidación responden `papeleraId` (también en `data`).
+        `GET /api/papelera` y `POST /api/papelera/:id/restaurar {confirmar}`: recrea con el mismo _id y fechas
+        (`save({timestamps:false})`), rehace el inventario (sin stock → no restaura y sigue en la papelera), pide confirmación
+        si la leche es de una semana pagada (y la recalcula), la liquidación vuelve con su número y sale de
+        `liquidaciones_anuladas`. `validarSemanaAbierta` pasó a utils/papelera. `test/papelera.test.js` 9/9; total 177/177.
+92. [x] App: `ui/common/Seguridad.kt` + `dialog_revisar.xml`. `confirmarBorrado` (muestra el registro, "¿Seguro que quieres
+        borrarlo?", botón resaltado = "Cancelar, no borrar", borrar en rojo con borde), `confirmarCambios` ("Litros: 40 L → 45 L";
+        sin cambios no guarda), `borrarConDeshacer` + Snackbar "Deshacer" 8 s (restaura ligado a la actividad, sirve aunque se
+        cierre la pantalla). `mostrarFormulario(alBorrar)`: botón rojo "Borrar este registro" arriba, lejos de Guardar (abajo).
+        Ya no se borra manteniendo presionado (se quitó de `Tabla`). Leche, producción y ventas: borrar dentro del formulario y
+        cambios a la vista; Precios: cambios a la vista (no tiene borrar); adelantos: tocar en el detalle de la liquidación →
+        confirmar borrado; liquidación: "Anular" rojo, abajo y separado por una línea. Pantalla Papelera (`ui/papelera/`,
+        `nav_papelera`, en Configuración y en Más): tabla con días que quedan y "Recuperar". App 18/18.
+93. [x] Respaldos vs. base real (solo lectura, script fuera del repo): en los 4 respaldos completos no falta ningún registro
+        de los usuarios reales; la única diferencia es el movimiento de inventario de una venta corregida (se rehízo al
+        corregirla). El registro borrado por error no está en ningún respaldo: se borró después del último (19 nov, 8 p. m.)
+        o se creó y borró entre dos respaldos. Nada restaurado.
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.

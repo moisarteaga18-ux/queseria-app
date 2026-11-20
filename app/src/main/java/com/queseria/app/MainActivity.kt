@@ -223,6 +223,7 @@ class MainActivity : AppCompatActivity() {
             "Ganaderos" to { ir(R.id.nav_ganaderos) },
             "Clientes" to { ir(R.id.nav_clientes) },
             "Productos" to { ir(R.id.nav_productos) },
+            "Papelera (recuperar lo borrado)" to { ir(R.id.nav_papelera) },
             "Mi cuenta" to { ir(R.id.nav_perfil) },
             "Cambiar contraseña" to { ir(R.id.nav_contrasena) },
             "Apariencia" to { elegirTema() },

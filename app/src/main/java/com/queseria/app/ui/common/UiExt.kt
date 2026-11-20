@@ -175,6 +175,9 @@ fun Fragment.mostrarFormulario(
     textoGuardar: String = "Guardar",
     foco: View? = null,
     @DrawableRes ilustracion: Int? = null,
+    /** Solo al corregir: botón rojo "Borrar este registro", arriba y lejos de Guardar. Cierra el formulario y lo llama. */
+    alBorrar: (() -> Unit)? = null,
+    textoBorrar: String = "Borrar este registro",
     alGuardar: (dialogo: Dialog) -> Boolean
 ): Dialog {
     val dialogo = Dialog(requireContext(), R.style.Theme_QuesoData_Formulario)
@@ -186,6 +189,11 @@ fun Fragment.mostrarFormulario(
     marco.btnGuardarFormulario.text = textoGuardar
     marco.btnGuardarFormulario.setOnClickListener { if (alGuardar(dialogo)) dialogo.dismiss() }
     marco.btnCancelarFormulario.setOnClickListener { dialogo.dismiss() }
+    if (alBorrar != null) {
+        marco.btnBorrarFormulario.text = textoBorrar
+        marco.btnBorrarFormulario.visibility = View.VISIBLE
+        marco.btnBorrarFormulario.setOnClickListener { dialogo.dismiss(); alBorrar() }
+    }
     dialogo.setContentView(marco.root)
     dialogo.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     if (foco != null) {

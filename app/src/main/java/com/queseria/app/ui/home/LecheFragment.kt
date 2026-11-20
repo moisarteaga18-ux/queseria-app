@@ -47,6 +47,11 @@ import com.queseria.app.ui.common.confirmar
 import com.queseria.app.ui.common.elegirFecha
 import com.queseria.app.ui.common.guardarConConfirmacion
 import com.queseria.app.ui.common.guardarEnApi
+import com.queseria.app.ui.common.Cambio
+import com.queseria.app.ui.common.Dato
+import com.queseria.app.ui.common.borrarConDeshacer
+import com.queseria.app.ui.common.confirmarBorrado
+import com.queseria.app.ui.common.confirmarCambios
 import com.queseria.app.ui.common.manejarError
 import com.queseria.app.ui.common.mostrarFormulario
 import com.queseria.app.ui.common.preguntar
@@ -106,8 +111,7 @@ class LecheFragment : Fragment() {
         marca = { l -> if (l.pendiente == null && l.ganaderoId == null) Tabla.Marca.AVISO else marcaPendiente(l.pendiente) },
         nota = { l -> l.pendiente?.etiqueta ?: if (l.ganaderoId == null) "Asignar" else null },
         // Hecho sin internet y sin subir: se muestra su estado (no se corrige ni se borra aquí)
-        alTocar = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioLeche(l) },
-        alMantener = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminarLeche(l) }
+        alTocar = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioLeche(l) }
     )
 
     // Producción de la semana agrupada por día (viernes a jueves), con el subtotal de cada día
@@ -130,8 +134,7 @@ class LecheFragment : Fragment() {
                 colorIcono = R.color.azul_info
             )
         },
-        alTocar = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioProduccion(p) },
-        alMantener = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminarProduccion(p) }
+        alTocar = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioProduccion(p) }
     )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -313,7 +316,8 @@ class LecheFragment : Fragment() {
         }
 
         val titulo = if (existente == null) "Registrar leche" else "Corregir registro de leche"
-        mostrarFormulario(titulo, f.root, foco = f.etLitros.takeIf { existente == null }) { dialogo ->
+        mostrarFormulario(titulo, f.root, foco = f.etLitros.takeIf { existente == null },
+            alBorrar = existente?.let { { eliminarLeche(it) } }) { dialogo ->
             val (litros, errorLitros) = Formato.validarPositivo(f.etLitros.text, "Escribe cuántos litros llegaron", "Los litros", plural = true)
             val ganadero = ganaderoElegido()
             if (litros == null) {
@@ -342,28 +346,34 @@ class LecheFragment : Fragment() {
                     RetrofitClient.api.crearLeche(nuevo.copy(confirmar = confirmar.takeIf { it }))
                 }) { cargar() }
             } else {
-                guardarConConfirmacion(dialogo, "Registro corregido: ${Formato.litros(litros)} de ${ganadero.nombre}", { confirmar ->
-                    RetrofitClient.api.actualizarLeche(id, request.copy(confirmar = confirmar.takeIf { it }))
-                }) { cargar() }
+                // Antes de guardar se muestra qué cambia ("Litros: 40 → 45")
+                confirmarCambios(listOf(
+                    Cambio("Fecha", Semana.diaLargo(LocalDate.parse(Formato.soloFecha(existente.fecha))), cuando),
+                    Cambio("Ganadero", existente.nombreGanadero ?: "Sin ganadero", ganadero.nombre),
+                    Cambio("Litros", Formato.litros(existente.litros), Formato.litros(litros)),
+                    Cambio("Nota", existente.observaciones.orEmpty(), request.observaciones.orEmpty())
+                )) {
+                    guardarConConfirmacion(dialogo, "Registro corregido: ${Formato.litros(litros)} de ${ganadero.nombre}", { confirmar ->
+                        RetrofitClient.api.actualizarLeche(id, request.copy(confirmar = confirmar.takeIf { it }))
+                    }) { cargar() }
+                }
             }
             false
         }
     }
 
+    /** Borrar leche: muestra el registro y pregunta; después, "Deshacer" unos segundos (queda en la Papelera). */
     private fun eliminarLeche(l: Leche) {
         val id = l.id ?: return
-        confirmar("Eliminar registro", "¿Eliminar ${Formato.litros(l.litros)} del ${Formato.fechaLegible(l.fecha)}?") {
-            viewLifecycleOwner.lifecycleScope.launch {
-                var r = llamarApi { RetrofitClient.api.eliminarLeche(id) }
-                if (r is Resultado.Error && r.requiereConfirmacion && preguntar("Semana ya pagada", r.mensaje, "Eliminar igual")) {
-                    r = llamarApi { RetrofitClient.api.eliminarLeche(id, confirmar = true) }
-                }
-                if (view == null) return@launch
-                when (r) {
-                    is Resultado.Exito -> { toast("Registro eliminado"); cargar() }
-                    is Resultado.Error -> if (!r.requiereConfirmacion) manejarError(r)
-                }
-            }
+        confirmarBorrado("Borrar registro de leche", listOf(
+            Dato("Fecha", Formato.fechaLegible(l.fecha)),
+            Dato("Ganadero", l.nombreGanadero ?: "Sin ganadero"),
+            Dato("Litros", Formato.litros(l.litros)),
+            Dato("Valor", precioLitro?.let { Formato.moneda(l.litros * it) } ?: "—")
+        )) {
+            borrarConDeshacer("Registro de leche borrado", { confirmar ->
+                RetrofitClient.api.eliminarLeche(id, confirmar = confirmar.takeIf { it })
+            }) { cargar() }
         }
     }
 
@@ -453,7 +463,8 @@ class LecheFragment : Fragment() {
         calcular()
 
         val titulo = if (existente == null) "Registrar producción" else "Corregir producción"
-        mostrarFormulario(titulo, f.root, foco = if (existente == null) f.etKg else null) { dialogo ->
+        mostrarFormulario(titulo, f.root, foco = if (existente == null) f.etKg else null,
+            alBorrar = existente?.let { { eliminarProduccion(it) } }) { dialogo ->
             val (litros, errorLitros) = Formato.validarPositivo(f.etLitros.text, "Escribe cuántos litros de leche usaste", "Los litros", plural = true)
             val (kg, errorKg) = Formato.validarPositivo(f.etKg.text, "Escribe cuántos kilos de queso salieron", "Los kilos", plural = true)
             if (litros == null) {
@@ -481,10 +492,19 @@ class LecheFragment : Fragment() {
                         "producción de ${Formato.kg(kg)} del ${Formato.fechaLegible(fecha)}", producto?.nombre)
                     guardarOEnCola(dialogo, mensaje, enCola, { RetrofitClient.api.crearProduccion(nueva) }) { cargar() }
                 } else {
-                    // productoId "" = ya no se suma al inventario (null no cambiaría nada)
-                    guardarEnApi(dialogo, "Producción corregida: ${Formato.kg(kg)}", {
-                        RetrofitClient.api.actualizarProduccion(existente.id, request.copy(productoId = producto?.id ?: ""))
-                    }) { cargar() }
+                    // Antes de guardar se muestra qué cambia; productoId "" = ya no se suma al inventario
+                    val productoAntes = productos.firstOrNull { it.id == existente.productoId }?.nombre ?: "No sumar al inventario"
+                    confirmarCambios(listOf(
+                        Cambio("Fecha", Formato.fechaLegible(existente.fecha), Formato.fechaLegible(fecha)),
+                        Cambio("Litros", Formato.litros(existente.litrosUsados), Formato.litros(litros)),
+                        Cambio("Queso", Formato.kg(existente.kgProducidos), Formato.kg(kg)),
+                        Cambio("Producto", productoAntes, producto?.nombre ?: "No sumar al inventario"),
+                        Cambio("Nota", existente.observaciones.orEmpty(), request.observaciones.orEmpty())
+                    )) {
+                        guardarEnApi(dialogo, "Producción corregida: ${Formato.kg(kg)}", {
+                            RetrofitClient.api.actualizarProduccion(existente.id, request.copy(productoId = producto?.id ?: ""))
+                        }) { cargar() }
+                    }
                 }
             }
             // Aviso si se usan más litros de los que llegaron ese día (puede ser leche de otro día: se permite)
@@ -503,17 +523,16 @@ class LecheFragment : Fragment() {
         }
     }
 
+    /** Borrar producción: muestra el registro y pregunta; después, "Deshacer" (queda en la Papelera). */
     private fun eliminarProduccion(p: Produccion) {
         val id = p.id ?: return
-        confirmar(
-            "Eliminar producción",
-            "¿Eliminar la producción de ${Formato.kg(p.kgProducidos)} del ${Formato.fechaLegible(p.fecha)}?\n" +
-                "Si se sumó al inventario, también se descontará."
-        ) {
-            conApi({ RetrofitClient.api.eliminarProduccion(id) }) {
-                toast("Producción eliminada")
-                cargar()
-            }
+        confirmarBorrado("Borrar producción", listOf(
+            Dato("Fecha", Formato.fechaLegible(p.fecha)),
+            Dato("Leche", Formato.litros(p.litrosUsados)),
+            Dato("Queso", Formato.kg(p.kgProducidos)),
+            Dato("Rendimiento", "${Formato.numero(librasPorLata(p.litrosUsados, p.kgProducidos))} lb por lata")
+        ), aviso = if (p.productoId != null) "Ese queso también se quitará del inventario." else null) {
+            borrarConDeshacer("Producción borrada", { RetrofitClient.api.eliminarProduccion(id) }) { cargar() }
         }
     }
 

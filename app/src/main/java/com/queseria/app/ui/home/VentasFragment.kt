@@ -23,6 +23,11 @@ import com.queseria.app.models.Venta
 import com.queseria.app.models.VentaRequest
 import com.queseria.app.ui.clientes.abrirFormularioCliente
 import com.queseria.app.ui.common.tablaVentas
+import com.queseria.app.ui.common.Cambio
+import com.queseria.app.ui.common.Dato
+import com.queseria.app.ui.common.borrarConDeshacer
+import com.queseria.app.ui.common.confirmarBorrado
+import com.queseria.app.ui.common.confirmarCambios
 import com.queseria.app.ui.common.totalesVentas
 import com.queseria.app.ui.common.cantidadCorta
 import com.queseria.app.ui.common.dp
@@ -75,10 +80,10 @@ class VentasFragment : Fragment() {
 
     // Ventas de la semana como tabla (viernes → jueves): Fecha (fija) | Cliente | Tipo | Cantidad | Precio | Total
     // Una venta hecha sin internet que no ha subido: se muestra su estado (no se edita ni se borra aquí)
-    private val adapter = tablaVentas(
-        porSemana = true,
-        alMantener = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminar(v) }
-    ) { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v) }
+    // Tocar = corregir; borrar va dentro de la venta, en rojo (ya no se borra manteniendo presionado)
+    private val adapter = tablaVentas(porSemana = true) { v ->
+        v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v)
+    }
 
     /** Ventas de la semana que llegaron del servidor (o de lo guardado en el teléfono). */
     private var ventasServidor: List<Venta> = emptyList()
@@ -341,7 +346,8 @@ class VentasFragment : Fragment() {
         actualizarTextos()
         cargarPrecios()
 
-        mostrarFormulario(if (existente == null) "Nueva venta" else "Corregir venta", f.root) { dialogo ->
+        mostrarFormulario(if (existente == null) "Nueva venta" else "Corregir venta", f.root,
+            alBorrar = existente?.let { { eliminar(it) } }, textoBorrar = "Borrar esta venta") { dialogo ->
             val cliente = clienteElegido()
             if (cliente == null) {
                 toast(if (listaClientes.isEmpty()) "Primero agrega el cliente con «+ Agregar cliente»" else "Elige a qué cliente le vendes")
@@ -384,26 +390,38 @@ class VentasFragment : Fragment() {
                     RetrofitClient.api.crearVenta(nueva)
                 }) { cargar() }
             } else {
-                // productoId "" = ya no descuenta inventario (null no cambiaría nada)
-                guardarEnApi(dialogo, "Venta corregida: ${Formato.moneda(cantidad * precio)}", {
-                    RetrofitClient.api.actualizarVenta(id, request.copy(productoId = prod?.id ?: ""))
-                }) { cargar() }
+                // Antes de guardar se muestra qué cambia; productoId "" = ya no descuenta inventario
+                val productoAntes = productos.firstOrNull { it.id == existente.productoId }?.nombre ?: "No descontar del inventario"
+                confirmarCambios(listOf(
+                    Cambio("Fecha", Formato.fechaLegible(existente.fecha), Formato.fechaLegible(fecha)),
+                    Cambio("Cliente", existente.cliente ?: "Cliente ocasional", cliente.nombre),
+                    Cambio("Tipo", tipoLegible(existente.tipoVenta), tipoLegible(request.tipoVenta)),
+                    Cambio("Producto", productoAntes, prod?.nombre ?: "No descontar del inventario"),
+                    Cambio("Cantidad", cantidadCorta(existente.cantidad, existente.unidad), cantidadCorta(cantidad, unidad)),
+                    Cambio("Precio", Formato.moneda(existente.precioUnitario), Formato.moneda(precio)),
+                    Cambio("Total", Formato.moneda(existente.total), Formato.moneda(cantidad * precio))
+                )) {
+                    guardarEnApi(dialogo, "Venta corregida: ${Formato.moneda(cantidad * precio)}", {
+                        RetrofitClient.api.actualizarVenta(id, request.copy(productoId = prod?.id ?: ""))
+                    }) { cargar() }
+                }
             }
             false
         }
     }
 
+    private fun tipoLegible(tipo: String) = if (tipo == TipoVenta.MAYORISTA) "Mayorista" else "Minorista"
+
+    /** Borrar venta: muestra la venta y pregunta; después, "Deshacer" unos segundos (queda en la Papelera). */
     private fun eliminar(v: Venta) {
         val id = v.id ?: return
-        confirmar(
-            "Eliminar venta",
-            "¿Eliminar la venta de ${Formato.moneda(v.total)} del ${Formato.fechaLegible(v.fecha)}?\n" +
-                "Si descontó inventario, el queso se devolverá al stock."
-        ) {
-            conApi({ RetrofitClient.api.eliminarVenta(id) }) {
-                toast("Venta eliminada")
-                cargar()
-            }
+        confirmarBorrado("Borrar venta", listOf(
+            Dato("Fecha", Formato.fechaLegible(v.fecha)),
+            Dato("Cliente", v.cliente ?: "Cliente ocasional"),
+            Dato("Cantidad", "${cantidadCorta(v.cantidad, v.unidad)} · ${tipoLegible(v.tipoVenta)}"),
+            Dato("Valor", Formato.moneda(v.total))
+        ), aviso = if (v.productoId != null) "El queso vuelve al inventario." else null) {
+            borrarConDeshacer("Venta borrada", { RetrofitClient.api.eliminarVenta(id) }) { cargar() }
         }
     }
 

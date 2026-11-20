@@ -340,6 +340,15 @@
         <item name="android:elevation">4dp</item>
     </style>
 
+    <!-- Borrar / anular: rojo, con borde (nunca relleno) y lejos del botón Guardar -->
+    <style name="Queseria.BotonBorrar" parent="Queseria.BotonCancelar">
+        <item name="android:textColor">@color/rojo_error</item>
+        <item name="strokeColor">@color/rojo_error</item>
+        <item name="icon">@drawable/ic_eliminar</item>
+        <item name="iconTint">@color/rojo_error</item>
+        <item name="rippleColor">#33C62828</item>
+    </style>
+
     <!-- Título de sección dentro de una pantalla -->
     <style name="Queseria.TituloSeccion">
         <item name="android:layout_width">match_parent</item>
