@@ -470,6 +470,10 @@ Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
         Escritorio (Render).
 95. [x] Push (aprobado por el usuario): servidor ef0ca44 y app 4fbdafc. Render publicó la versión nueva (/api/papelera
         responde 401 sin sesión) y en Atlas se creó la colección vacía `papelera` con su índice TTL (verificado solo leyendo).
+96. [x] Producción del día como tabla (igual que Leche): Fecha (fija) | Leche | Queso | Libras | Lb por lata | Nota, encabezado fijo,
+        totales de la semana; tocar = corregir. Inicio → Hoy: las 4 tarjetas con el mismo alto (80 dp), título hasta 2 líneas y
+        ayuda corta en 1 ("Por ganadero", "Leche → queso", "A un ganadero", "Pasar queso · Lo que sobró"); en celulares < 360 dp
+        una por fila. Probado en el emulador (servidor local + base temporal) a 411 y 320 dp. App 18/18. Sin subir.
 
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas

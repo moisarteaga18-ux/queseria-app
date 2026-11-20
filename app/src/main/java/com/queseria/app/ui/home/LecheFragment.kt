@@ -30,7 +30,6 @@ import com.queseria.app.ui.common.Tabla
 import com.queseria.app.ui.common.dp
 import com.queseria.app.ui.common.fechaCorta
 import com.queseria.app.ui.common.marcaPendiente
-import com.queseria.app.ui.common.ListaPorDias
 import com.queseria.app.offline.Pendiente
 import com.queseria.app.offline.Pendientes
 import com.queseria.app.offline.comoLeche
@@ -114,26 +113,29 @@ class LecheFragment : Fragment() {
         alTocar = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioLeche(l) }
     )
 
-    // Producción de la semana agrupada por día (viernes a jueves), con el subtotal de cada día
-    private val adapterProduccion = ListaPorDias<Produccion>(
-        fechaDe = { Formato.soloFecha(it.fecha) },
-        subtotal = { del -> "${Formato.kg(del.sumOf { it.kgProducidos })} · ${Formato.litros(del.sumOf { it.litrosUsados })}" },
-        aFila = { p ->
-            Fila(
-                titulo = Formato.fechaLegible(p.fecha),
-                subtitulo = "${Formato.litros(p.litrosUsados)} → ${Formato.kg(p.kgProducidos)}",
-                detalle = p.observaciones,
-                valor = Formato.kg(p.kgProducidos),
-                etiqueta = p.pendiente?.etiqueta ?: "${Formato.numero(librasPorLata(p.litrosUsados, p.kgProducidos))} lb/lata",
-                colorEtiqueta = when {
-                    p.pendiente?.rechazado == true -> R.color.rojo_error
-                    p.pendiente != null -> R.color.ambar_advertencia
-                    else -> R.color.azul_info
-                },
-                icono = R.drawable.ic_produccion,
-                colorIcono = R.color.azul_info
+    // Producción de la semana como tabla (viernes → jueves): Fecha (fija) | Leche | Queso | Libras | Lb por lata | Nota
+    private val adapterProduccion = Tabla<Produccion>(
+        columnas = listOf(
+            Tabla.Columna("Fecha", 84),
+            Tabla.Columna("Leche", 96, numero = true),
+            Tabla.Columna("Queso", 96, numero = true),
+            Tabla.Columna("Libras", 90, numero = true),
+            Tabla.Columna("Lb por lata", 104, numero = true),
+            Tabla.Columna("Nota", 150)
+        ),
+        celdas = { p ->
+            listOf(
+                fechaCorta(p.fecha),
+                Formato.litros(p.litrosUsados),
+                Formato.kg(p.kgProducidos),
+                Formato.numero(Formato.kgALibras(p.kgProducidos)),
+                Formato.numero(librasPorLata(p.litrosUsados, p.kgProducidos)),
+                p.observaciones?.takeIf { it.isNotBlank() } ?: "—"
             )
         },
+        marca = { p -> marcaPendiente(p.pendiente) },
+        nota = { p -> p.pendiente?.etiqueta },
+        // Hecha sin internet y sin subir: se muestra su estado (no se corrige ni se borra aquí)
         alTocar = { p -> p.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioProduccion(p) }
     )
 
@@ -160,7 +162,9 @@ class LecheFragment : Fragment() {
             mostrar()
             cargar()
         } else {
-            // Semana de viernes a jueves (por defecto la actual); cambiarla vuelve a cargar
+            // Misma tabla que Leche: encabezado fijo; semana de viernes a jueves (por defecto la actual)
+            binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
+            adapterProduccion.crearEncabezado(binding.contenedorFijo)
             navegador = NavegadorSemana(cabeceraProduccion!!.semana) { mostrar(); cargar() }
             mostrar()
             cargar()
@@ -244,7 +248,15 @@ class LecheFragment : Fragment() {
             c.tvKg.text = Formato.kg(kg)
             c.tvKgDetalle.text = "queso · ${Formato.numero(Formato.kgALibras(kg))} lb"
             c.tvRendimiento.text = if (litros > 0) Formato.numero(librasPorLata(litros, kg)) else "—"
-            adapterProduccion.mostrar(semana, produccionSemana)
+            // Tabla del viernes al jueves; al final, los totales (rendimiento de toda la semana)
+            val n = produccionSemana.size
+            adapterProduccion.mostrar(
+                produccionSemana.sortedBy { Formato.soloFecha(it.fecha) },
+                totales = if (n == 0) null else listOf("Total", Formato.litros(litros), Formato.kg(kg),
+                    Formato.numero(Formato.kgALibras(kg)), if (litros > 0) Formato.numero(librasPorLata(litros, kg)) else "—",
+                    if (n == 1) "1 producción" else "$n producciones"),
+                vacio = "Sin producción registrada en la semana ${semana.numero}.\nToca + Registrar producción para anotar la de hoy."
+            )
             binding.tvVacio.visibility = View.GONE
         }
     }

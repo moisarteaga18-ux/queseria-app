@@ -79,14 +79,14 @@ class InicioFragment : Fragment() {
     // Hoy: lo que se registra todos los días
     private val hoy by lazy {
         listOf(
-            Opcion("Registrar leche", "Litros de cada ganadero", R.drawable.ic_leche, R.id.nav_leche,
+            Opcion("Registrar leche", "Por ganadero", R.drawable.ic_leche, R.id.nav_leche,
                 R.color.qd_c_liquidacion, args = bundleOf(ARG_NUEVO to true)),
-            Opcion("Producción del día", "Leche convertida en queso", R.drawable.ic_produccion, R.id.nav_produccion,
+            Opcion("Producción del día", "Leche → queso", R.drawable.ic_produccion, R.id.nav_produccion,
                 R.color.qd_c_precios, args = bundleOf(ARG_NUEVO to true)),
-            Opcion("Adelanto o descuento", "A un ganadero, eligiendo la semana en que se descuenta", R.drawable.ic_pagos, null,
+            Opcion("Adelanto o descuento", "A un ganadero", R.drawable.ic_pagos, null,
                 R.color.qd_c_cuenta, accion = { registrarAdelantoODescuento { cargar() } }),
             // Opción aparte (ya no se pregunta sola el viernes): solo cuando el usuario quiera
-            Opcion("Pasar queso a la semana siguiente", "Los kg que quedaron de una semana cerrada", R.drawable.ic_qd_inventario, null,
+            Opcion("Pasar queso", "Lo que sobró", R.drawable.ic_qd_inventario, null,
                 R.color.qd_c_inventario, accion = { pasarQuesoASemanaSiguiente { cargar() } })
         )
     }
@@ -177,9 +177,9 @@ class InicioFragment : Fragment() {
     }
 
     private fun construirMenu() {
-        llenar(binding.filaHoy, hoy, 2) { o, fila -> accionDiaria(o, fila, enInicio = true) }
-        // En celulares angostos (< 360 dp) una tarjeta grande por fila: si no, el texto cae sobre la ilustración
+        // En celulares angostos (< 360 dp) una tarjeta por fila (Hoy y las grandes): si no, el texto se corta
         val columnas = if (resources.configuration.screenWidthDp < 360) 1 else 2
+        llenar(binding.filaHoy, hoy, columnas) { o, fila -> accionDiaria(o, fila, enInicio = true) }
         llenar(binding.contenedorPrincipal, principales, columnas) { o, fila -> tarjetaGrande(o, fila) }
         llenar(binding.contenedorMas, masOpciones, 2) { o, fila -> tarjetaPequena(o, fila) }
     }
@@ -234,7 +234,18 @@ class InicioFragment : Fragment() {
     /** [enInicio] = tarjeta de Inicio (en la ventana de Configuración va normal). */
     private fun accionDiaria(o: Opcion, padre: ViewGroup, enInicio: Boolean = false): View {
         val t = ItemAccionDiariaBinding.inflate(layoutInflater, padre, false)
-        if (enInicio) tarjetaCrema(t.root, color(R.color.superficie))
+        if (enInicio) {
+            tarjetaCrema(t.root, color(R.color.superficie))
+            // Todas las tarjetas de "Hoy" del mismo tamaño: alto fijo, título hasta 2 líneas y ayuda en 1
+            t.root.layoutParams = t.root.layoutParams.apply { height = dp(ALTO_HOY) }
+            t.tvTitulo.maxLines = 2
+            t.tvTitulo.ellipsize = android.text.TextUtils.TruncateAt.END
+            t.tvDescripcion.maxLines = 1
+            t.tvDescripcion.ellipsize = android.text.TextUtils.TruncateAt.END
+            // Ícono algo más pequeño: deja más espacio al texto en teléfonos angostos
+            t.ivIcono.layoutParams = t.ivIcono.layoutParams.apply { width = dp(36); height = dp(36) }
+            t.ivIcono.setPadding(dp(8), dp(8), dp(8), dp(8))
+        }
         t.ivIcono.setImageResource(o.icono)
         t.ivIcono.background.mutate().setTint(color(o.circulo))
         t.tvTitulo.text = o.titulo
@@ -373,5 +384,8 @@ class InicioFragment : Fragment() {
     companion object {
         /** Argumento para abrir directamente el formulario de "nuevo" (leche, producción, venta). */
         const val ARG_NUEVO = "abrirNuevo"
+
+        /** Alto (dp) de cada tarjeta de "Hoy": iguales aunque el texto sea más largo. */
+        private const val ALTO_HOY = 80
     }
 }
