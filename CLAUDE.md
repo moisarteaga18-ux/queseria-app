@@ -413,9 +413,18 @@ No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo le
         con el ícono en círculo verde, texto y rayita dorados. Ganancias/Reportes sin barra superior y con la barra de estado oscura.
         Probado en el emulador (servidor local + base temporal) a 411 dp y 320 dp: sin textos cortados. App 18/18.
 
-### Parte 21 — Leche y Ventas como tabla tipo Excel (pendiente)
-88. [ ] Encabezado verde fijo, rejilla, filas alternas, números a la derecha, fila de totales, primera columna fija con
-        desplazamiento horizontal, por semana, tocar = editar, pendientes marcados.
+### Parte 21 — Leche y Ventas como tabla tipo Excel
+88. [x] `ui/common/Tabla.kt` (adaptador de RecyclerView armado con vistas simples): encabezado verde en negrilla en
+        `fragment_lista.xml → contenedorFijo` (último hijo del AppBarLayout, sin scrollFlags: no se mueve al bajar), rejilla fina
+        (fondo que asoma entre celdas), filas alternas, números a la derecha, fila de totales resaltada, primera columna (Fecha)
+        fija y las demás en un HorizontalScrollView por fila sincronizado con el del encabezado. Tocar = corregir, mantener =
+        eliminar (como antes). Filas marcadas: pendiente (ámbar + "Pendiente"), rechazada (rojo + "No se subió"), leche sin
+        ganadero (ámbar + "Asignar"). Colores `tabla_*` en claro y oscuro.
+        Leche recibida: ahora por semana (`cabecera_leche.xml`: `NavegadorSemana`, litros/latas, valor, hoy); `getLeche` con
+        `desde`/`hasta` (el backend ya los aceptaba); columnas Fecha | Ganadero | Litros | Valor (litros × precio del litro de la
+        semana, de `precios/actual`; sin precio "—"). Ventas: Fecha | Cliente | Tipo (Mayor/Detal) | Cantidad | Precio | Total.
+        Probado en el emulador (servidor local): encabezado fijo, desplazamiento lateral, tocar = "Corregir venta", leche sin
+        internet marcada «Pendiente» y al volver la red se subió sola. App 18/18.
 89. [ ] Al terminar: todas las pruebas, capturas en el emulador (Ganancias, Reportes, Leche, Ventas), APK en el Escritorio (Render).
 
 ## Decisiones

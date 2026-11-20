@@ -43,7 +43,9 @@ interface QueseriaApi {
     @GET("leche")
     suspend fun getLeche(
         @Query("limit") limit: Int = 30,
-        @Query("fecha") fecha: String? = null
+        @Query("fecha") fecha: String? = null,
+        @Query("desde") desde: String? = null,
+        @Query("hasta") hasta: String? = null
     ): Response<ApiResponse<List<Leche>>>
 
     /** Litros recibidos y usados por día entre [desde] y [hasta] (yyyy-MM-dd, incluidos). */

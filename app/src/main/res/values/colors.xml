@@ -121,4 +121,13 @@
     <color name="gr_positivo">#43E870</color>
     <color name="gr_negativo">#FF5263</color>
     <color name="gr_barra">#0D1A12</color>
+
+    <!-- Tablas tipo hoja de cálculo (Leche y Ventas) -->
+    <color name="tabla_encabezado">#2E7D32</color>
+    <color name="tabla_rejilla">#D5DDD0</color>
+    <color name="tabla_fila_par">#FFFFFF</color>
+    <color name="tabla_fila_impar">#F3F7EE</color>
+    <color name="tabla_total">#D7EFCF</color>
+    <color name="tabla_pendiente">#FFF4D6</color>
+    <color name="tabla_rechazada">#FDE2E2</color>
 </resources>

@@ -47,4 +47,13 @@
     <color name="velo_fondo">#B3101512</color>
 
     <color name="aviso_sin_internet">#6B5520</color>
+
+    <!-- Tablas tipo hoja de cálculo (Leche y Ventas) -->
+    <color name="tabla_encabezado">#2E7D32</color>
+    <color name="tabla_rejilla">#33413A</color>
+    <color name="tabla_fila_par">#1A2420</color>
+    <color name="tabla_fila_impar">#202C27</color>
+    <color name="tabla_total">#24452C</color>
+    <color name="tabla_pendiente">#3D3418</color>
+    <color name="tabla_rechazada">#4A2226</color>
 </resources>

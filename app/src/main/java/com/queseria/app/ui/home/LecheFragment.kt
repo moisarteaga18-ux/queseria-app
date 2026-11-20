@@ -15,7 +15,7 @@ import com.queseria.app.api.Resultado
 import com.queseria.app.api.RetrofitClient
 import com.queseria.app.api.llamarApi
 import com.queseria.app.databinding.CabeceraProduccionBinding
-import com.queseria.app.databinding.CabeceraTabsBinding
+import com.queseria.app.databinding.CabeceraLecheBinding
 import com.queseria.app.databinding.DialogLecheBinding
 import com.queseria.app.databinding.DialogProduccionBinding
 import com.queseria.app.databinding.FragmentListaBinding
@@ -26,7 +26,10 @@ import com.queseria.app.models.Produccion
 import com.queseria.app.models.ProduccionRequest
 import com.queseria.app.models.Producto
 import com.queseria.app.ui.common.Fila
-import com.queseria.app.ui.common.FilaAdapter
+import com.queseria.app.ui.common.Tabla
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.fechaCorta
+import com.queseria.app.ui.common.marcaPendiente
 import com.queseria.app.ui.common.ListaPorDias
 import com.queseria.app.offline.Pendiente
 import com.queseria.app.offline.Pendientes
@@ -69,11 +72,14 @@ class LecheFragment : Fragment() {
     private var _binding: FragmentListaBinding? = null
     private val binding get() = _binding!!
     // Leche: resumen de hoy. Producción: selector de semana y resumen de la semana.
-    private var cabeceraLeche: CabeceraTabsBinding? = null
+    private var cabeceraLeche: CabeceraLecheBinding? = null
     private var cabeceraProduccion: CabeceraProduccionBinding? = null
     private var navegador: NavegadorSemana? = null
 
+    /** Leche de la semana elegida (la más nueva primero). */
     private var leche: List<Leche> = emptyList()
+    /** Precio del litro de la semana elegida (null = no se ha definido). */
+    private var precioLitro: Double? = null
     /** Producción reciente (para proponer el producto en el formulario). */
     private var produccion: List<Produccion> = emptyList()
     /** Producción de la semana elegida. */
@@ -81,24 +87,24 @@ class LecheFragment : Fragment() {
 
     private val enLeche by lazy { arguments?.getString(ARG_MODO) != MODO_PRODUCCION }
 
-    private val adapterLeche = FilaAdapter<Leche>(
-        aFila = { l ->
-            val sinGanadero = l.ganaderoId == null
-            Fila(
-                titulo = if (sinGanadero) "Sin ganadero" else l.nombreGanadero ?: "Ganadero",
-                subtitulo = Formato.fechaLegible(l.fecha),
-                detalle = if (sinGanadero) "Toca para elegir el ganadero (si no, no entra en su liquidación)" else l.observaciones,
-                valor = Formato.litros(l.litros),
-                etiqueta = l.pendiente?.etiqueta ?: if (sinGanadero) "Asignar" else "${Formato.numero(l.litros / LITROS_POR_LATA, 1)} latas",
-                colorEtiqueta = when {
-                    l.pendiente?.rechazado == true -> R.color.rojo_error
-                    l.pendiente != null || sinGanadero -> R.color.ambar_advertencia
-                    else -> R.color.gris_texto_secundario
-                },
-                icono = R.drawable.ic_ganadero,
-                colorIcono = if (sinGanadero) R.color.ambar_advertencia else R.color.verde_principal
+    // Leche de la semana como tabla (viernes → jueves): Fecha (fija) | Ganadero | Litros | Valor
+    private val adapterLeche = Tabla<Leche>(
+        columnas = listOf(
+            Tabla.Columna("Fecha", 84),
+            Tabla.Columna("Ganadero", 118),
+            Tabla.Columna("Litros", 80, numero = true),
+            Tabla.Columna("Valor", 112, numero = true)
+        ),
+        celdas = { l ->
+            listOf(
+                fechaCorta(l.fecha),
+                if (l.ganaderoId == null) "Sin ganadero" else l.nombreGanadero ?: "Ganadero",
+                Formato.numero(l.litros, 1),
+                precioLitro?.let { Formato.moneda(l.litros * it) } ?: "—"
             )
         },
+        marca = { l -> if (l.pendiente == null && l.ganaderoId == null) Tabla.Marca.AVISO else marcaPendiente(l.pendiente) },
+        nota = { l -> l.pendiente?.etiqueta ?: if (l.ganaderoId == null) "Asignar" else null },
         // Hecho sin internet y sin subir: se muestra su estado (no se corrige ni se borra aquí)
         alTocar = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormularioLeche(l) },
         alMantener = { l -> l.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminarLeche(l) }
@@ -130,7 +136,7 @@ class LecheFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
-        if (enLeche) cabeceraLeche = CabeceraTabsBinding.inflate(inflater, binding.contenedorCabecera, true)
+        if (enLeche) cabeceraLeche = CabeceraLecheBinding.inflate(inflater, binding.contenedorCabecera, true)
         else cabeceraProduccion = CabeceraProduccionBinding.inflate(inflater, binding.contenedorCabecera, true)
         return binding.root
     }
@@ -143,8 +149,11 @@ class LecheFragment : Fragment() {
         binding.fabAgregar.setOnClickListener {
             if (enLeche) abrirFormularioLeche(null) else abrirFormularioProduccion(null)
         }
-        cabeceraLeche?.tabs?.visibility = View.GONE
         if (enLeche) {
+            // Tabla con el encabezado fijo; semana de viernes a jueves (por defecto la actual)
+            binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
+            adapterLeche.crearEncabezado(binding.contenedorFijo)
+            navegador = NavegadorSemana(cabeceraLeche!!.semana) { mostrar(); cargar() }
             mostrar()
             cargar()
         } else {
@@ -167,12 +176,22 @@ class LecheFragment : Fragment() {
 
     private fun cargar() {
         if (enLeche) {
-            conApi({ RetrofitClient.api.getLeche(limit = 60) }, binding.swipeRefresh) {
+            val semana = navegador?.semana ?: return
+            // Precio del litro de la semana (columna Valor); sin precio la columna dice —
+            // (404 = la semana no tiene precios: no es un error para mostrar)
+            viewLifecycleOwner.lifecycleScope.launch {
+                val r = llamarApi { RetrofitClient.api.getPrecioActual(semana.inicio.toString()) }
+                if (view == null || semana != navegador?.semana) return@launch
+                precioLitro = (r as? Resultado.Exito)?.data?.precioLitro?.takeIf { it > 0 }
+                mostrar()
+            }
+            conApi({ RetrofitClient.api.getLeche(limit = 1000, desde = semana.inicio.toString(), hasta = semana.fin.toString()) }, binding.swipeRefresh) {
+                if (semana != navegador?.semana) return@conApi
                 val servidor = it.orEmpty()
                 // Más los hechos sin internet que todavía no llegan (arriba, son los más nuevos)
                 val locales = pendientesDe(Pendiente.LECHE, servidor.mapNotNull { l -> l.idLocal }.toSet()).map { p -> p.comoLeche() }
+                    .filter { l -> semana.contiene(LocalDate.parse(Formato.soloFecha(l.fecha))) }
                 leche = (locales + servidor).sortedByDescending { l -> Formato.soloFecha(l.fecha) }
-                adapterLeche.actualizar(leche)
                 mostrar()
             }
         } else {
@@ -192,13 +211,26 @@ class LecheFragment : Fragment() {
     private fun mostrar() {
         val cabecera = cabeceraLeche
         if (cabecera != null) {
+            val semana = navegador?.semana ?: return
+            val litros = leche.sumOf { it.litros }
             val litrosHoy = leche.filter { Formato.soloFecha(it.fecha) == Formato.hoyIso() }.sumOf { it.litros }
-            val sinGanadero = leche.count { it.ganaderoId == null }
-            cabecera.tvResumen.text = "Hoy: ${Formato.litros(litrosHoy)} · ${Formato.numero(litrosHoy / LITROS_POR_LATA, 1)} latas" +
-                if (sinGanadero > 0) "\n$sinGanadero ${if (sinGanadero == 1) "registro" else "registros"} sin ganadero: tócalos para asignarlo" else ""
-            binding.tvVacio.text = "Aún no has registrado leche.\nToca + Registrar leche para anotar la de hoy."
-            binding.tvVacio.visibility = if (leche.isEmpty()) View.VISIBLE else View.GONE
-            cabecera.tvResumen.visibility = View.VISIBLE
+            val sinGanadero = leche.count { it.ganaderoId == null && it.pendiente == null }
+            val precio = precioLitro
+            cabecera.tvLitros.text = Formato.litros(litros)
+            cabecera.tvLatas.text = "${Formato.numero(litros / LITROS_POR_LATA, 1)} latas en la semana"
+            cabecera.tvValor.text = precio?.let { Formato.moneda(litros * it) } ?: "—"
+            cabecera.tvValorDetalle.text = precio?.let { "a ${Formato.moneda(it)} el litro" } ?: "sin precio del litro"
+            cabecera.tvHoy.text = if (semana.esActual) Formato.litros(litrosHoy) else "—"
+            cabecera.tvAviso.text = "$sinGanadero ${if (sinGanadero == 1) "registro" else "registros"} sin ganadero: tócalos para asignarlo"
+            cabecera.tvAviso.visibility = if (sinGanadero > 0) View.VISIBLE else View.GONE
+            // Tabla del viernes al jueves; al final, los totales
+            adapterLeche.mostrar(
+                leche.sortedBy { Formato.soloFecha(it.fecha) },
+                totales = listOf("Total", "${leche.size} ${if (leche.size == 1) "registro" else "registros"}",
+                    Formato.numero(litros, 1), precio?.let { Formato.moneda(litros * it) } ?: "—"),
+                vacio = "Sin leche registrada en esta semana.\nToca + Registrar leche para anotar la de hoy."
+            )
+            binding.tvVacio.visibility = View.GONE
         } else {
             // Resumen de la semana elegida y la lista por días (los vacíos dicen "Sin registros")
             val c = cabeceraProduccion ?: return

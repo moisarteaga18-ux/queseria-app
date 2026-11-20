@@ -22,7 +22,12 @@ import com.queseria.app.models.Producto
 import com.queseria.app.models.Venta
 import com.queseria.app.models.VentaRequest
 import com.queseria.app.ui.clientes.abrirFormularioCliente
-import com.queseria.app.ui.common.ListaPorDias
+import com.queseria.app.ui.common.Tabla
+import com.queseria.app.ui.common.cantidadCorta
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.fechaCorta
+import com.queseria.app.ui.common.marcaPendiente
+import com.queseria.app.offline.etiqueta
 import com.queseria.app.ui.common.NavegadorSemana
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.confirmar
@@ -41,7 +46,6 @@ import com.queseria.app.offline.pendiente
 import com.queseria.app.offline.pendientesDe
 import com.queseria.app.ui.ventas.TipoVenta
 import com.queseria.app.ui.ventas.Unidad
-import com.queseria.app.ui.ventas.filaVenta
 import com.queseria.app.ui.ventas.total
 import com.queseria.app.util.Formato
 import com.queseria.app.util.Semana
@@ -68,11 +72,28 @@ class VentasFragment : Fragment() {
     /** Precios de cada semana ya consultada ("anio-semana" → precio; null = esa semana no tiene). */
     private val preciosSemana = mutableMapOf<String, Precio?>()
 
-    // Ventas de la semana agrupadas por día (viernes a jueves), con el subtotal de cada día
-    private val adapter = ListaPorDias<Venta>(
-        fechaDe = { Formato.soloFecha(it.fecha) },
-        subtotal = { del -> "${Formato.moneda(del.sumOf { it.total })} · ${Formato.kg(del.sumOf { Formato.aKg(it.cantidad, it.unidad) })}" },
-        aFila = { filaVenta(it) },
+    // Ventas de la semana como tabla (viernes → jueves): Fecha (fija) | Cliente | Tipo | Cantidad | Precio | Total
+    private val adapter = Tabla<Venta>(
+        columnas = listOf(
+            Tabla.Columna("Fecha", 84),
+            Tabla.Columna("Cliente", 140),
+            Tabla.Columna("Tipo", 74),
+            Tabla.Columna("Cantidad", 96, numero = true),
+            Tabla.Columna("Precio", 100, numero = true),
+            Tabla.Columna("Total", 116, numero = true)
+        ),
+        celdas = { v ->
+            listOf(
+                fechaCorta(v.fecha),
+                v.cliente?.takeIf { it.isNotBlank() } ?: "Cliente ocasional",
+                if (v.tipoVenta == TipoVenta.MAYORISTA) "Mayor" else "Detal",
+                cantidadCorta(v.cantidad, v.unidad),
+                Formato.moneda(v.precioUnitario),
+                Formato.moneda(v.total)
+            )
+        },
+        marca = { v -> marcaPendiente(v.pendiente) },
+        nota = { v -> v.pendiente?.etiqueta },
         // Una venta hecha sin internet que no ha subido: se muestra su estado (no se edita ni se borra aquí)
         alTocar = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v) },
         alMantener = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminar(v) }
@@ -90,6 +111,8 @@ class VentasFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLista.adapter = adapter
+        binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
+        adapter.crearEncabezado(binding.contenedorFijo)
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         binding.fabAgregar.text = "Nueva venta"
         binding.fabAgregar.setOnClickListener { abrirFormulario(null) }
@@ -131,8 +154,14 @@ class VentasFragment : Fragment() {
     }
 
     private fun mostrar(semana: Semana, ventas: List<Venta>) {
-        adapter.mostrar(semana, ventas)
         val kg = ventas.sumOf { Formato.aKg(it.cantidad, it.unidad) }
+        val ordenadas = ventas.sortedBy { Formato.soloFecha(it.fecha) }
+        adapter.mostrar(
+            ordenadas,
+            totales = listOf("Total", "${ventas.size} ${if (ventas.size == 1) "venta" else "ventas"}", "", Formato.kg(kg), "",
+                Formato.moneda(ventas.sumOf { it.total })),
+            vacio = "Sin ventas en esta semana.\nToca + Nueva venta para registrar una."
+        )
         cabecera.tvTotal.text = Formato.moneda(ventas.sumOf { it.total })
         cabecera.tvNumVentas.text = "vendido en la semana · ${ventas.size} ${if (ventas.size == 1) "venta" else "ventas"}"
         cabecera.tvCantidad.text = Formato.kg(kg)

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Efecto al tocar una fila de la tabla (Leche y Ventas) -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#2A1B5E20">
+    <item android:id="@android:id/mask">
+        <color android:color="#FFFFFFFF" />
+    </item>
+</ripple>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leche recibida: selector de semana (viernes a jueves), resumen de la semana y aviso de registros sin ganadero.
+     Debajo va la tabla (encabezado fijo en contenedorFijo). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/semana"
+        layout="@layout/vista_semana" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_resumen_verde"
+        android:elevation="3dp"
+        android:orientation="horizontal"
+        android:outlineAmbientShadowColor="@color/sombra"
+        android:outlineSpotShadowColor="@color/sombra"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="14dp">
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvLitros" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView android:id="@+id/tvLatas" style="@style/Queseria.ResumenColumna.Rotulo" />
+        </LinearLayout>
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvValor" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView android:id="@+id/tvValorDetalle" style="@style/Queseria.ResumenColumna.Rotulo" />
+        </LinearLayout>
+        <LinearLayout style="@style/Queseria.ResumenColumna">
+            <TextView android:id="@+id/tvHoy" style="@style/Queseria.ResumenColumna.Valor" />
+            <TextView style="@style/Queseria.ResumenColumna.Rotulo" android:text="hoy" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvAviso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_chip"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/poppins_medium"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:textColor="@color/ambar_advertencia"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:drawableStartCompat="@drawable/ic_ganadero"
+        app:drawableTint="@color/ambar_advertencia" />
+
+</LinearLayout>

@@ -45,6 +45,15 @@
             android:clipToPadding="false"
             android:clipChildren="false"
             app:layout_scrollFlags="scroll" />
+
+        <!-- Encabezado fijo de las tablas (Leche y Ventas): no sube con la lista -->
+        <FrameLayout
+            android:id="@+id/contenedorFijo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="8dp"
+            android:visibility="gone" />
     </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
