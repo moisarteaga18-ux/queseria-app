@@ -69,6 +69,8 @@ class HistorialGanaderoFragment : Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        // Al volver de un detalle, la misma pestaña que se estaba viendo
+        cabecera.tabs.getTabAt(if (enDescuentos) 1 else 0)?.select()
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
         binding.swipeRefresh.setOnRefreshListener { cargar() }

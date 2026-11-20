@@ -30,6 +30,13 @@ fun fechaConMes(fecha: String?): String {
     return "${f.dayOfMonth} $mes" + if (f.year != LocalDate.now().year) " ${f.year % 100}" else ""
 }
 
+/** "20 – 26 nov" o "30 oct – 5 nov": los días de una semana en una sola línea. */
+fun rangoCorto(s: Semana): String {
+    val mesFin = fechaConMes(s.fin.toString()).substringAfter(" ")
+    val mesInicio = fechaConMes(s.inicio.toString()).substringAfter(" ")
+    return if (mesInicio == mesFin) "${s.inicio.dayOfMonth} – ${s.fin.dayOfMonth} $mesFin" else "${s.inicio.dayOfMonth} $mesInicio – ${s.fin.dayOfMonth} $mesFin"
+}
+
 private fun plural(n: Int, uno: String, varios: String) = "$n ${if (n == 1) uno else varios}"
 
 // ========================= VENTAS =========================
@@ -85,7 +92,7 @@ fun totalesVentas(ventas: List<Venta>, conCliente: Boolean = true): List<String>
 fun tablaPrecios(alTocar: (Precio) -> Unit): Tabla<Precio> = Tabla(
     columnas = listOf(
         Tabla.Columna("Semana", 84),
-        Tabla.Columna("Días", 150),
+        Tabla.Columna("Días", 130),
         Tabla.Columna("Minorista kg", 118, numero = true),
         Tabla.Columna("Mayorista kg", 118, numero = true),
         Tabla.Columna("Litro leche", 104, numero = true)
@@ -94,13 +101,13 @@ fun tablaPrecios(alTocar: (Precio) -> Unit): Tabla<Precio> = Tabla(
         val s = Semana.de(p.semana, p.anio)
         listOf(
             "S${p.semana}",
-            s.textoConDias(),
+            rangoCorto(s),
             p.precioPorKg?.let { Formato.moneda(it) } ?: "—",
             p.precioMayoristaPorKg?.let { Formato.moneda(it) } ?: "—",
             p.precioLitro?.let { Formato.moneda(it) } ?: "—"
         )
     },
-    nota = { p -> if (Semana.de(p.semana, p.anio).esActual) "esta" else if (p.anio != LocalDate.now().year) "${p.anio}" else null },
+    nota = { p -> if (Semana.de(p.semana, p.anio).esActual) "actual" else if (p.anio != LocalDate.now().year) "${p.anio}" else null },
     marca = { p -> if (p.precioPorKg == null || p.precioLitro == null) Tabla.Marca.AVISO else Tabla.Marca.NINGUNA },
     alTocar = alTocar
 )
@@ -119,7 +126,7 @@ private fun estadoSemana(s: SemanaLiquidacion): String = when {
 fun tablaSemanasLiquidacion(alTocar: (SemanaLiquidacion) -> Unit): Tabla<SemanaLiquidacion> = Tabla(
     columnas = listOf(
         Tabla.Columna("Semana", 84),
-        Tabla.Columna("Días", 150),
+        Tabla.Columna("Días", 130),
         Tabla.Columna("Ganaderos", 98, numero = true),
         Tabla.Columna("Litros", 90, numero = true),
         Tabla.Columna("Total", 116, numero = true),
@@ -130,7 +137,7 @@ fun tablaSemanasLiquidacion(alTocar: (SemanaLiquidacion) -> Unit): Tabla<SemanaL
         val sinTotal = s.ganaderos == 0 || s.sinPrecio > 0
         listOf(
             "S${s.semana}",
-            Semana.de(s.semana, s.anio).textoConDias(),
+            rangoCorto(Semana.de(s.semana, s.anio)),
             s.ganaderos.toString(),
             Formato.numero(s.totalLitros, 1),
             if (sinTotal) "—" else Formato.moneda(s.totalAPagar),
@@ -170,7 +177,7 @@ fun tablaLiquidaciones(conGanadero: Boolean, alTocar: (Liquidacion) -> Unit): Ta
     val columnas = if (conGanadero) listOf(
         Tabla.Columna("N°", 84), Tabla.Columna("Ganadero", 130), Tabla.Columna("Semana", 80)
     ) else listOf(
-        Tabla.Columna("Semana", 84), Tabla.Columna("Días", 150), Tabla.Columna("N°", 84)
+        Tabla.Columna("Semana", 84), Tabla.Columna("Días", 130), Tabla.Columna("N°", 84)
     )
     return Tabla(
         columnas = columnas + listOf(
@@ -182,7 +189,7 @@ fun tablaLiquidaciones(conGanadero: Boolean, alTocar: (Liquidacion) -> Unit): Ta
         celdas = { l ->
             val numero = LiquidacionPdf.numeroTexto(l.numero).removePrefix("N° ")
             val inicio = if (conGanadero) listOf(numero, l.nombreGanadero, "S${l.semana}")
-            else listOf("S${l.semana}", Semana.de(l.semana, l.anio).textoConDias(), numero)
+            else listOf("S${l.semana}", rangoCorto(Semana.de(l.semana, l.anio)), numero)
             inicio + listOf(
                 Formato.numero(l.litros, 1),
                 Formato.moneda(l.total),
@@ -297,25 +304,25 @@ fun totalesDescuentos(lista: List<Descuento>): List<String> {
     )
 }
 
-/** Descuentos dentro de una liquidación: Fecha (fija) | Tipo | Detalle | Valor (ya valorizado). */
+/** Descuentos dentro de una liquidación: Fecha (fija) | Tipo | Valor (ya valorizado) | Detalle. El valor va antes para que se vea en la tarjeta. */
 fun tablaDescuentosLiquidacion(precioLitro: Double, alTocar: ((LineaDescuento) -> Unit)?): Tabla<LineaDescuento> = Tabla(
     columnas = listOf(
-        Tabla.Columna("Fecha", 84),
-        Tabla.Columna("Tipo", 118),
-        Tabla.Columna("Detalle", 160),
-        Tabla.Columna("Valor", 112, numero = true)
+        Tabla.Columna("Fecha", 76),
+        Tabla.Columna("Tipo", 108),
+        Tabla.Columna("Valor", 108, numero = true),
+        Tabla.Columna("Detalle", 160)
     ),
     celdas = { d ->
         listOf(
             d.fecha?.let { fechaCorta(it) } ?: "—",
             TipoDescuento.legible(d.tipo),
+            "−${Formato.moneda(d.valor)}",
             listOfNotNull(
                 d.litros?.takeIf { d.tipo == TipoDescuento.LECHE_RECHAZADA }?.let { "${Formato.litros(it)} × ${Formato.moneda(precioLitro)}" },
                 d.descripcion
-            ).joinToString(" · ").ifEmpty { "—" },
-            "−${Formato.moneda(d.valor)}"
+            ).joinToString(" · ").ifEmpty { "—" }
         )
     },
-    colorCelda = { _, i -> if (i == 3) R.color.rojo_error else null },
+    colorCelda = { _, i -> if (i == 2) R.color.rojo_error else null },
     alTocar = alTocar
 )

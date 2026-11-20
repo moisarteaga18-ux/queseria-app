@@ -461,6 +461,13 @@ Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
         de los usuarios reales; la única diferencia es el movimiento de inventario de una venta corregida (se rehízo al
         corregirla). El registro borrado por error no está en ningún respaldo: se borró después del último (19 nov, 8 p. m.)
         o se creó y borró entre dos respaldos. Nada restaurado.
+94. [x] Al terminar (20 nov 2026): servidor 177/177 y app 18/18. Probado en el emulador con servidor local + base temporal:
+        tablas (Liquidaciones, Historial, Adelantos, Precios, Ventas, Leche, descuentos del detalle), borrar venta →
+        confirmación → "Deshacer" la recupera, "Revisa los cambios" al corregir leche, Papelera, anular liquidación →
+        "Deshacer" la recupera con su número. Corregido en la prueba: la columna Días ocupaba dos líneas ("20 – 26 nov"),
+        el Valor de los descuentos quedaba oculto en la tarjeta (va antes del Detalle) y al volver de un detalle la
+        pestaña marcada no era la que se veía. 15 capturas en `Escritorio\Capturas QuesoData 2026-11-20`; APK en el
+        Escritorio (Render). Sin subir a GitHub: la papelera necesita el push del servidor para funcionar en el teléfono.
 
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas

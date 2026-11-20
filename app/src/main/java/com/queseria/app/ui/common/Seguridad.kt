@@ -93,10 +93,11 @@ fun Fragment.confirmarBorrado(
     aviso: String? = null,
     pregunta: String = "¿Seguro que quieres borrarlo?",
     textoBorrar: String = "Sí, borrar",
+    textoCancelar: String = "Cancelar, no borrar",
     alBorrar: () -> Unit
 ) {
     val (dialogo, b) = armarRevision(titulo, datos.map { it.nombre to it.valor }, aviso, pregunta)
-    b.btnPrincipal.text = "Cancelar, no borrar"
+    b.btnPrincipal.text = textoCancelar
     b.btnPrincipal.setIconResource(R.drawable.ic_cerrar)
     b.btnPrincipal.setOnClickListener { dialogo.dismiss() }
     b.btnSecundario.text = textoBorrar

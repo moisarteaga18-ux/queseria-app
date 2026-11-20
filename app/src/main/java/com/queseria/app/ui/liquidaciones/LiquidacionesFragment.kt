@@ -82,6 +82,8 @@ class LiquidacionesFragment : Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        // Al volver de un detalle, la misma pestaña que se estaba viendo
+        cabecera.tabs.getTabAt(pestana)?.select()
         mostrar()
     }
 

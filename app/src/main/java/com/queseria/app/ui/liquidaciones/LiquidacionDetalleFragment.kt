@@ -225,7 +225,7 @@ class LiquidacionDetalleFragment : Fragment() {
         val tabla = tablaDescuentosLiquidacion(l.precioLitro,
             if (l.pagada) null else { d -> if (d.descuentoId != null) eliminarDescuento(d) })
         tabla.llenarEn(binding.contenedorDescuentos, l.descuentos,
-            if (l.descuentos.isEmpty()) null else listOf("Total", plural(l.descuentos.size), "", "−${Formato.moneda(l.totalDescuentos)}"),
+            if (l.descuentos.isEmpty()) null else listOf("Total", plural(l.descuentos.size), "−${Formato.moneda(l.totalDescuentos)}", ""),
             "Sin adelantos, préstamos ni leche rechazada esta semana.")
     }
 
@@ -347,7 +347,7 @@ class LiquidacionDetalleFragment : Fragment() {
             Dato("Total", Formato.moneda(l.total))
         ), aviso = "La leche y los descuentos no se borran. No se volverá a generar sola: si la necesitas, " +
             "recupérala de la Papelera o ábrela de nuevo y toca «Generar liquidación».",
-            pregunta = "¿Seguro que quieres anularla?", textoBorrar = "Sí, anular") {
+            pregunta = "¿Seguro que quieres anularla?", textoBorrar = "Sí, anular", textoCancelar = "Cancelar, no anular") {
             borrarConDeshacer("Liquidación ${LiquidacionPdf.numeroTexto(l.numero)} anulada", { RetrofitClient.api.anularLiquidacion(id) }) {
                 if (view != null) findNavController().navigateUp()
             }
