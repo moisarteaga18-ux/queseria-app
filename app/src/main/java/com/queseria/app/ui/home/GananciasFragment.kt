@@ -59,17 +59,35 @@ class GananciasFragment : Fragment() {
         rango.text = "Semana ${s.semana} · " + (s.rango?.texto ?: rango(s.rango?.inicio, s.rango?.fin)) + " (viernes a jueves)"
         ingresos.text = "Ingresos: ${Formato.moneda(s.ingresos)}"
         costos.text = "Leche: ${Formato.litros(s.litrosComprados)} × ${Formato.moneda(s.costoLitro)} = ${Formato.moneda(s.costoLeche)}"
-        val estimada = if (s.mermaEstimada) " (estimada)" else ""
-        merma.text = when {
-            s.mermaKg <= 0 -> "Merma: 0 kg"
-            // Sin precio del queso esa semana no se puede valorar (no es una pérdida de $ 0)
-            s.precioVentaKg <= 0 -> "Merma$estimada: ${Formato.kg(s.mermaKg)} · ${Formato.numero(s.mermaPct, 1)} % " +
-                "(sin valor: falta el precio del queso de esa semana en Precios)"
-            else -> "Pérdida por merma$estimada: −${Formato.moneda(s.valorMerma)} " +
-                "(${Formato.kg(s.mermaKg)} · ${Formato.numero(s.mermaPct, 1)} % × ${Formato.moneda(s.precioVentaKg)}/kg)"
-        }
-        ganancia.text = "Ganancia: ${Formato.moneda(s.ganancia)}"
+        merma.text = textoMerma(s)
+        ganancia.text = (if (s.completa) "Ganancia: " else "Ganancia hasta hoy: ") + Formato.moneda(s.ganancia)
         colorear(ganancia, s.ganancia)
+    }
+
+    companion object {
+        /**
+         * Merma de la semana tal como la calcula el servidor. Mientras no termine el viernes siguiente no
+         * hay merma (no se inventa): se muestra lo producido, lo vendido y lo que falta por vender.
+         */
+        fun textoMerma(s: GananciaSemana): String {
+            val kg = s.mermaKg
+            if (!s.completa || kg == null) {
+                val viernes = s.viernesSiguiente?.let { " del ${Formato.fechaLegible(it)}" } ?: ""
+                return "Queso de la semana: ${Formato.kg(s.stockInicialKg + s.kgProducidos)} · vendido ${Formato.kg(s.kgVendidos)} · " +
+                    "por vender ${Formato.kg(s.kgPorVender)}.\nLa merma y la ganancia de esta semana se completan al terminar el viernes$viernes."
+            }
+            val pct = Formato.numero(s.mermaPct ?: 0.0, 1)
+            val texto = when {
+                kg < 0 -> "Merma: ${Formato.kg(kg)} ($pct %)"
+                kg == 0.0 -> "Merma: 0 kg"
+                // Sin ventas ni precio registrado no se puede valorar (no es una pérdida de $ 0)
+                s.precioVentaKg <= 0 -> "Merma: ${Formato.kg(kg)} · $pct % (sin valor: no hubo ventas ni precio del queso esa semana)"
+                else -> "Pérdida por merma: −${Formato.moneda(s.valorMerma ?: 0.0)} " +
+                    "(${Formato.kg(kg)} · $pct % × ${Formato.moneda(s.precioVentaKg)}/kg" +
+                    (if (s.precioPromedioKg != null) ", precio promedio de venta)" else ", precio registrado)")
+            }
+            return texto + (s.revisar?.let { "\n⚠ Revisar: $it" } ?: "")
+        }
     }
 
     private fun rango(inicio: String?, fin: String?) =

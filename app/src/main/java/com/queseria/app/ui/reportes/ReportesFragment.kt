@@ -122,7 +122,8 @@ class ReportesFragment : Fragment() {
         binding.graficoMerma.mostrar(
             Grafico.Tipo.BARRAS,
             etiquetas,
-            listOf(Grafico.Serie("Merma", semanas.map { it.mermaPct }, color(R.color.dorado))),
+            // Semanas sin completar (no ha terminado su viernes siguiente) quedan en 0: su merma todavía no existe
+            listOf(Grafico.Serie("Merma", semanas.map { it.mermaPct ?: 0.0 }, color(R.color.dorado))),
             resaltar = actual,
             formatoValor = { "${Formato.numero(it, 1)} %" }
         )
@@ -136,16 +137,26 @@ class ReportesFragment : Fragment() {
         )
     }
 
-    /** Últimas 4 semanas: kg y % de merma (la semana en curso es estimada). */
+    /**
+     * Últimas 4 semanas con queso: kg y % de merma de las completas; las que no han terminado su viernes
+     * siguiente dicen cuánto falta por vender (la merma no se inventa). "⚠" si el servidor pide revisar.
+     */
     private fun mostrarDetalleMerma(semanas: List<ResumenSemana>) {
         val contenedor = binding.contenedorMerma
         contenedor.removeAllViews()
-        semanas.filter { it.kgProducidos > 0 || it.mermaKg != 0.0 }.takeLast(4).reversed().forEachIndexed { i, s ->
+        semanas.filter { it.kgProducidos > 0 || (it.mermaKg ?: 0.0) != 0.0 }.takeLast(4).reversed().forEachIndexed { i, s ->
             val fila = ItemDiaBinding.inflate(layoutInflater, contenedor, false)
-            fila.tvDia.text = "Semana ${s.semana}" + if (s.mermaEstimada) " (estimada)" else ""
-            fila.tvEntregas.text = "${Formato.numero(s.mermaPct, 1)} % de ${Formato.kg(s.kgProducidos)}"
-            fila.tvLitros.text = Formato.kg(s.mermaKg)
-            fila.tvLitros.setTextColor(color(if (s.mermaKg < 0) R.color.rojo_error else R.color.ambar_advertencia))
+            val kg = s.mermaKg
+            fila.tvDia.text = "Semana ${s.semana}" + if (s.revisar != null) " ⚠ revisar" else ""
+            if (!s.completa || kg == null) {
+                fila.tvEntregas.text = "Se completa al terminar el viernes · vendido ${Formato.kg(s.kgVendidos)} de ${Formato.kg(s.kgProducidos)}"
+                fila.tvLitros.text = "—"
+                fila.tvLitros.setTextColor(color(R.color.gris_texto_secundario))
+            } else {
+                fila.tvEntregas.text = "${Formato.numero(s.mermaPct ?: 0.0, 1)} % de ${Formato.kg(s.kgProducidos)}"
+                fila.tvLitros.text = Formato.kg(kg)
+                fila.tvLitros.setTextColor(color(if (kg < 0 || s.revisar != null) R.color.rojo_error else R.color.ambar_advertencia))
+            }
             if (i % 2 == 0) {
                 fila.root.setBackgroundResource(R.drawable.bg_chip)
                 fila.root.backgroundTintList = android.content.res.ColorStateList.valueOf(color(R.color.beige_fondo))

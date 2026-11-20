@@ -129,9 +129,13 @@ interface QueseriaApi {
     @GET("resumen/hoy")
     suspend fun getResumenHoy(@Query("fecha") fecha: String): Response<ApiResponse<ResumenHoy>>
 
-    /** Semana actual (viernes a jueves, según [fecha]) contra la anterior. */
+    /** Semana (viernes a jueves; [semana]/[anio] o la de [fecha]) contra la anterior. */
     @GET("resumen/ganancias")
-    suspend fun getGanancias(@Query("fecha") fecha: String = Formato.hoyIso()): Response<ApiResponse<Ganancias>>
+    suspend fun getGanancias(
+        @Query("fecha") fecha: String = Formato.hoyIso(),
+        @Query("semana") semana: Int? = null,
+        @Query("anio") anio: Int? = null
+    ): Response<ApiResponse<Ganancias>>
 
     @GET("resumen/semanas")
     suspend fun getResumenSemanas(

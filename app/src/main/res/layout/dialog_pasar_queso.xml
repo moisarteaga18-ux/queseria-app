@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- "Pasar queso a la semana siguiente": opción aparte (Inventario, Inicio y Más). Se elige una semana ya
+     cerrada y los kg que pasan; con eso el servidor completa la merma de esa semana. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_panel_semana"
+            android:orientation="vertical"
+            android:padding="12dp">
+            <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_semana"
+                android:layout_marginTop="0dp"
+                android:text="¿De qué semana es el queso?" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tarjeta_semana"
+                android:elevation="2dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <ImageButton
+                    android:id="@+id/btnSemanaAnterior"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_circulo_verde_suave"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Semana anterior"
+                    android:src="@drawable/ic_flecha_izquierda"
+                    app:tint="@color/verde_principal" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvSemana"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:gravity="center"
+                        android:textColor="@color/verde_oscuro"
+                        android:textSize="22sp" />
+                    <TextView
+                        android:id="@+id/tvSemanaDias"
+                        style="@style/Queseria.TextoSecundario"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnSemanaSiguiente"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/bg_circulo_verde_suave"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Semana siguiente"
+                    android:src="@drawable/ic_flecha_derecha"
+                    app:tint="@color/verde_principal" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Lo producido, lo vendido y lo que queda de esa semana (datos del servidor) -->
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvDetalle"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_queso"
+            android:text="Kg que pasas a la semana siguiente" />
+        <EditText
+            android:id="@+id/etKg"
+            style="@style/Queseria.Input"
+            android:hint="0 kg"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            style="@style/Queseria.Aviso"
+            android:text="Esos kg se venden como queso de la semana siguiente. Escribe 0 para no pasar nada (o para deshacerlo)." />
+    </LinearLayout>
+</ScrollView>

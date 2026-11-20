@@ -46,6 +46,15 @@
         app:drawableStartCompat="@drawable/ic_queso"
         app:drawableTint="@color/verde_principal" />
 
+    <!-- Opción aparte: el usuario pasa queso de una semana cerrada solo cuando quiera -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPasarQueso"
+        style="@style/Queseria.BotonCancelar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Pasar queso a la semana siguiente" />
+
     <TextView
         android:id="@+id/tvAlertaStock"
         android:layout_width="match_parent"

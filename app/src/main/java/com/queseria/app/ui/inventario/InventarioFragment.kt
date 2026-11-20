@@ -24,6 +24,7 @@ import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.guardarEnApi
 import com.queseria.app.ui.common.mostrarFormulario
 import com.queseria.app.ui.common.toast
+import com.queseria.app.ui.merma.pasarQuesoASemanaSiguiente
 import com.queseria.app.util.Formato
 
 /**
@@ -94,6 +95,7 @@ class InventarioFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         binding.fabAgregar.text = "Entrada o salida"
         binding.fabAgregar.setOnClickListener { abrirMovimiento(null) }
+        cabecera.btnPasarQueso.setOnClickListener { pasarQuesoASemanaSiguiente { cargar() } }
 
         cabecera.tabs.addTab(cabecera.tabs.newTab().setText("Stock"))
         cabecera.tabs.addTab(cabecera.tabs.newTab().setText("Movimientos"))
@@ -113,13 +115,15 @@ class InventarioFragment : Fragment() {
             actualizarResumen()
             mostrarPestana()
         }
-        // Stock de la semana estimado con la merma promedio (la merma se calcula sola al cierre)
+        // Queso de la semana por vender (lo calcula el servidor; no se resta ninguna merma estimada)
         conApi({ RetrofitClient.api.getMerma() }) { m ->
             val a = m?.actual ?: return@conApi
-            cabecera.tvEstimado.visibility = if (a.kgProducidos + a.stockInicialKg <= 0) View.GONE else View.VISIBLE
-            cabecera.tvEstimado.text = "Esta semana: ${Formato.kg(a.stockInicialKg)} inicial + ${Formato.kg(a.kgProducidos)} producidos − " +
-                "${Formato.kg(a.kgVendidos)} vendidos − merma est. ${Formato.kg(a.mermaEstimadaKg)} (${Formato.numero(m.promedioPct, 1)} %) = " +
-                "${Formato.kg(a.stockEstimadoKg)}"
+            cabecera.tvEstimado.visibility = if (a.kgProducidos + a.stockInicialKg + m.porVenderKg <= 0) View.GONE else View.VISIBLE
+            val inicial = if (a.stockInicialKg > 0) "${Formato.kg(a.stockInicialKg)} de la semana anterior + " else ""
+            val previa = m.porVenderKg - a.kgPorVender
+            cabecera.tvEstimado.text = "Esta semana: $inicial${Formato.kg(a.kgProducidos)} producidos − " +
+                "${Formato.kg(a.kgVendidos)} vendidos = ${Formato.kg(a.kgPorVender)} por vender" +
+                if (previa > 0.005) ".\nDe la semana que cerró el jueves quedan ${Formato.kg(previa)} (se venden primero)." else "."
         }
         conApi({ RetrofitClient.api.getMovimientos() }) {
             movimientos = it.orEmpty()

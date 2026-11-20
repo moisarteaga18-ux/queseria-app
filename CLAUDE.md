@@ -165,8 +165,7 @@ Pruebas: app `./gradlew testDebugUnitTest`; backend `cd C:\Users\Moises\queseria
         al ganadero del mismo nombre (o crea el ganadero; si hay dos con el mismo nombre no la toca) y
         quita `proveedor`. Aplicada en Atlas el 26 oct 2026 (aprobada por el usuario): `pagos` eliminada,
         4 precios del litro creados (de usuarios de prueba), `costoLitroLeche` quitado de 10 precios,
-        `proveedor` quitado de 4 registros (ya tenían ganadero). Semana 44 de "moises el grande": 1.600
-        (confirmado por el usuario). Respaldo en `scripts/respaldo-2026-10-26T16-27-41-618Z.json`.
+        `proveedor` quitado de 4 registros (ya tenían ganadero). El precio del litro de la semana 44 lo confirmó el usuario. Respaldo en `scripts/respaldo-2026-10-26T16-27-41-618Z.json`.
 
 ### Parte 10 — Calendario por semanas, edición y producción con la leche del día
 32. [x] Registrar leche: `ui/home/SelectorSemana.kt` — "Semana 44: vie 23 oct – jue 29 oct" con flechas
@@ -190,14 +189,14 @@ Pruebas: app `./gradlew testDebugUnitTest`; backend `cd C:\Users\Moises\queseria
 38. [x] Render tras la migración: edicion 41/41 y liquidaciones 34/34. `.env` local corregido
         (`MONGODB_URI=` delante; antes era solo la URI y dotenv no la leía).
 39. [x] Probar la app en el emulador (ver 48).
-40. [x] Usuarios de prueba borrados (19 `prueba_*`, 8 `r26_*` y `moises_test`, 59 documentos), con respaldo en
-        `Respaldos QuesoDataorrado-usuarios-prueba-2026-10-26.json`. Quedan "moises el grande" y "moises arteaga".
+40. [x] Usuarios de prueba borrados (19 `prueba_*`, 8 `r26_*` y otro de prueba, 59 documentos), con respaldo en
+        `Respaldos QuesoDataorrado-usuarios-prueba-2026-10-26.json`. Quedan los dos usuarios reales.
 
 ### Parte 11 — Libra de 500 g, tipos numéricos, respaldos y seguridad (26 oct 2026)
 41. [x] Libra colombiana: 1 kg = 2 lb. Una constante en el backend (`utils/unidades.js`: `LIBRAS_POR_KG`,
         `aKg`, `precioPorLibra`, `librasPorLata`) y otra en la app (`Formato.LIBRAS_POR_KG`). Rendimiento
         guardado = (kg × 2) ÷ (litros ÷ 20) lb por lata (antes litros ÷ kg). En Atlas no hay ventas en libras.
-42. [x] Ventas: sí se guardan (1 venta de "moises arteaga" del 23 oct con su movimiento de inventario).
+42. [x] Ventas: sí se guardan (1 venta real del 23 oct con su movimiento de inventario).
 43. [x] Tipos: los decimales usan `decimal()` (Schema.Types.Double + getter a número) en `models/index.js`;
         antes un mismo campo quedaba int o double según el valor ("tipo mixto" en Atlas).
         `scripts/migrar-tipos-2026-10.js` corrige los registros existentes. Probado en local (22/22 double).
@@ -228,7 +227,7 @@ Pruebas: app `./gradlew testDebugUnitTest`; backend `cd C:\Users\Moises\queseria
 51. [x] Push del backend (061a32a, aprobado por el usuario). Contra Render: 155/155 (api, liquidaciones,
         edicion, merma, seguridad, anular_mov). Usuarios de prueba borrados de Atlas (8 `prueba_*`, 35 documentos;
         aprobado), con respaldo en `Respaldos QuesoData\borrado-usuarios-prueba-2026-10-26b.json`.
-        Quedan "moises el grande" y "moises arteaga".
+        Quedan los dos usuarios reales.
 
 ### Parte 12 — Mi cuenta: perfil y contraseña (26 oct 2026)
 52. [x] Backend: `Usuario` con `propietario`, `telefono`, `direccion`, `nit` y `passwordCambiadoEn`.
@@ -291,7 +290,7 @@ Pruebas: app `./gradlew testDebugUnitTest`; backend `cd C:\Users\Moises\queseria
         Compila y pasan las pruebas unitarias; falta verlo en el emulador.
 67. [x] Push del backend (5d0eb33, pedido por el usuario). Contra Render: `prueba_precios` 8/8. APK nuevo en el
         Escritorio. Los 2 usuarios `prueba_precios_*` (y sus 3 precios) se borraron de Atlas el 3 nov 2026 (aprobado),
-        respaldo en `Respaldos QuesoData\borrado-usuarios-prueba-2026-11-03.json`. Quedan "moises el grande" y "moises arteaga".
+        respaldo en `Respaldos QuesoData\borrado-usuarios-prueba-2026-11-03.json`. Quedan los dos usuarios reales.
 
 ## Plan (2 nov 2026) — Ventas/Producción por semana y diseño de toda la app
 Solo organización y diseño: sin cambiar fórmulas, cálculos, llamadas a la API, backend ni base de datos.
@@ -353,15 +352,56 @@ Software. Es solo local: está en `.gitignore` y nunca se sube (el repositorio e
         iniciada, se ejecuta al encender si se perdió la hora). `respaldo-semanal.cmd` pasó a CRLF (`.gitattributes`):
         con LF, cmd mostraba "em no se reconoce". Respaldos del 18 nov 2026 (manual y prueba de la tarea, resultado 0).
 
+## Plan (19 nov 2026) — merma por lotes, sin internet, diseño de Ganancias/Reportes, tablas
+Orden pedido: Parte 18 → 19 → 20 → 21. Al terminar cada parte: pruebas, commit local (SIN subir) y anotar aquí.
+No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo lectura).
+
+### Parte 18 — Merma y cierre de semana (regla nueva)
+81. [x] Backend `utils/merma.js` reescrito: `cuentaSemanal` (pura) por lotes FIFO. Lo vendido el viernes sale primero
+        del queso de la semana que cerró el jueves (hasta lo que le quede); el resto es de la nueva. Ganancia de la semana =
+        ventas de su queso − leche de esa semana. Merma = pasado anterior + producido − vendido (kg + libras ÷ 2, con el
+        viernes siguiente) − pasado a la siguiente; % = merma ÷ (pasado + producido); valor = kg × precio promedio real
+        (ventas ÷ kg), sin ventas el precio minorista registrado. Merma null hasta que termina el viernes siguiente
+        (`completa`). `revisar` si > 15 % o negativa. GET /merma y /resumen/* ya NO escriben en la base.
+        `PUT /api/merma/:anio/:semana {kgFinal}` = "Pasar queso a la semana siguiente" (solo semanas cerradas, ≥ 0).
+        `resumen/ganancias` (acepta semana/anio) y `resumen/semanas` usan la cuenta por lotes; `resumen/hoy` y las listas
+        siguen por fecha; liquidación sin cambios. Pruebas: `test/merma.test.js` (63 kg/50/8 → 5 kg 7,9 %; libras; queso
+        pasado; reparto del viernes; revisar; API) + api.test.js anclado a hace 2 semanas: 159/159.
+82. [x] App: sin pregunta automática del viernes (borrados `CierreSemanal.kt` y `dialog_cierre.xml`).
+        `ui/merma/PasarQueso.kt` + `dialog_pasar_queso.xml`: en Inicio (Hoy) y en Inventario (botón). Ganancias: "se completa al terminar el viernes",
+        producido/vendido/por vender, aviso revisar, valor con precio promedio. Inicio: "por vender". Reportes: merma solo de
+        semanas completas. Modelos con merma nullable. App 13/13.
+83. [x] Comparación con una copia local de los datos reales (solo lectura): mismas ganancias y kg de merma en las semanas
+        cerradas; el valor de la merma baja porque usa el precio promedio real de venta. Los valores no se anotan aquí
+        (el repositorio es público).
+
+### Parte 19 — Sin internet (pendiente)
+84. [ ] Caché de lecturas (inicio, ganancias, reportes, leche, producción, ventas, ganaderos, clientes) + aviso superior
+        "Sin internet · datos guardados del …"; cola de leche/producción/ventas con id del cliente (idempotente, el servidor
+        no duplica), marcados "pendiente"; rechazados se avisan y nunca se borran; liquidación y contraseña dicen que
+        necesitan internet. Probar con backend local + emulador en modo avión.
+
+### Parte 20 — Diseño de Ganancias y Reportes (pendiente)
+85. [ ] Según `Downloads/diseno_ganancias_reportes.png` (no copiar la imagen entera: tiene números del negocio). Fondo casi negro
+        verdoso, tarjetas de vidrio oscuro con borde neón (leche azul, merma roja), cabecera con foto recortada, barra inferior
+        flotante oscura. Ilustraciones recortadas con borde difuminado. Sin botones decorativos.
+
+### Parte 21 — Leche y Ventas como tabla tipo Excel (pendiente)
+86. [ ] Encabezado verde fijo, rejilla, filas alternas, números a la derecha, fila de totales, primera columna fija con
+        desplazamiento horizontal, por semana, tocar = editar, pendientes marcados.
+87. [ ] Al terminar: todas las pruebas, capturas en el emulador (Ganancias, Reportes, Leche, Ventas), APK en el Escritorio (Render).
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.
 - Los precios semanales guardados antes del cambio conservan sus fechas (lunes–domingo).
-- La merma se calcula sobre el total de queso (no por producto). El stock por producto de
-  Inventario no descuenta la merma; el stock real de la semana es el "estimado" de `/api/merma`.
+- La merma se calcula sobre el total de queso (no por producto). El stock por producto de Inventario no descuenta la merma.
+- (19 nov 2026) Ventas por lotes: lo vendido el viernes cuenta primero para la semana que cerró el jueves (ventas y ganancia).
+  La merma solo existe al terminar el viernes siguiente; antes se muestra lo que falta por vender. Sin merma estimada.
+  "Pasar queso a la semana siguiente" es una opción aparte (no se pregunta sola). Merma > 15 % o negativa → revisar.
 - El valor de la merma se muestra como pérdida informativa y NO se resta otra vez de la ganancia:
   es queso que no se vendió (ya falta en los ingresos) y su leche ya está en el costo.
-- Mientras la última semana cerrada espera su dato (kg que pasan), no cuenta en el promedio.
+- El promedio de merma usa solo semanas completas.
 - Una liquidación pendiente se recalcula sola; al pagarla queda congelada como comprobante.
   Los PDF no se guardan: se generan en el teléfono con los datos guardados en MongoDB.
 - El costo del litro (Ganancias, Reportes, liquidaciones, Precios) sale solo de `precioleches`; sin
@@ -380,7 +420,7 @@ Software. Es solo local: está en `.gitignore` y nunca se sube (el repositorio e
 - Los datos que había en Room (solo pruebas) no se migraron.
 - Dos precios del queso por semana: minorista (`precioPorKg`, el que usa la merma) y mayorista. La venta
   "libras" es la minorista. El precio de la venta se puede cambiar a mano.
-- El `.env` local del backend conecta con el cluster de Atlas de producción (`cluster0.6q12wde`; verificado el
+- El `.env` local del backend conecta con el cluster de Atlas de producción (verificado el
   3 nov 2026). Cuidado: scripts locales sin `MONGODB_URI` propia tocan los datos reales.
 - Litros, kilos, cantidades vendidas y precios deben ser mayores que 0; lo valida el servidor (`utils/validar.js`)
   y también la app (`Formato.validarPositivo`).

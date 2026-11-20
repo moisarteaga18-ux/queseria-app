@@ -207,53 +207,50 @@ data class PagarLiquidacionRequest(
 )
 
 // ========================================
-// MERMA DEL QUESO (cierre semanal, viernes a jueves)
+// QUESO DE CADA SEMANA (viernes a jueves): ventas por lote, merma y "pasar queso"
 // Endpoint: GET /api/merma, PUT /api/merma/{anio}/{semana}
+// El cálculo lo hace el servidor (utils/merma.js); la app solo lo muestra.
 // ========================================
 
-/** Cierre de una semana: merma = inicial + producido − vendido − lo que pasa a la siguiente. */
+/**
+ * Cuenta del queso de una semana. Las ventas del viernes siguiente cuentan primero para esta semana
+ * (se vende primero el queso que quedó). [mermaKg], [mermaPct] y [valorMerma] son null mientras no
+ * termine el viernes siguiente ([completa] = false): la app no inventa la merma.
+ */
 data class CierreSemana(
     val semana: Int,
     val anio: Int,
     val fechaInicio: String,
     val fechaFin: String,
     val texto: String? = null,
+    val viernesSiguiente: String? = null,
+    val completa: Boolean = false,
     val stockInicialKg: Double = 0.0,
     val kgProducidos: Double = 0.0,
     val kgVendidos: Double = 0.0,
-    val kgFinal: Double = 0.0,
-    val confirmado: Boolean = false,
-    val mermaKg: Double = 0.0,
-    val mermaPct: Double = 0.0,
-    val precioPorKg: Double = 0.0,
-    val valorMerma: Double = 0.0
-)
-
-/** Semana en curso: stock estimado usando el % de merma promedio. */
-data class SemanaMermaActual(
-    val semana: Int,
-    val anio: Int,
-    val texto: String? = null,
-    val stockInicialKg: Double = 0.0,
-    val kgProducidos: Double = 0.0,
-    val kgVendidos: Double = 0.0,
-    val mermaEstimadaKg: Double = 0.0,
-    val stockEstimadoKg: Double = 0.0
-)
-
-/** Semana recién cerrada de la que hay que confirmar cuántos kg pasan a la siguiente. */
-data class CierrePendiente(
-    val semana: Int,
-    val anio: Int,
-    val texto: String? = null,
-    val sobranteEstimadoKg: Double = 0.0
+    val kgVendidosViernesSiguiente: Double = 0.0,
+    /** Kg que el usuario pasó de esta semana a la siguiente ("Pasar queso a la semana siguiente"). */
+    val kgPasados: Double = 0.0,
+    val kgPorVender: Double = 0.0,
+    val ventas: Double = 0.0,
+    val precioPromedioKg: Double? = null,
+    val precioMermaKg: Double? = null,
+    val mermaKg: Double? = null,
+    val mermaPct: Double? = null,
+    val valorMerma: Double? = null,
+    /** Aviso del servidor si la merma pasa del 15 % o da negativa (puede faltar un registro). */
+    val revisar: String? = null
 )
 
 data class MermaResumen(
+    /** La más reciente primero (la primera es la semana en curso). */
     val semanas: List<CierreSemana> = emptyList(),
+    /** % de merma de todas las semanas completas (merma total ÷ queso total). */
     val promedioPct: Double = 0.0,
-    val actual: SemanaMermaActual? = null,
-    val pendiente: CierrePendiente? = null
+    val actual: CierreSemana? = null,
+    /** Queso por vender hoy: el de la semana en curso y, el viernes, lo que quede de la que cerró. */
+    val porVenderKg: Double = 0.0
 )
 
+/** "Pasar queso a la semana siguiente": kg de esa semana que pasan a la siguiente (0 = deshacer). */
 data class CierreRequest(val kgFinal: Double, val fecha: String)

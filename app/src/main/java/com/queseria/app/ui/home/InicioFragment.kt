@@ -35,7 +35,7 @@ import com.queseria.app.databinding.ItemTarjetaPequenaBinding
 import com.queseria.app.models.ResumenHoy
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.liquidaciones.registrarAdelantoODescuento
-import com.queseria.app.ui.merma.preguntarCierre
+import com.queseria.app.ui.merma.pasarQuesoASemanaSiguiente
 import com.google.android.material.card.MaterialCardView
 import com.queseria.app.util.Formato
 import java.util.Calendar
@@ -51,9 +51,9 @@ class InicioFragment : Fragment() {
     private var _binding: FragmentInicioBinding? = null
     private val binding get() = _binding!!
 
-    // El detalle del queso se arma con dos llamadas (resumen del día y merma), que llegan en cualquier orden
+    // El detalle del queso se arma con dos llamadas (resumen del día y queso por vender), que llegan en cualquier orden
     private var kgHoy = 0.0
-    private var stockEstimado: Double? = null
+    private var porVender: Double? = null
 
     /**
      * Una tarjeta del menú. [args] se pasan al abrir la pantalla (por ejemplo, abrir el formulario de una vez).
@@ -84,7 +84,10 @@ class InicioFragment : Fragment() {
             Opcion("Producción del día", "Leche convertida en queso", R.drawable.ic_produccion, R.id.nav_produccion,
                 R.color.qd_c_precios, args = bundleOf(ARG_NUEVO to true)),
             Opcion("Adelanto o descuento", "A un ganadero, eligiendo la semana en que se descuenta", R.drawable.ic_pagos, null,
-                R.color.qd_c_cuenta, accion = { registrarAdelantoODescuento { cargar() } })
+                R.color.qd_c_cuenta, accion = { registrarAdelantoODescuento { cargar() } }),
+            // Opción aparte (ya no se pregunta sola el viernes): solo cuando el usuario quiera
+            Opcion("Pasar queso a la semana siguiente", "Los kg que quedaron de una semana cerrada", R.drawable.ic_qd_inventario, null,
+                R.color.qd_c_inventario, accion = { pasarQuesoASemanaSiguiente { cargar() } })
         )
     }
 
@@ -314,16 +317,10 @@ class InicioFragment : Fragment() {
                 "${it.nombre}: ${Formato.kg(it.stockKg)} (mínimo ${Formato.kg(it.stockMinimoKg)})"
             }
         }
-        // Merma: stock estimado de la semana y, al cierre, la única pregunta (si sobró queso)
+        // Queso por vender (lo calcula el servidor, sin restar ninguna merma estimada)
         conApi({ RetrofitClient.api.getMerma() }) { m ->
-            val actual = m?.actual
-            stockEstimado = actual?.takeIf { it.kgProducidos + it.stockInicialKg > 0 }?.stockEstimadoKg
+            porVender = m?.porVenderKg
             mostrarDetalleQueso()
-            val pendiente = m?.pendiente
-            if (pendiente != null && !cierrePreguntado) {
-                cierrePreguntado = true
-                preguntarCierre(pendiente, m.promedioPct) { cargar() }
-            }
         }
         // Lo que se debe a los ganaderos: semana en curso + semanas cerradas sin pagar
         conApi({ RetrofitClient.api.getSemanasLiquidacion(n = 12) }) { lista ->
@@ -354,7 +351,7 @@ class InicioFragment : Fragment() {
     }
 
     private fun mostrarDetalleQueso() {
-        binding.tvQuesoDetalle.text = stockEstimado?.let { "stock estimado ${Formato.kg(it)}" }
+        binding.tvQuesoDetalle.text = porVender?.let { "por vender ${Formato.kg(it)}" }
             ?: "${Formato.numero(Formato.kgALibras(kgHoy))} lb"
     }
 
@@ -374,8 +371,5 @@ class InicioFragment : Fragment() {
     companion object {
         /** Argumento para abrir directamente el formulario de "nuevo" (leche, producción, venta). */
         const val ARG_NUEVO = "abrirNuevo"
-
-        /** El cierre semanal se pregunta una sola vez por sesión (si se cancela, vuelve a salir al abrir la app). */
-        private var cierrePreguntado = false
     }
 }

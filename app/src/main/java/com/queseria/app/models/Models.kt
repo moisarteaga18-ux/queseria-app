@@ -229,13 +229,24 @@ data class GananciaSemana(
     val litrosComprados: Double = 0.0,
     val costoLitro: Double = 0.0,
     val costoLeche: Double = 0.0,
+    /** Ventas del queso de esta semana − leche de esta semana (se completa al terminar el viernes siguiente). */
     val ganancia: Double = 0.0,
+    /** Precio con el que se valora la merma: promedio real de venta (o el registrado si no hubo ventas). */
     val precioVentaKg: Double = 0.0,
-    // Merma del queso de la semana (estimada si la semana sigue abierta), valorada a precio de venta
-    val mermaKg: Double = 0.0,
-    val mermaPct: Double = 0.0,
-    val mermaEstimada: Boolean = false,
-    val valorMerma: Double = 0.0
+    val completa: Boolean = true,
+    val viernesSiguiente: String? = null,
+    val stockInicialKg: Double = 0.0,
+    val kgProducidos: Double = 0.0,
+    val kgVendidos: Double = 0.0,
+    val kgVendidosViernesSiguiente: Double = 0.0,
+    val kgPasados: Double = 0.0,
+    val kgPorVender: Double = 0.0,
+    val precioPromedioKg: Double? = null,
+    // Merma: null mientras no termine el viernes siguiente (no se inventa)
+    val mermaKg: Double? = null,
+    val mermaPct: Double? = null,
+    val valorMerma: Double? = null,
+    val revisar: String? = null
 )
 
 data class RangoFechas(
@@ -259,8 +270,11 @@ data class ResumenSemana(
     val costoLeche: Double = 0.0,
     val ganancia: Double = 0.0,
     val kgProducidos: Double = 0.0,
+    val kgVendidos: Double = 0.0,
     val librasPorLata: Double = 0.0,
-    val mermaKg: Double = 0.0,
-    val mermaPct: Double = 0.0,
-    val mermaEstimada: Boolean = false
+    /** false mientras no termine el viernes siguiente: ventas y ganancia todavía pueden cambiar y no hay merma. */
+    val completa: Boolean = true,
+    val mermaKg: Double? = null,
+    val mermaPct: Double? = null,
+    val revisar: String? = null
 )
