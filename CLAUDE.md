@@ -427,6 +427,20 @@ No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo le
         internet marcada «Pendiente» y al volver la red se subió sola. App 18/18.
 89. [ ] Al terminar: todas las pruebas, capturas en el emulador (Ganancias, Reportes, Leche, Ventas), APK en el Escritorio (Render).
 
+## Plan (20 nov 2026) — más tablas y seguridad al modificar o borrar
+Regla del usuario: no modificar, borrar ni migrar datos existentes; de la base real solo leer; pruebas contra base temporal.
+Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
+
+### Parte 22 — Más tablas estilo hoja de cálculo
+90. [x] `ui/common/TablasApp.kt`: columnas y totales de cada tabla en un solo lugar (`tablaVentas`, `tablaPrecios`,
+        `tablaSemanasLiquidacion`, `tablaLiquidaciones`, `tablaGanaderosSemana`, `tablaDescuentos`,
+        `tablaDescuentosLiquidacion`). `Tabla` gana `colorCelda` (estado verde/ámbar, descuentos en rojo) y `llenarEn`
+        (tabla corta dentro de una página, sin RecyclerView). Ventas y compras de un cliente usan la misma tabla.
+        Precios (sin totales), Liquidaciones (pestañas Semanas, Historial y Adelantos — esta última es nueva: todos los
+        adelantos y descuentos), ganaderos de una semana, historial de un ganadero (pestañas Liquidaciones / Adelantos y
+        descuentos) y descuentos del detalle de la liquidación. Tocar una fila abre lo mismo que antes; un adelanto abre
+        la liquidación de su semana. El PDF no cambia. App 18/18.
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.

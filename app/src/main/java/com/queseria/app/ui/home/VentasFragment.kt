@@ -22,7 +22,8 @@ import com.queseria.app.models.Producto
 import com.queseria.app.models.Venta
 import com.queseria.app.models.VentaRequest
 import com.queseria.app.ui.clientes.abrirFormularioCliente
-import com.queseria.app.ui.common.Tabla
+import com.queseria.app.ui.common.tablaVentas
+import com.queseria.app.ui.common.totalesVentas
 import com.queseria.app.ui.common.cantidadCorta
 import com.queseria.app.ui.common.dp
 import com.queseria.app.ui.common.fechaCorta
@@ -73,31 +74,11 @@ class VentasFragment : Fragment() {
     private val preciosSemana = mutableMapOf<String, Precio?>()
 
     // Ventas de la semana como tabla (viernes → jueves): Fecha (fija) | Cliente | Tipo | Cantidad | Precio | Total
-    private val adapter = Tabla<Venta>(
-        columnas = listOf(
-            Tabla.Columna("Fecha", 84),
-            Tabla.Columna("Cliente", 140),
-            Tabla.Columna("Tipo", 74),
-            Tabla.Columna("Cantidad", 96, numero = true),
-            Tabla.Columna("Precio", 100, numero = true),
-            Tabla.Columna("Total", 116, numero = true)
-        ),
-        celdas = { v ->
-            listOf(
-                fechaCorta(v.fecha),
-                v.cliente?.takeIf { it.isNotBlank() } ?: "Cliente ocasional",
-                if (v.tipoVenta == TipoVenta.MAYORISTA) "Mayor" else "Detal",
-                cantidadCorta(v.cantidad, v.unidad),
-                Formato.moneda(v.precioUnitario),
-                Formato.moneda(v.total)
-            )
-        },
-        marca = { v -> marcaPendiente(v.pendiente) },
-        nota = { v -> v.pendiente?.etiqueta },
-        // Una venta hecha sin internet que no ha subido: se muestra su estado (no se edita ni se borra aquí)
-        alTocar = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v) },
+    // Una venta hecha sin internet que no ha subido: se muestra su estado (no se edita ni se borra aquí)
+    private val adapter = tablaVentas(
+        porSemana = true,
         alMantener = { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: eliminar(v) }
-    )
+    ) { v -> v.pendiente?.let { requireContext().mostrarPendiente(it) } ?: abrirFormulario(v) }
 
     /** Ventas de la semana que llegaron del servidor (o de lo guardado en el teléfono). */
     private var ventasServidor: List<Venta> = emptyList()
@@ -158,8 +139,7 @@ class VentasFragment : Fragment() {
         val ordenadas = ventas.sortedBy { Formato.soloFecha(it.fecha) }
         adapter.mostrar(
             ordenadas,
-            totales = listOf("Total", "${ventas.size} ${if (ventas.size == 1) "venta" else "ventas"}", "", Formato.kg(kg), "",
-                Formato.moneda(ventas.sumOf { it.total })),
+            totales = totalesVentas(ventas),
             vacio = "Sin ventas en esta semana.\nToca + Nueva venta para registrar una."
         )
         cabecera.tvTotal.text = Formato.moneda(ventas.sumOf { it.total })

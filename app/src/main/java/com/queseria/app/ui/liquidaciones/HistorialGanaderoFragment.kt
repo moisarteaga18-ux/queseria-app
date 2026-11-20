@@ -8,18 +8,27 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.queseria.app.R
 import com.queseria.app.api.RetrofitClient
 import com.queseria.app.databinding.CabeceraTabsBinding
 import com.queseria.app.databinding.FragmentListaBinding
+import com.queseria.app.models.Descuento
 import com.queseria.app.models.Liquidacion
-import com.queseria.app.ui.common.FilaAdapter
+import com.queseria.app.ui.common.Tabla
 import com.queseria.app.ui.common.conApi
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.tablaDescuentos
+import com.queseria.app.ui.common.tablaLiquidaciones
+import com.queseria.app.ui.common.totalesDescuentos
+import com.queseria.app.ui.common.totalesLiquidaciones
 import com.queseria.app.util.Formato
+import com.queseria.app.util.Semana
+import java.time.LocalDate
 
 /**
- * Historial de liquidaciones de un ganadero, para consultarlas o reenviarlas.
- * El + registra un adelanto o descuento para ese ganadero.
+ * Historial de un ganadero, en tablas: sus liquidaciones (para consultarlas o reenviarlas) y sus
+ * adelantos y descuentos. El + registra un adelanto o descuento para ese ganadero.
  */
 class HistorialGanaderoFragment : Fragment() {
 
@@ -30,10 +39,18 @@ class HistorialGanaderoFragment : Fragment() {
     private val ganaderoId by lazy { requireArguments().getString(ARG_GANADERO)!! }
     private val nombre by lazy { requireArguments().getString(ARG_NOMBRE).orEmpty() }
 
-    private val adapter = FilaAdapter<Liquidacion>(
-        aFila = { filaLiquidacion(it, mostrarGanadero = false) },
-        alTocar = { l -> l.id?.let { findNavController().navigate(R.id.nav_liquidacion, LiquidacionDetalleFragment.argsExistente(it)) } }
-    )
+    private var liquidaciones: List<Liquidacion>? = null
+    private var descuentos: List<Descuento>? = null
+    private var enDescuentos = false
+
+    private val tablaHistorial = tablaLiquidaciones(conGanadero = false) { l ->
+        l.id?.let { findNavController().navigate(R.id.nav_liquidacion, LiquidacionDetalleFragment.argsExistente(it)) }
+    }
+
+    private val tablaAdelantos = tablaDescuentos({ nombre }) { d ->
+        val semana = Semana(LocalDate.parse(Formato.soloFecha(d.fecha)))
+        findNavController().navigate(R.id.nav_liquidacion, LiquidacionDetalleFragment.argsSemana(ganaderoId, semana.numero, semana.anio))
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -42,12 +59,22 @@ class HistorialGanaderoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        cabecera.tabs.visibility = View.GONE
+        cabecera.tabs.addTab(cabecera.tabs.newTab().setText("Liquidaciones"))
+        cabecera.tabs.addTab(cabecera.tabs.newTab().setText("Adelantos y descuentos"))
+        cabecera.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                enDescuentos = tab.position == 1
+                mostrar()
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvLista.adapter = adapter
+        binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         binding.fabAgregar.text = "Adelanto o descuento"
         binding.fabAgregar.setOnClickListener { abrirFormularioDescuento(ganaderoId, nombre) { cargar() } }
+        mostrar()
     }
 
     override fun onResume() {
@@ -57,16 +84,37 @@ class HistorialGanaderoFragment : Fragment() {
 
     private fun cargar() {
         conApi({ RetrofitClient.api.getLiquidaciones(ganaderoId = ganaderoId) }, binding.swipeRefresh) { lista ->
-            val liquidaciones = lista.orEmpty()
-            adapter.actualizar(liquidaciones)
-            val pagado = liquidaciones.filter { it.pagada }.sumOf { it.total }
-            val pendiente = liquidaciones.filterNot { it.pagada }.sumOf { it.total }
-            cabecera.tvResumen.text = "$nombre · ${liquidaciones.size} ${if (liquidaciones.size == 1) "liquidación" else "liquidaciones"} · pagado ${Formato.moneda(pagado)}" +
-                if (pendiente > 0) " · por pagar ${Formato.moneda(pendiente)}" else ""
-            cabecera.tvResumen.visibility = View.VISIBLE
-            binding.tvVacio.text = "$nombre aún no tiene liquidaciones.\nToca + Adelanto o descuento para registrar uno."
-            binding.tvVacio.visibility = if (liquidaciones.isEmpty()) View.VISIBLE else View.GONE
+            liquidaciones = lista.orEmpty()
+            mostrar()
         }
+        conApi({ RetrofitClient.api.getDescuentos(ganaderoId = ganaderoId) }) { lista ->
+            descuentos = lista.orEmpty()
+            mostrar()
+        }
+    }
+
+    private fun mostrar() {
+        if (_binding == null) return
+        val tabla: Tabla<*> = if (enDescuentos) tablaAdelantos.also { t ->
+            val lista = descuentos.orEmpty()
+            t.mostrar(lista, if (lista.isEmpty()) null else totalesDescuentos(lista),
+                "$nombre no tiene adelantos ni descuentos.\nToca + Adelanto o descuento para registrar uno.")
+        } else tablaHistorial.also { t ->
+            val lista = liquidaciones.orEmpty()
+            t.mostrar(lista, if (lista.isEmpty()) null else totalesLiquidaciones(lista),
+                "$nombre aún no tiene liquidaciones.\nToca + Adelanto o descuento para registrar uno.")
+        }
+        if (binding.rvLista.adapter !== tabla) {
+            binding.rvLista.adapter = tabla
+            tabla.crearEncabezado(binding.contenedorFijo)
+        }
+        val lista = liquidaciones.orEmpty()
+        val pagado = lista.filter { it.pagada }.sumOf { it.total }
+        val pendiente = lista.filterNot { it.pagada }.sumOf { it.total }
+        cabecera.tvResumen.text = "$nombre · pagado ${Formato.moneda(pagado)}" +
+            if (pendiente > 0) " · por pagar ${Formato.moneda(pendiente)}" else ""
+        cabecera.tvResumen.visibility = View.VISIBLE
+        binding.tvVacio.visibility = View.GONE
     }
 
     override fun onDestroyView() {

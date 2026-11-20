@@ -18,7 +18,8 @@ import com.queseria.app.databinding.FragmentListaBinding
 import com.queseria.app.models.Precio
 import com.queseria.app.models.PrecioSemanaRequest
 import com.queseria.app.ui.common.Fila
-import com.queseria.app.ui.common.FilaAdapter
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.tablaPrecios
 import com.queseria.app.ui.common.elegirFecha
 import com.queseria.app.ui.common.guardarConConfirmacion
 import com.queseria.app.ui.common.manejarError
@@ -42,22 +43,8 @@ class PreciosFragment : Fragment() {
 
     private var lista: List<Precio> = emptyList()
 
-    private val adapter = FilaAdapter<Precio>(
-        aFila = { p ->
-            val semana = Semana.de(p.semana, p.anio)
-            Fila(
-                titulo = "Semana ${p.semana} · ${p.anio}",
-                subtitulo = "${Formato.fechaLegible(p.fechaInicio)} – ${Formato.fechaLegible(p.fechaFin)}",
-                detalle = "Mayorista: " + (p.precioMayoristaPorKg?.let { "${Formato.moneda(it)} / kg" } ?: "sin definir") +
-                    " · Litro: " + (p.precioLitro?.let { Formato.moneda(it) } ?: "sin definir"),
-                valor = p.precioPorKg?.let { "${Formato.moneda(it)} / kg" } ?: "Minorista: —",
-                etiqueta = if (semana.esActual) "Esta semana" else null,
-                colorEtiqueta = R.color.verde_exito,
-                icono = R.drawable.ic_precios
-            )
-        },
-        alTocar = { abrirFormulario(Semana.de(it.semana, it.anio), it) }
-    )
+    // Tabla de precios por semana (sin fila de totales: sumar precios no tiene sentido)
+    private val adapter = tablaPrecios { abrirFormulario(Semana.de(it.semana, it.anio), it) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -68,6 +55,8 @@ class PreciosFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLista.adapter = adapter
+        binding.rvLista.setPadding(dp(8), 0, dp(8), dp(96))
+        adapter.crearEncabezado(binding.contenedorFijo)
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         binding.fabAgregar.text = "Precio de la semana"
         binding.fabAgregar.setOnClickListener {
@@ -88,9 +77,8 @@ class PreciosFragment : Fragment() {
                     lista = r.data.orEmpty()
                     val actual = Semana.actual()
                     mostrarActual(lista.firstOrNull { it.semana == actual.numero && it.anio == actual.anio })
-                    adapter.actualizar(lista)
-                    binding.tvVacio.text = "Aún no tienes precios.\nToca + Precio de la semana para definir los de esta semana."
-                    binding.tvVacio.visibility = if (lista.isEmpty()) View.VISIBLE else View.GONE
+                    adapter.mostrar(lista, totales = null, vacio = "Aún no tienes precios.\nToca + Precio de la semana para definir los de esta semana.")
+                    binding.tvVacio.visibility = View.GONE
                 }
                 is Resultado.Error -> {
                     manejarError(r)

@@ -24,7 +24,6 @@ import com.queseria.app.auth.SessionManager
 import com.queseria.app.databinding.DialogPagarBinding
 import com.queseria.app.databinding.DialogVistaPdfBinding
 import com.queseria.app.databinding.FragmentLiquidacionBinding
-import com.queseria.app.databinding.ItemDescuentoBinding
 import com.queseria.app.databinding.ItemDiaBinding
 import com.queseria.app.models.FormaPago
 import com.queseria.app.models.GenerarLiquidacionRequest
@@ -33,6 +32,7 @@ import com.queseria.app.models.Liquidacion
 import com.queseria.app.models.PagarLiquidacionRequest
 import com.queseria.app.models.TipoDescuento
 import com.queseria.app.ui.common.conApi
+import com.queseria.app.ui.common.tablaDescuentosLiquidacion
 import com.queseria.app.ui.common.confirmar
 import com.queseria.app.ui.common.elegirFecha
 import com.queseria.app.ui.common.guardarEnApi
@@ -214,32 +214,17 @@ class LiquidacionDetalleFragment : Fragment() {
         }
     }
 
+    /** Descuentos de la semana como tabla (en la pantalla; el PDF no cambia). Tocar uno = quitarlo (si no está pagada). */
     private fun mostrarDescuentos(l: Liquidacion) {
-        val contenedor = binding.contenedorDescuentos
-        contenedor.removeAllViews()
-        binding.tvSinDescuentos.visibility = if (l.descuentos.isEmpty()) View.VISIBLE else View.GONE
-        l.descuentos.forEach { d ->
-            val fila = ItemDescuentoBinding.inflate(layoutInflater, contenedor, false)
-            fila.ivTipo.setImageResource(iconoDescuento(d.tipo))
-            fila.tvTipo.text = TipoDescuento.legible(d.tipo)
-            fila.tvDetalle.text = listOfNotNull(
-                d.fecha?.let { Formato.fechaLegible(it) },
-                d.litros?.takeIf { d.tipo == TipoDescuento.LECHE_RECHAZADA }?.let { "${Formato.litros(it)} × ${Formato.moneda(l.precioLitro)}" },
-                d.descripcion
-            ).joinToString(" · ")
-            fila.tvValor.text = "−${Formato.moneda(d.valor)}"
-            fila.btnEliminar.visibility = if (l.pagada || d.descuentoId == null) View.GONE else View.VISIBLE
-            fila.btnEliminar.setOnClickListener { eliminarDescuento(d) }
-            contenedor.addView(fila.root)
-        }
+        binding.tvSinDescuentos.visibility = View.GONE
+        val tabla = tablaDescuentosLiquidacion(l.precioLitro,
+            if (l.pagada) null else { d -> if (d.descuentoId != null) eliminarDescuento(d) })
+        tabla.llenarEn(binding.contenedorDescuentos, l.descuentos,
+            if (l.descuentos.isEmpty()) null else listOf("Total", plural(l.descuentos.size), "", "−${Formato.moneda(l.totalDescuentos)}"),
+            "Sin adelantos, préstamos ni leche rechazada esta semana.")
     }
 
-    private fun iconoDescuento(tipo: String) = when (tipo) {
-        TipoDescuento.ADELANTO -> R.drawable.ic_pagos
-        TipoDescuento.PRESTAMO -> R.drawable.ic_precios
-        TipoDescuento.LECHE_RECHAZADA -> R.drawable.ic_leche
-        else -> R.drawable.ic_ajuste
-    }
+    private fun plural(n: Int) = if (n == 1) "1 descuento" else "$n descuentos"
 
     // ========================================
     // ACCIONES

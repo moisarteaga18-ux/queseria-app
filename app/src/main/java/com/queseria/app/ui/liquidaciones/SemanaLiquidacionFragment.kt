@@ -24,8 +24,9 @@ import com.queseria.app.models.LiquidacionGanadero
 import com.queseria.app.models.LiquidacionesSemana
 import com.queseria.app.models.PrecioLecheRequest
 import com.queseria.app.models.SemanaRequest
-import com.queseria.app.ui.common.Fila
-import com.queseria.app.ui.common.FilaAdapter
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.tablaGanaderosSemana
+import com.queseria.app.ui.common.totalesGanaderosSemana
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.guardarConConfirmacion
 import com.queseria.app.ui.common.mostrarFormulario
@@ -48,41 +49,8 @@ class SemanaLiquidacionFragment : Fragment() {
     private lateinit var semana: Semana
     private var datos: LiquidacionesSemana? = null
 
-    private val adapter = FilaAdapter<LiquidacionGanadero>(
-        aFila = { g ->
-            val liq = g.liquidacion
-            val pagada = liq?.estado == Liquidacion.PAGADO
-            Fila(
-                titulo = g.nombre,
-                subtitulo = Formato.litros(g.litros) +
-                    if (g.totalDescuentos > 0) " · descuentos −${Formato.moneda(g.totalDescuentos)}" else "",
-                detalle = when {
-                    liq == null -> "Toca para ver el detalle y generar la liquidación"
-                    pagada -> "${LiquidacionPdf.numeroTexto(liq.numero)} · pagada (${FormaPago.enFrase(liq.formaPago)})"
-                    else -> "${LiquidacionPdf.numeroTexto(liq.numero)} · falta pagar"
-                },
-                valor = g.total?.let { Formato.moneda(it) } ?: "Sin precio",
-                colorValor = if (pagada) R.color.verde_exito else R.color.verde_oscuro,
-                etiqueta = when {
-                    liq == null -> "Sin generar"
-                    pagada -> "Pagado"
-                    else -> "Pendiente"
-                },
-                colorEtiqueta = when {
-                    liq == null -> R.color.gris_texto_secundario
-                    pagada -> R.color.verde_exito
-                    else -> R.color.ambar_advertencia
-                },
-                icono = if (pagada) R.drawable.ic_check else R.drawable.ic_ganadero,
-                colorIcono = when {
-                    liq == null -> R.color.verde_principal
-                    pagada -> R.color.verde_exito
-                    else -> R.color.ambar_advertencia
-                }
-            )
-        },
-        alTocar = { abrirDetalle(it) }
-    )
+    // Ganaderos de la semana en tabla; tocar uno abre su detalle
+    private val adapter = tablaGanaderosSemana { abrirDetalle(it) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -97,6 +65,8 @@ class SemanaLiquidacionFragment : Fragment() {
 
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLista.adapter = adapter
+        binding.rvLista.setPadding(dp(8), 0, dp(8), dp(24))
+        adapter.crearEncabezado(binding.contenedorFijo)
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         binding.fabAgregar.visibility = View.GONE
         // La semana se elige en el paso anterior
@@ -124,7 +94,9 @@ class SemanaLiquidacionFragment : Fragment() {
             binding.tvVacio.visibility = View.VISIBLE
         }) {
             datos = it
-            adapter.actualizar(it?.ganaderos.orEmpty())
+            val lista = it?.ganaderos.orEmpty()
+            adapter.mostrar(lista, if (lista.isEmpty()) null else totalesGanaderosSemana(lista),
+                "Ningún ganadero entregó leche esta semana.\nRegistra la leche desde el menú: Registrar leche.")
             mostrarEncabezado()
         }
     }
@@ -165,7 +137,7 @@ class SemanaLiquidacionFragment : Fragment() {
         cabecera.tvAyuda.visibility = if (d?.ganaderos?.isNotEmpty() == true) View.VISIBLE else View.GONE
         cabecera.tvAyuda.text = "Toca un ganadero para ver su detalle, generar la liquidación, enviarla por WhatsApp y marcarla como pagada."
         binding.tvVacio.text = "Ningún ganadero entregó leche esta semana.\nRegistra la leche desde el menú: Registrar leche."
-        binding.tvVacio.visibility = if (d != null && d.ganaderos.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvVacio.visibility = View.GONE
     }
 
     private fun abrirDetalle(g: LiquidacionGanadero) {

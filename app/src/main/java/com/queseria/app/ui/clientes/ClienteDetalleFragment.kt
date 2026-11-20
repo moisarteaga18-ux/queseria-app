@@ -14,11 +14,12 @@ import com.queseria.app.databinding.CabeceraClienteBinding
 import com.queseria.app.databinding.FragmentListaBinding
 import com.queseria.app.models.Cliente
 import com.queseria.app.models.Venta
-import com.queseria.app.ui.common.FilaAdapter
+import com.queseria.app.ui.common.dp
+import com.queseria.app.ui.common.tablaVentas
+import com.queseria.app.ui.common.totalesVentas
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.confirmar
 import com.queseria.app.ui.common.toast
-import com.queseria.app.ui.ventas.filaVenta
 import com.queseria.app.ui.ventas.total
 import com.queseria.app.util.Formato
 
@@ -34,7 +35,8 @@ class ClienteDetalleFragment : Fragment() {
     private var cliente: Cliente? = null
     private val clienteId by lazy { arguments?.getString(ARG_ID).orEmpty() }
 
-    private val adapter = FilaAdapter<Venta>(aFila = { filaVenta(it, mostrarCliente = false) })
+    // Compras del cliente: misma tabla que Ventas (sin la columna Cliente)
+    private val adapter = tablaVentas(porSemana = false, conCliente = false)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -45,6 +47,8 @@ class ClienteDetalleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.rvLista.layoutManager = LinearLayoutManager(requireContext())
         binding.rvLista.adapter = adapter
+        binding.rvLista.setPadding(dp(8), 0, dp(8), dp(24))
+        adapter.crearEncabezado(binding.contenedorFijo)
         binding.fabAgregar.visibility = View.GONE
         binding.swipeRefresh.setOnRefreshListener { cargarVentas() }
 
@@ -86,11 +90,12 @@ class ClienteDetalleFragment : Fragment() {
             binding.tvVacio.visibility = View.VISIBLE
         }) { lista ->
             val ventas = lista.orEmpty()
-            adapter.actualizar(ventas)
+            adapter.mostrar(ventas.sortedByDescending { Formato.soloFecha(it.fecha) }, totalesVentas(ventas, conCliente = false),
+                "Este cliente aún no tiene compras registradas.")
             cabecera.tvTotalComprado.text = Formato.moneda(ventas.sumOf { it.total })
             cabecera.tvNumCompras.text = ventas.size.toString()
             binding.tvVacio.text = "Este cliente aún no tiene compras registradas."
-            binding.tvVacio.visibility = if (ventas.isEmpty()) View.VISIBLE else View.GONE
+            binding.tvVacio.visibility = View.GONE
         }
     }
 

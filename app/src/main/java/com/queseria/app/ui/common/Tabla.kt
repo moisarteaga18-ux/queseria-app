@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -21,7 +22,8 @@ import com.queseria.app.R
  * - Encabezado verde en negrilla que no se mueve al bajar (va fuera de la lista: [crearEncabezado]).
  * - Rejilla fina, filas alternas, números a la derecha (con separador de miles, ya formateados).
  * - Primera columna fija; las demás se desplazan de lado, todas a la vez (encabezado incluido).
- * - Al final, la fila de totales resaltada. Tocar una fila = [alTocar]; mantenerla = [alMantener].
+ * - Al final, la fila de totales resaltada. Tocar una fila = [alTocar] (abrirla). Borrar no se hace desde la
+ *   lista (ni manteniendo presionado): va aparte, en rojo, dentro del registro.
  * - Filas marcadas: hechas sin internet ([Marca.PENDIENTE]), rechazadas ([Marca.RECHAZADA]) o con algo
  *   que falta ([Marca.AVISO]); la [nota] sale debajo del dato de la primera columna.
  * Todo se arma con vistas simples (sin XML ni sombras) para que se mueva fluido en teléfonos sencillos.
@@ -31,8 +33,10 @@ class Tabla<T>(
     private val celdas: (T) -> List<String>,
     private val marca: (T) -> Marca = { Marca.NINGUNA },
     private val nota: (T) -> String? = { null },
-    private val alTocar: (T) -> Unit = {},
-    private val alMantener: (T) -> Unit = {}
+    private val alTocar: ((T) -> Unit)? = null,
+    private val alMantener: ((T) -> Unit)? = null,
+    /** Color de una celda (columna i) según el dato: estados, negativos… null = el normal. */
+    private val colorCelda: (T, Int) -> Int? = { _, _ -> null }
 ) : RecyclerView.Adapter<Tabla.Holder>() {
 
     /** [ancho] en dp; [numero] = alineada a la derecha. La primera columna es la fija. */
@@ -108,8 +112,40 @@ class Tabla<T>(
             (holder.itemView as TextView).text = vacio
             return
         }
-        val ctx = holder.itemView.context
-        val esTotal = getItemViewType(position) == TIPO_TOTAL
+        pintar(fila, position, getItemViewType(position) == TIPO_TOTAL)
+    }
+
+    /**
+     * Tabla corta dentro de una página (por ejemplo, los descuentos del detalle de una liquidación):
+     * encabezado, filas y totales como vistas normales en [contenedor], sin lista que recicle.
+     */
+    fun llenarEn(contenedor: LinearLayout, filas: List<T>, totales: List<String>?, vacio: String) {
+        this.filas = filas
+        this.totales = totales
+        this.vacio = vacio
+        contenedor.removeAllViews()
+        desplazables.clear()
+        val ctx = contenedor.context
+        val encabezado = FrameLayout(ctx)
+        crearEncabezado(encabezado)
+        contenedor.addView(encabezado)
+        for (i in 0 until itemCount) {
+            if (getItemViewType(i) == TIPO_VACIO) {
+                val h = onCreateViewHolder(contenedor, TIPO_VACIO)
+                onBindViewHolder(h, i)
+                h.itemView.layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                contenedor.addView(h.itemView)
+                continue
+            }
+            val fila = armarFila(ctx)
+            registrar(fila.desplazable)
+            pintar(fila, i, getItemViewType(i) == TIPO_TOTAL)
+            contenedor.addView(fila.raiz, LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+    }
+
+    private fun pintar(fila: Fila, position: Int, esTotal: Boolean) {
+        val ctx = fila.raiz.context
         val elemento = if (esTotal) null else filas[position]
         val textos = if (esTotal) totales.orEmpty() else celdas(elemento!!)
         val m = elemento?.let(marca) ?: Marca.NINGUNA
@@ -126,6 +162,7 @@ class Tabla<T>(
             tv.setTextColor(colorTexto)
             tv.setTypeface(if (esTotal || i == 0) negrita(ctx) else normal(ctx), Typeface.NORMAL)
             tv.text = textos.getOrElse(i) { "" }
+            elemento?.let { e -> colorCelda(e, i) }?.let { tv.setTextColor(ContextCompat.getColor(ctx, it)) }
         }
         // Debajo de la fecha: "Pendiente", "No se subió" o lo que falte
         val n = elemento?.let(nota)
@@ -141,13 +178,16 @@ class Tabla<T>(
         }
         fila.raiz.contentDescription = if (esTotal) "Total: " + columnas.indices.drop(1).joinToString(", ") { "${columnas[it].titulo} ${textos.getOrElse(it) { "" }}" }
             else columnas.indices.joinToString(", ") { "${columnas[it].titulo} ${textos.getOrElse(it) { "" }}" } + (n?.let { ", $it" } ?: "")
-        val tocar = if (elemento == null) null else View.OnClickListener { alTocar(elemento) }
-        val mantener = if (elemento == null) null else View.OnLongClickListener { alMantener(elemento); true }
+        // Tocar = abrir (para corregir). Borrar NO se hace desde la lista: va aparte, dentro del registro.
+        val accion = alTocar
+        val tocar = if (elemento == null || accion == null) null else View.OnClickListener { accion(elemento) }
+        val m2 = alMantener
+        val mantener = if (elemento == null || m2 == null) null else View.OnLongClickListener { m2(elemento); true }
         listOf(fila.celdas[0], fila.contenido).forEach {
             it.setOnClickListener(tocar)
             it.setOnLongClickListener(mantener)
-            it.isClickable = elemento != null
-            it.isLongClickable = elemento != null
+            it.isClickable = tocar != null
+            it.isLongClickable = mantener != null
         }
         // La fila nueva o reciclada queda corrida igual que las demás
         fila.desplazable.doOnLayout { mover(fila.desplazable, desplazamiento) }
