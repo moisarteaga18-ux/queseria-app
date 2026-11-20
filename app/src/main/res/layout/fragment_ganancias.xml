@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Ganancias (diseño oscuro con neón). Orden: diferencia vs semana anterior (con curva de 8 semanas), la semana
+     elegida (botón calendario), ingresos y leche, pérdida por merma, ganancia y la semana anterior. -->
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/beige_fondo">
+    android:background="@color/gr_fondo">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -13,48 +16,311 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="24dp">
 
-            <TextView
-                android:id="@+id/tvError"
+            <include
+                android:id="@+id/cabecera"
+                layout="@layout/cabecera_gr" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_card"
-                android:padding="12dp"
-                android:textColor="@color/rojo_error"
-                android:visibility="gone" />
+                android:layout_marginTop="-6dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp">
 
-            <!-- Diferencia entre semanas -->
-            <LinearLayout style="@style/Queseria.Tarjeta" android:gravity="center_horizontal">
-                <TextView style="@style/Queseria.TextoSecundario" android:text="DIFERENCIA VS SEMANA ANTERIOR" android:textStyle="bold" />
-                <TextView android:id="@+id/tvDiferencia" style="@style/Queseria.ValorGrande" android:layout_marginTop="4dp" android:textSize="28sp" android:text="—" />
-                <TextView android:id="@+id/tvPorcentaje" style="@style/Queseria.TextoSecundario" android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_gr_tarjeta_roja"
+                    android:padding="16dp"
+                    android:textColor="@color/gr_texto"
+                    android:visibility="gone" />
+
+                <!-- 1. Diferencia vs semana anterior -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:gravity="center_vertical"
+                    android:minHeight="128dp"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+                    <ImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/img_gr_barras_flecha" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            style="@style/Gr.Rotulo"
+                            android:text="Diferencia vs semana anterior" />
+                        <TextView
+                            android:id="@+id/tvDiferencia"
+                            style="@style/Gr.Valor"
+                            android:text="—" />
+                        <TextView
+                            android:id="@+id/tvPorcentaje"
+                            style="@style/Gr.Pildora"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                    <com.queseria.app.ui.common.MiniLinea
+                        android:id="@+id/curvaDiferencia"
+                        android:layout_width="84dp"
+                        android:layout_height="64dp"
+                        android:layout_marginStart="6dp" />
+                </LinearLayout>
+
+                <!-- 2. Semana elegida: el calendario abre el selector de semana -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvSemanaTitulo"
+                            style="@style/Gr.Rotulo"
+                            android:text="Esta semana" />
+                        <TextView
+                            android:id="@+id/tvRangoActual"
+                            style="@style/Gr.Texto"
+                            android:fontFamily="@font/poppins_semibold" />
+                        <TextView
+                            style="@style/Gr.Secundario"
+                            android:text="(viernes a jueves)" />
+                    </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/btnSemana"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_gr_boton_redondo"
+                        android:contentDescription="Elegir la semana"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:padding="13dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_qd_calendario"
+                        app:tint="@color/gr_neon" />
+                </LinearLayout>
+
+                <!-- 3. Ingresos y leche, lado a lado -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_gr_tarjeta"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="8dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/img_gr_monedas" />
+                            <TextView
+                                style="@style/Gr.Rotulo"
+                                android:layout_marginStart="8dp"
+                                android:text="Ingresos" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvActualIngresos"
+                            style="@style/Gr.ValorMediano"
+                            android:layout_marginTop="6dp" />
+                        <TextView
+                            android:id="@+id/tvActualIngresosDetalle"
+                            style="@style/Gr.Secundario" />
+                        <com.queseria.app.ui.common.MiniLinea
+                            android:id="@+id/curvaIngresos"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_gr_tarjeta_azul"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="8dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/img_gr_jarra_leche" />
+                            <TextView
+                                style="@style/Gr.Rotulo"
+                                android:layout_marginStart="8dp"
+                                android:text="Leche" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvActualLitros"
+                            style="@style/Gr.Texto"
+                            android:layout_marginTop="6dp" />
+                        <TextView
+                            android:id="@+id/tvActualCostos"
+                            style="@style/Gr.ValorMediano" />
+                        <com.queseria.app.ui.common.MiniLinea
+                            android:id="@+id/curvaLeche"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 4. Pérdida por merma -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_gr_tarjeta_roja"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/img_gr_triangulo" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvMermaTitulo"
+                            style="@style/Gr.Rotulo"
+                            android:text="Pérdida por merma" />
+                        <TextView
+                            android:id="@+id/tvActualMerma"
+                            style="@style/Gr.Texto"
+                            android:layout_marginTop="2dp"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                    <ImageView
+                        android:layout_width="96dp"
+                        android:layout_height="58dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/img_gr_tabla_queso" />
+                </LinearLayout>
+
+                <!-- 5. Ganancia -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+                    <ImageView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/img_gr_trofeo" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvGananciaTitulo"
+                            style="@style/Gr.Rotulo"
+                            android:text="Ganancia" />
+                        <TextView
+                            android:id="@+id/tvActualGanancia"
+                            style="@style/Gr.Valor" />
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/ivFlechaGanancia"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/bg_gr_boton_redondo"
+                        android:importantForAccessibility="no"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_gr_flecha_arriba" />
+                </LinearLayout>
+
+                <!-- 6. Semana anterior -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+                    <TextView
+                        style="@style/Gr.Rotulo"
+                        android:text="Semana anterior" />
+                    <TextView
+                        android:id="@+id/tvRangoAnterior"
+                        style="@style/Gr.Secundario" />
+                    <TextView
+                        android:id="@+id/tvAnteriorIngresos"
+                        style="@style/Gr.Texto"
+                        android:layout_marginTop="8dp" />
+                    <TextView
+                        android:id="@+id/tvAnteriorCostos"
+                        style="@style/Gr.Texto"
+                        android:layout_marginTop="2dp" />
+                    <TextView
+                        android:id="@+id/tvAnteriorMerma"
+                        style="@style/Gr.Texto"
+                        android:layout_marginTop="2dp"
+                        android:textColor="#FF9AA4" />
+                    <TextView
+                        android:id="@+id/tvAnteriorGanancia"
+                        style="@style/Gr.ValorMediano"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Gr.Secundario"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Semanas de viernes a jueves. Lo vendido el viernes cuenta primero para la semana que cerró el jueves (se vende primero el queso que quedó). Ganancia = ventas del queso de la semana − leche de esa semana. La merma y la ganancia se completan al terminar el viernes siguiente; la pérdida por merma es informativa: ese queso no se vendió, así que no se resta otra vez." />
             </LinearLayout>
-
-            <TextView style="@style/Queseria.TituloSeccion" android:text="Esta semana" />
-            <TextView android:id="@+id/tvRangoActual" style="@style/Queseria.TextoSecundario" android:layout_marginBottom="6dp" />
-            <LinearLayout style="@style/Queseria.Tarjeta">
-                <TextView android:id="@+id/tvActualIngresos" style="@style/Queseria.TextoSecundario" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
-                <TextView android:id="@+id/tvActualCostos" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
-                <TextView android:id="@+id/tvActualMerma" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/rojo_error" />
-                <TextView android:id="@+id/tvActualGanancia" style="@style/Queseria.ValorGrande" android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <TextView style="@style/Queseria.TituloSeccion" android:text="Semana anterior" />
-            <TextView android:id="@+id/tvRangoAnterior" style="@style/Queseria.TextoSecundario" android:layout_marginBottom="6dp" />
-            <LinearLayout style="@style/Queseria.Tarjeta">
-                <TextView android:id="@+id/tvAnteriorIngresos" style="@style/Queseria.TextoSecundario" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
-                <TextView android:id="@+id/tvAnteriorCostos" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/gris_texto_principal" />
-                <TextView android:id="@+id/tvAnteriorMerma" style="@style/Queseria.TextoSecundario" android:layout_marginTop="4dp" android:textSize="15sp" android:textColor="@color/rojo_error" />
-                <TextView android:id="@+id/tvAnteriorGanancia" style="@style/Queseria.ValorGrande" android:layout_marginTop="8dp" />
-            </LinearLayout>
-
-            <TextView
-                style="@style/Queseria.TextoSecundario"
-                android:layout_marginTop="16dp"
-                android:text="Semanas de viernes a jueves. Ingresos = ventas. Costo = litros de leche × precio del litro de esa semana (el de Liquidaciones o, si no está, el de Precios). Pérdida por merma = kg de merma × precio por kg: es queso que no se vendió, así que ya está reflejada en la ganancia (no se resta dos veces). En la semana en curso la merma es estimada con el promedio." />
-
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

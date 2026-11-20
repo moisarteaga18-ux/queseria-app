@@ -398,10 +398,20 @@ No subir nada a GitHub sin preguntar. Pruebas nunca contra la base real (solo le
         subieron solos (42→43 leche, 21→22 producción, 42→43 ventas) y la de 80 kg fue rechazada ("Solo hay 79 kg"),
         nombrada en el aviso y conservada; «Reintentar» la subió (44 ventas, stock 8,5 kg). Reabrir la app: sin duplicados.
 
-### Parte 20 — Diseño de Ganancias y Reportes (pendiente)
-87. [ ] Según `Downloads/diseno_ganancias_reportes.png` (no copiar la imagen entera: tiene números del negocio). Fondo casi negro
-        verdoso, tarjetas de vidrio oscuro con borde neón (leche azul, merma roja), cabecera con foto recortada, barra inferior
-        flotante oscura. Ilustraciones recortadas con borde difuminado. Sin botones decorativos.
+### Parte 20 — Diseño de Ganancias y Reportes
+87. [x] Según `Downloads/diseno_ganancias_reportes.png` (la imagen entera NO está en el proyecto: tiene números del negocio).
+        Solo 9 recortes sin textos ni números, con borde difuminado, en WebP (`drawable-nodpi/img_gr_*`, ~150 KB; los originales
+        miden 80–200 px, se ven algo suaves). Colores `gr_*` (iguales en claro y oscuro); tarjetas `bg_gr_tarjeta(_azul/_roja)`:
+        vidrio oscuro con borde neón hecho con 3 trazos (sin desenfoque, fluido en teléfonos sencillos). `cabecera_gr.xml`: foto que
+        se funde con el fondo, botón ≡ (`MainActivity.mostrarMenu`: Ir al inicio y Cerrar sesión), título, recargar (solo Reportes),
+        vaca en círculo; Ganancias con "Tu negocio más rentable". Sin campana (la app no tiene notificaciones).
+        Ganancias: diferencia (+ curva `MiniLinea` de 8 semanas reales), semana elegida (botón calendario → `NavegadorSemana` en un
+        diálogo → `getGanancias(semana, anio)`), ingresos + leche, merma, ganancia (trofeo; flecha y color según el signo), semana
+        anterior. Reportes: ganancia grande, ventas + leche, botón verde "Comparar con la semana anterior", gráfico de 8 semanas
+        (ventas verde, leche dorada, leyenda) y debajo las secciones de antes en oscuro (`Grafico.modoOscuro()`).
+        Negativo = rojo con ▼, positivo = verde con ▲. Barra inferior de toda la app: flotante, oscura con borde verde; la activa
+        con el ícono en círculo verde, texto y rayita dorados. Ganancias/Reportes sin barra superior y con la barra de estado oscura.
+        Probado en el emulador (servidor local + base temporal) a 411 dp y 320 dp: sin textos cortados. App 18/18.
 
 ### Parte 21 — Leche y Ventas como tabla tipo Excel (pendiente)
 88. [ ] Encabezado verde fijo, rejilla, filas alternas, números a la derecha, fila de totales, primera columna fija con

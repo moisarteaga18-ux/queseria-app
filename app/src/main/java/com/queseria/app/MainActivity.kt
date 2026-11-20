@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -70,8 +71,14 @@ class MainActivity : AppCompatActivity() {
         // La casita se oculta en Inicio; Inicio tampoco muestra la barra (tiene su propia cabecera)
         navController.addOnDestinationChangedListener { _, destino, _ ->
             // Inicio y Mi cuenta / Cambiar contraseña traen su propia cabecera (con botón atrás)
-            val cabeceraPropia = destino.id in setOf(R.id.nav_inicio, R.id.nav_perfil, R.id.nav_contrasena)
+            // Ganancias y Reportes (diseño oscuro) también: su botón de menú abre lo mismo que el ⋮
+            val oscura = destino.id in PANTALLAS_OSCURAS
+            val cabeceraPropia = oscura || destino.id in setOf(R.id.nav_inicio, R.id.nav_perfil, R.id.nav_contrasena)
             binding.toolbar.visibility = if (cabeceraPropia) View.GONE else View.VISIBLE
+            // Lo que se ve alrededor de la barra flotante sigue el fondo de la pantalla
+            binding.root.setBackgroundColor(getColor(if (oscura) R.color.gr_fondo else R.color.beige_fondo))
+            @Suppress("DEPRECATION")
+            window.statusBarColor = getColor(if (oscura) R.color.gr_fondo else R.color.qd_reportes_inicio)
             marcarBarra(destino.id)
             invalidateOptionsMenu()
         }
@@ -172,14 +179,33 @@ class MainActivity : AppCompatActivity() {
             Triple(b.icVentas, b.txtVentas, b.rayaVentas),
             Triple(b.icMas, b.txtMas, b.rayaMas)
         )
-        val amarillo = ContextCompat.getColor(this, R.color.dorado_titulo)
+        val dorado = ContextCompat.getColor(this, R.color.gr_oro)
         val gris = ContextCompat.getColor(this, R.color.qd_nav_inactivo)
+        val blanco = ContextCompat.getColor(this, R.color.gr_texto)
         opciones.forEachIndexed { i, (icono, texto, raya) ->
-            val color = if (i == activa) amarillo else gris
-            icono.setColorFilter(color)
-            texto.setTextColor(color)
-            raya.visibility = if (i == activa) View.VISIBLE else View.INVISIBLE
+            val activo = i == activa
+            // Activa: ícono blanco dentro de un círculo verde, texto dorado y rayita dorada
+            icono.setColorFilter(if (activo) blanco else gris)
+            icono.setBackgroundResource(if (activo) R.drawable.bg_gr_nav_activo else 0)
+            texto.setTextColor(if (activo) dorado else gris)
+            raya.visibility = if (activo) View.VISIBLE else View.INVISIBLE
         }
+    }
+
+    /**
+     * Menú del botón ≡ de las pantallas con cabecera propia (Ganancias y Reportes): las mismas opciones
+     * del ⋮ de la barra superior (Ir al inicio y Cerrar sesión).
+     */
+    fun mostrarMenu(ancla: View) {
+        PopupMenu(this, ancla).apply {
+            menuInflater.inflate(R.menu.toolbar_menu, menu)
+            setOnMenuItemClickListener { onOptionsItemSelected(it) }
+        }.show()
+    }
+
+    companion object {
+        /** Pantallas con el diseño oscuro (cabecera propia y fondo casi negro). */
+        val PANTALLAS_OSCURAS = setOf(R.id.nav_ganancias, R.id.nav_reportes)
     }
 
     /** Abre una pantalla desde la barra inferior (sin apilar la misma pantalla dos veces). */

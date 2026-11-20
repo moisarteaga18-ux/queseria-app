@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La foto de la cabecera se funde con el fondo oscuro hacia abajo -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient android:angle="270" android:centerColor="#00070E0A" android:centerY="0.45"
+        android:endColor="@color/gr_fondo" android:startColor="#66070E0A" />
+</shape>

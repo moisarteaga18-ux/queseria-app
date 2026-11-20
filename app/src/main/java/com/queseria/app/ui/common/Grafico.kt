@@ -43,6 +43,11 @@ class Grafico @JvmOverloads constructor(
     private var resaltar: Int = -1
     private var progreso = 1f
 
+    // Colores de los textos (claros por defecto; [modoOscuro] para Reportes)
+    private var colorTexto = ContextCompat.getColor(context, R.color.gris_texto_secundario)
+    private var colorFuerte = ContextCompat.getColor(context, R.color.verde_oscuro)
+    private var colorNegativo = ContextCompat.getColor(context, R.color.rojo_error)
+
     private val densidad = resources.displayMetrics.density
     private fun dp(v: Float) = v * densidad
 
@@ -80,6 +85,17 @@ class Grafico @JvmOverloads constructor(
     private val pPunto = Paint(Paint.ANTI_ALIAS_FLAG)
     private val rect = RectF()
     private val path = Path()
+
+    /** Textos claros y guías tenues para dibujar sobre el fondo oscuro de Reportes. */
+    fun modoOscuro() {
+        colorTexto = 0xFFB9C9BE.toInt()
+        colorFuerte = 0xFFFFFFFF.toInt()
+        colorNegativo = 0xFFFF5263.toInt()
+        pGuia.color = 0x22FFFFFF
+        pBase.color = 0x55FFFFFF
+        pValor.color = colorFuerte
+        invalidate()
+    }
 
     fun mostrar(
         tipo: Tipo,
@@ -136,7 +152,7 @@ class Grafico @JvmOverloads constructor(
         val ancho = (der - izq) / n
         etiquetas.forEachIndexed { i, e ->
             pTexto.typeface = if (i == resaltar) fuenteFuerte else fuente
-            pTexto.color = ContextCompat.getColor(context, if (i == resaltar) R.color.verde_oscuro else R.color.gris_texto_secundario)
+            pTexto.color = if (i == resaltar) colorFuerte else colorTexto
             canvas.drawText(e, izq + ancho * (i + 0.5f), height - paddingBottom - dp(6f), pTexto)
         }
 
@@ -155,7 +171,7 @@ class Grafico @JvmOverloads constructor(
                 val l = x0 + barra * s + dp(1.5f)
                 val r = x0 + barra * (s + 1) - dp(1.5f)
                 rect.set(l, min(cero, cero + alto), r, max(cero, cero + alto))
-                val base = if (v < 0) ContextCompat.getColor(context, R.color.rojo_error) else serie.color
+                val base = if (v < 0) colorNegativo else serie.color
                 // Las semanas que no se resaltan se ven un poco más suaves
                 pRelleno.color = if (resaltar >= 0 && i != resaltar) ColorUtils.setAlphaComponent(base, 0xB0) else base
                 canvas.drawRoundRect(rect, radio, radio, pRelleno)
@@ -165,10 +181,10 @@ class Grafico @JvmOverloads constructor(
                     val ty = if (v >= 0) rect.top - dp(5f) else cero - dp(5f)
                     pValor.textAlign = if (i == etiquetas.lastIndex) Paint.Align.RIGHT else Paint.Align.CENTER
                     val tx = if (i == etiquetas.lastIndex) r else (l + r) / 2
-                    pValor.color = ContextCompat.getColor(context, if (v < 0) R.color.rojo_error else R.color.verde_oscuro)
+                    pValor.color = if (v < 0) colorNegativo else colorFuerte
                     canvas.drawText(formatoValor(v), tx, ty, pValor)
                     pValor.textAlign = Paint.Align.CENTER
-                    pValor.color = ContextCompat.getColor(context, R.color.verde_oscuro)
+                    pValor.color = colorFuerte
                 }
             }
         }
@@ -180,7 +196,7 @@ class Grafico @JvmOverloads constructor(
         val indices = serie.valores.indices.filter { serie.valores[it] != 0.0 }
         val puntos = indices.map { i -> (izq + ancho * (i + 0.5f)) to y(serie.valores[i]) }
         if (puntos.isEmpty()) {
-            pTexto.color = ContextCompat.getColor(context, R.color.gris_texto_secundario)
+            pTexto.color = colorTexto
             canvas.drawText("Sin producciones en estas semanas", width / 2f, abajo / 2, pTexto)
             return
         }

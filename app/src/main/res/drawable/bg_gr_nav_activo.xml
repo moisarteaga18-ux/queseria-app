@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Opción activa de la barra inferior: el ícono va dentro de un círculo verde -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="4dp" android:color="@color/gr_neon_tenue" />
+        </shape>
+    </item>
+    <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+        <shape android:shape="oval">
+            <solid android:color="#1E8A3D" />
+            <stroke android:width="1.5dp" android:color="#9BFFB4" />
+        </shape>
+    </item>
+</layer-list>

@@ -501,9 +501,10 @@
     </style>
 
     <style name="Queseria.NavItem.Icono">
-        <item name="android:layout_width">52dp</item>
-        <item name="android:layout_height">30dp</item>
-        <item name="android:paddingVertical">4dp</item>
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:paddingVertical">7dp</item>
+        <item name="android:paddingHorizontal">7dp</item>
         <item name="android:importantForAccessibility">no</item>
         <item name="tint">@color/qd_nav_inactivo</item>
     </style>
@@ -515,17 +516,69 @@
         <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/qd_nav_inactivo</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">11sp</item>
     </style>
 
     <!-- Rayita amarilla de la opción activa (visible solo en la activa) -->
     <style name="Queseria.NavItem.Raya">
         <item name="android:layout_width">34dp</item>
         <item name="android:layout_height">3dp</item>
-        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginTop">3dp</item>
         <item name="android:background">@drawable/bg_nav_indicador</item>
         <item name="android:visibility">invisible</item>
     </style>
 
 
+
+    <!-- ===== Ganancias y Reportes: diseño oscuro con neón ===== -->
+    <style name="Gr.Rotulo" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/gr_texto</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <!-- Valores grandes: se achican solos (nunca se cortan) en pantallas pequeñas -->
+    <style name="Gr.Valor" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/gr_texto</item>
+        <item name="android:textSize">28sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">14sp</item>
+        <item name="autoSizeMaxTextSize">28sp</item>
+    </style>
+    <style name="Gr.ValorMediano" parent="Gr.Valor">
+        <item name="android:layout_height">28dp</item>
+        <item name="android:textSize">21sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeMaxTextSize">21sp</item>
+    </style>
+    <style name="Gr.Texto" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:textColor">@color/gr_texto</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Gr.Secundario" parent="Gr.Texto">
+        <item name="android:textColor">@color/gr_texto_2</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="Gr.Pildora" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:paddingVertical">4dp</item>
+        <item name="android:textColor">@color/gr_texto</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

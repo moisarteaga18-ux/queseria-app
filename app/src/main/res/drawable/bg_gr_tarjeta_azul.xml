@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vidrio oscuro con borde de neón (Ganancias y Reportes), azul (leche). El brillo son tres trazos en capas, sin desenfoque,
+     para que se dibuje rápido en teléfonos sencillos. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:width="6dp" android:color="@color/gr_azul_tenue" />
+            <corners android:radius="30dp" />
+        </shape>
+    </item>
+    <item android:bottom="3dp" android:left="3dp" android:right="3dp" android:top="3dp">
+        <shape android:shape="rectangle">
+            <gradient android:angle="270" android:endColor="@color/gr_vidrio_abajo" android:startColor="@color/gr_vidrio_arriba" />
+            <stroke android:width="3dp" android:color="@color/gr_azul_suave" />
+            <corners android:radius="26dp" />
+        </shape>
+    </item>
+    <item android:bottom="4dp" android:left="4dp" android:right="4dp" android:top="4dp">
+        <shape android:shape="rectangle">
+            <stroke android:width="1.5dp" android:color="@color/gr_azul" />
+            <corners android:radius="25dp" />
+        </shape>
+    </item>
+</layer-list>

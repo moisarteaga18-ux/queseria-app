@@ -101,4 +101,24 @@
 
     <!-- Aviso superior sin internet -->
     <color name="aviso_sin_internet">#5B4A1E</color>
+
+    <!-- Ganancias y Reportes (diseño oscuro con neón): iguales en modo claro y oscuro -->
+    <color name="gr_fondo">#070E0A</color>
+    <color name="gr_vidrio_arriba">#E6152219</color>
+    <color name="gr_vidrio_abajo">#F00A130D</color>
+    <color name="gr_neon">#38E26A</color>
+    <color name="gr_neon_suave">#5538E26A</color>
+    <color name="gr_neon_tenue">#2238E26A</color>
+    <color name="gr_azul">#3C9BFF</color>
+    <color name="gr_azul_suave">#553C9BFF</color>
+    <color name="gr_azul_tenue">#223C9BFF</color>
+    <color name="gr_rojo">#FF4255</color>
+    <color name="gr_rojo_suave">#55FF4255</color>
+    <color name="gr_rojo_tenue">#22FF4255</color>
+    <color name="gr_texto">#FFFFFF</color>
+    <color name="gr_texto_2">#B9C9BE</color>
+    <color name="gr_oro">#F6C744</color>
+    <color name="gr_positivo">#43E870</color>
+    <color name="gr_negativo">#FF5263</color>
+    <color name="gr_barra">#0D1A12</color>
 </resources>

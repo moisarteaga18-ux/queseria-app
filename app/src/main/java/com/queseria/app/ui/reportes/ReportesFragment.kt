@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.queseria.app.MainActivity
 import com.queseria.app.R
 import com.queseria.app.api.Resultado
 import com.queseria.app.api.RetrofitClient
@@ -44,6 +45,14 @@ class ReportesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.cabecera.tvTitulo.text = "Reportes"
+        binding.cabecera.btnMenu.setOnClickListener { (activity as? MainActivity)?.mostrarMenu(it) }
+        binding.cabecera.btnAccion.visibility = View.VISIBLE
+        binding.cabecera.btnAccion.setOnClickListener { cargar() }
+        listOf(binding.graficoIngresos, binding.graficoGanancia, binding.graficoRendimiento, binding.graficoMerma)
+            .forEach { it.modoOscuro() }
+        binding.swipeRefresh.setColorSchemeResources(R.color.gr_neon)
+        binding.swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.gr_barra)
         binding.btnGanancias.setOnClickListener { findNavController().navigate(R.id.nav_ganancias) }
         binding.btnRendimiento.setOnClickListener { findNavController().navigate(R.id.nav_rendimiento) }
         binding.swipeRefresh.setOnRefreshListener { cargar() }
@@ -89,14 +98,29 @@ class ReportesFragment : Fragment() {
 
     private fun mostrarGanancias(g: Ganancias) {
         val s = g.semanaActual
+        // Negativa en rojo, positiva en verde (nunca una pérdida en verde)
+        binding.tvGananciaTitulo.text = if (s.completa) "Ganancia de esta semana" else "Ganancia de esta semana (hasta hoy)"
         binding.tvGanancia.text = Formato.moneda(s.ganancia)
-        binding.tvGananciaCambio.text = when {
-            g.semanaAnterior.ganancia == 0.0 && g.variacion == 0.0 -> "Sin datos de la semana anterior"
-            else -> "${if (g.variacion >= 0) "▲" else "▼"} ${Formato.moneda(kotlin.math.abs(g.variacion))}" +
+        binding.tvGanancia.setTextColor(color(if (s.ganancia < 0) R.color.gr_negativo else R.color.gr_texto))
+        val sinDatos = g.semanaAnterior.ganancia == 0.0 && g.variacion == 0.0
+        binding.tvGananciaCambio.text = if (sinDatos) "Sin datos de la semana anterior" else
+            "${if (g.variacion < 0) "▼" else "▲"} ${Formato.moneda(kotlin.math.abs(g.variacion))}" +
                 (if (g.porcentaje != 0.0) " (${Formato.numero(kotlin.math.abs(g.porcentaje), 1)} %)" else "") +
                 " vs. semana anterior"
-        }
-        binding.tvGananciaDetalle.text = "Ventas ${Formato.moneda(s.ingresos)} · Leche ${Formato.moneda(s.costoLeche)}"
+        binding.tvGananciaCambio.setBackgroundResource(when {
+            sinDatos -> R.drawable.bg_gr_pildora_verde
+            g.variacion < 0 -> R.drawable.bg_gr_pildora_roja
+            else -> R.drawable.bg_gr_pildora_verde
+        })
+        binding.tvSemanaInfo.text = "Semana ${s.semana} · " + (s.rango?.texto ?: "") +
+            if (!s.completa) "\nLo vendido el viernes cuenta primero para la semana que cerró el jueves." else ""
+        // La ilustración de la flecha sube; con pérdida se gira para que apunte hacia abajo
+        binding.ivGanancia.scaleY = if (s.ganancia < 0) -1f else 1f
+        binding.tvVentas.text = Formato.moneda(s.ingresos)
+        binding.tvVentasDetalle.text = "${Formato.kg(s.kgVendidos)} vendidos"
+        binding.tvLeche.text = Formato.moneda(s.costoLeche)
+        binding.tvLecheDetalle.text = Formato.litros(s.litrosComprados) +
+            if (s.costoLitro > 0) " × ${Formato.moneda(s.costoLitro)}" else " · sin precio del litro"
     }
 
     private fun mostrarGraficos(semanas: List<ResumenSemana>) {
@@ -106,8 +130,8 @@ class ReportesFragment : Fragment() {
             Grafico.Tipo.BARRAS,
             etiquetas,
             listOf(
-                Grafico.Serie("Ventas", semanas.map { it.ingresos }, color(R.color.verde_principal)),
-                Grafico.Serie("Leche comprada", semanas.map { it.costoLeche }, color(R.color.dorado))
+                Grafico.Serie("Ventas", semanas.map { it.ingresos }, color(R.color.gr_neon)),
+                Grafico.Serie("Leche comprada", semanas.map { it.costoLeche }, color(R.color.gr_oro))
             ),
             resaltar = actual,
             formatoValor = ::monedaCorta
@@ -115,7 +139,7 @@ class ReportesFragment : Fragment() {
         binding.graficoGanancia.mostrar(
             Grafico.Tipo.BARRAS,
             etiquetas,
-            listOf(Grafico.Serie("Ganancia", semanas.map { it.ganancia }, color(R.color.verde_claro))),
+            listOf(Grafico.Serie("Ganancia", semanas.map { it.ganancia }, color(R.color.gr_positivo))),
             resaltar = actual,
             formatoValor = ::monedaCorta
         )
@@ -123,7 +147,7 @@ class ReportesFragment : Fragment() {
             Grafico.Tipo.BARRAS,
             etiquetas,
             // Semanas sin completar (no ha terminado su viernes siguiente) quedan en 0: su merma todavía no existe
-            listOf(Grafico.Serie("Merma", semanas.map { it.mermaPct ?: 0.0 }, color(R.color.dorado))),
+            listOf(Grafico.Serie("Merma", semanas.map { it.mermaPct ?: 0.0 }, color(R.color.gr_rojo))),
             resaltar = actual,
             formatoValor = { "${Formato.numero(it, 1)} %" }
         )
@@ -131,7 +155,7 @@ class ReportesFragment : Fragment() {
         binding.graficoRendimiento.mostrar(
             Grafico.Tipo.LINEA,
             etiquetas,
-            listOf(Grafico.Serie("Libras por lata", semanas.map { it.librasPorLata }, color(R.color.verde_principal))),
+            listOf(Grafico.Serie("Libras por lata", semanas.map { it.librasPorLata }, color(R.color.gr_neon))),
             resaltar = actual,
             formatoValor = { Formato.numero(it, 1) }
         )
@@ -147,19 +171,21 @@ class ReportesFragment : Fragment() {
         semanas.filter { it.kgProducidos > 0 || (it.mermaKg ?: 0.0) != 0.0 }.takeLast(4).reversed().forEachIndexed { i, s ->
             val fila = ItemDiaBinding.inflate(layoutInflater, contenedor, false)
             val kg = s.mermaKg
+            fila.tvDia.setTextColor(color(R.color.gr_texto))
+            fila.tvEntregas.setTextColor(color(R.color.gr_texto_2))
             fila.tvDia.text = "Semana ${s.semana}" + if (s.revisar != null) " ⚠ revisar" else ""
             if (!s.completa || kg == null) {
                 fila.tvEntregas.text = "Se completa al terminar el viernes · vendido ${Formato.kg(s.kgVendidos)} de ${Formato.kg(s.kgProducidos)}"
                 fila.tvLitros.text = "—"
-                fila.tvLitros.setTextColor(color(R.color.gris_texto_secundario))
+                fila.tvLitros.setTextColor(color(R.color.gr_texto_2))
             } else {
                 fila.tvEntregas.text = "${Formato.numero(s.mermaPct ?: 0.0, 1)} % de ${Formato.kg(s.kgProducidos)}"
                 fila.tvLitros.text = Formato.kg(kg)
-                fila.tvLitros.setTextColor(color(if (kg < 0 || s.revisar != null) R.color.rojo_error else R.color.ambar_advertencia))
+                fila.tvLitros.setTextColor(color(if (kg < 0 || s.revisar != null) R.color.gr_negativo else R.color.gr_oro))
             }
             if (i % 2 == 0) {
                 fila.root.setBackgroundResource(R.drawable.bg_chip)
-                fila.root.backgroundTintList = android.content.res.ColorStateList.valueOf(color(R.color.beige_fondo))
+                fila.root.backgroundTintList = android.content.res.ColorStateList.valueOf(0x14FFFFFF)
             }
             contenedor.addView(fila.root)
         }
@@ -187,17 +213,21 @@ class ReportesFragment : Fragment() {
         if (grupos.isEmpty()) {
             contenedor.addView(TextView(requireContext()).apply {
                 text = "No hay ventas en los últimos 30 días."
-                setTextColor(color(R.color.gris_texto_secundario))
+                setTextColor(color(R.color.gr_texto_2))
                 setPadding(0, 16, 0, 8)
             })
             return
         }
         val totalGeneral = ventas.sumOf { it.total }
         val mayor = grupos.first().third
-        val colores = listOf(R.color.verde_principal, R.color.verde_claro, R.color.dorado)
+        val colores = listOf(R.color.gr_neon, R.color.gr_positivo, R.color.gr_oro)
         grupos.take(6).forEachIndexed { i, (cliente, num, total) ->
             val fila = ItemBarraClienteBinding.inflate(layoutInflater, contenedor, false)
             fila.tvNombre.text = cliente
+            fila.tvNombre.setTextColor(color(R.color.gr_texto))
+            fila.tvTotal.setTextColor(color(R.color.gr_neon))
+            fila.tvDetalle.setTextColor(color(R.color.gr_texto_2))
+            fila.barra.trackColor = 0x22FFFFFF
             fila.tvTotal.text = Formato.moneda(total)
             fila.barra.setIndicatorColor(color(colores.getOrElse(i) { R.color.verde_principal }))
             fila.barra.progress = if (mayor > 0) (total * 100 / mayor).toInt().coerceAtLeast(2) else 0

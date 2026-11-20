@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Barra inferior de toda la app (guía de diseño): Inicio, Reportes, Ventas y Más.
-     La opción activa va en amarillo con una rayita debajo (MainActivity.marcarBarra). -->
+<!-- Barra inferior de toda la app: flotante, oscura y con borde verde brillante. Inicio, Reportes, Ventas y Más.
+     La opción activa lleva el ícono en un círculo verde, el texto dorado y una rayita dorada (MainActivity.marcarBarra). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="@drawable/bg_barra_inferior"
+    android:layout_height="74dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="4dp"
+    android:background="@drawable/bg_gr_barra"
     android:elevation="8dp"
     android:orientation="horizontal"
-    android:paddingHorizontal="6dp">
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="4dp">
 
     <LinearLayout android:id="@+id/navInicio" style="@style/Queseria.NavItem">
         <ImageView android:id="@+id/icInicio" style="@style/Queseria.NavItem.Icono" android:src="@drawable/ic_qd_nav_inicio" />

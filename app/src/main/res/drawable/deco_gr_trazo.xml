@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Trazo verde curvo bajo "Tu negocio más rentable" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="150dp" android:height="12dp" android:viewportWidth="150" android:viewportHeight="12">
+    <path android:pathData="M2,9 C40,2 95,1 148,6" android:strokeColor="@color/gr_neon"
+        android:strokeLineCap="round" android:strokeWidth="3" />
+</vector>

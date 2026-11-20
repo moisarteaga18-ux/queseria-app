@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- La foto se oscurece a la izquierda para que el título se lea -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient android:angle="0" android:centerColor="#88070E0A" android:centerX="0.35"
+        android:endColor="#00070E0A" android:startColor="@color/gr_fondo" />
+</shape>
