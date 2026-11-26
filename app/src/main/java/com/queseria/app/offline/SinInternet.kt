@@ -109,7 +109,7 @@ fun Pendiente.comoVenta(): Venta {
     val r = gson.fromJson(cuerpo, VentaRequest::class.java)
     return Venta(fecha = r.fecha ?: fecha, tipoVenta = r.tipoVenta, cliente = nombre ?: r.cliente, clienteId = r.clienteId,
         productoId = r.productoId, cantidad = r.cantidad, unidad = r.unidad, precioUnitario = r.precioUnitario,
-        totalVenta = r.cantidad * r.precioUnitario, pendiente = this)
+        totalVenta = r.cantidad * r.precioUnitario, fiada = r.fiada, pendiente = this)
 }
 
 /** Texto corto de la etiqueta en las listas. */

@@ -33,6 +33,18 @@ object Unidad {
 /** Total de la venta: el que manda el backend o, si no viene, cantidad × precio. */
 val Venta.total: Double get() = totalVenta ?: (cantidad * precioUnitario)
 
+/**
+ * Lo que falta por cobrar de la venta: 0 si está pagada (las ventas sin "fiada", todas las antiguas, están
+ * pagadas). Una fiada sin el dato del servidor (hecha sin internet) debe todo su total.
+ */
+val Venta.debe: Double get() = if (fiada == true) (saldo ?: total).coerceAtLeast(0.0) else 0.0
+
+/** Venta fiada que todavía debe algo. */
+val Venta.porCobrar: Boolean get() = debe > 0.5
+
+/** "Pagada" o "Debe $ 70.000". */
+val Venta.textoPago: String get() = if (porCobrar) "Debe ${Formato.moneda(debe)}" else "Pagada"
+
 /** Fila de lista para una venta (se usa en Ventas y en el detalle de un cliente). */
 fun filaVenta(v: Venta, mostrarCliente: Boolean = true) = Fila(
     titulo = if (mostrarCliente) (v.cliente?.takeIf { it.isNotBlank() } ?: "Cliente ocasional")

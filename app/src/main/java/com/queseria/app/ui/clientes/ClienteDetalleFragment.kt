@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.queseria.app.R
 import com.queseria.app.api.RetrofitClient
+import com.queseria.app.ui.cobros.abrirAbonos
+import com.queseria.app.ui.cobros.comoCobro
 import com.queseria.app.databinding.CabeceraClienteBinding
 import com.queseria.app.databinding.FragmentListaBinding
 import com.queseria.app.models.Cliente
@@ -35,8 +38,11 @@ class ClienteDetalleFragment : Fragment() {
     private var cliente: Cliente? = null
     private val clienteId by lazy { arguments?.getString(ARG_ID).orEmpty() }
 
-    // Compras del cliente: misma tabla que Ventas (sin la columna Cliente)
-    private val adapter = tablaVentas(porSemana = false, conCliente = false)
+    // Compras del cliente: misma tabla que Ventas (sin la columna Cliente). Tocar una fiada = sus abonos.
+    private val adapter = tablaVentas(porSemana = false, conCliente = false) { v ->
+        if (v.fiada == true) v.comoCobro()?.let { abrirAbonos(it) { recargar() } }
+        else toast("Venta pagada. Para corregirla, ábrela en Ventas.")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListaBinding.inflate(inflater, container, false)
@@ -53,9 +59,10 @@ class ClienteDetalleFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { cargarVentas() }
 
         cabecera.btnEditar.setOnClickListener {
-            cliente?.let { c -> abrirFormularioCliente(c) { mostrarCliente(it); cargarVentas() } }
+            cliente?.let { c -> abrirFormularioCliente(c) { recargar() } }
         }
         cabecera.btnEliminar.setOnClickListener { eliminar() }
+        cabecera.tarjetaDebe.setOnClickListener { findNavController().navigate(R.id.nav_cuentas_cobrar) }
         cabecera.btnLlamar.setOnClickListener {
             cliente?.telefono?.let { tel -> startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$tel"))) }
         }
@@ -82,6 +89,17 @@ class ClienteDetalleFragment : Fragment() {
         cabecera.tvNotas.text = c.notas
         cabecera.tvNotas.visibility = if (c.notas == null) View.GONE else View.VISIBLE
         cabecera.btnLlamar.isEnabled = c.telefono != null
+        val debe = c.debe ?: 0.0
+        cabecera.tvDebe.text = Formato.moneda(debe)
+        cabecera.tvDebe.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(),
+            if (debe > 0.5) R.color.ambar_advertencia else R.color.verde_principal))
+        cabecera.tvDebeDetalle.text = if (debe > 0.5) "te debe · toca para ver las cuentas por cobrar" else "no te debe nada"
+    }
+
+    /** Después de un abono: lo que debe y sus compras. */
+    private fun recargar() {
+        conApi({ RetrofitClient.api.getCliente(clienteId) }) { c -> c?.let { mostrarCliente(it) } }
+        cargarVentas()
     }
 
     private fun cargarVentas() {

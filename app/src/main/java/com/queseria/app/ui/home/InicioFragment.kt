@@ -115,6 +115,8 @@ class InicioFragment : Fragment() {
                 R.color.qd_c_clientes, R.color.qd_clientes, R.drawable.img_clientes_apreton, 46),
             Opcion("Productos", "", R.drawable.ic_qd_productos, R.id.nav_productos,
                 R.color.qd_c_productos, R.color.qd_productos, R.drawable.img_productos_queso, 46),
+            Opcion("Por cobrar", "", R.drawable.ic_dinero, R.id.nav_cuentas_cobrar,
+                R.color.qd_c_precios, R.color.qd_precios, R.drawable.img_nueva_venta_queso, 46),
             Opcion("Configuración", "", R.drawable.ic_qd_configuracion, null,
                 R.color.qd_c_configuracion, R.color.qd_configuracion, R.drawable.img_configuracion_engranajes, 36,
                 accion = { abrirConfiguracion() })
@@ -360,7 +362,8 @@ class InicioFragment : Fragment() {
         kgHoy = r.kgProducidosHoy
         mostrarDetalleQueso()
         binding.tvVentas.text = Formato.moneda(r.totalVentasHoy)
-        binding.tvVentasDetalle.text = "${r.numeroVentasHoy} ${if (r.numeroVentasHoy == 1) "venta" else "ventas"}"
+        binding.tvVentasDetalle.text = "${r.numeroVentasHoy} ${if (r.numeroVentasHoy == 1) "venta" else "ventas"}" +
+            if (r.porCobrarTotal > 0.5) " · te deben ${Formato.moneda(r.porCobrarTotal)}" else ""
     }
 
     private fun mostrarDetalleQueso() {

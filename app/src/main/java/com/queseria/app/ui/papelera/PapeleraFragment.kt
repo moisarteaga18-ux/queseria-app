@@ -110,7 +110,9 @@ class PapeleraFragment : Fragment() {
             })
         }
         val aviso = when (e.tipo) {
-            "venta" -> "El queso se vuelve a descontar del inventario (si no alcanza el stock, no se recupera)."
+            "venta" -> "El queso se vuelve a descontar del inventario (si no alcanza el stock, no se recupera). " +
+                "Si tenía abonos, vuelven con ella."
+            "abono" -> "Vuelve a la venta (si ya se pagó completa por otro lado, no se recupera)."
             "produccion" -> "El queso se vuelve a sumar al inventario."
             "liquidacion" -> "Vuelve con su mismo número, pendiente de pago."
             else -> null

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Abonos de una venta fiada: cliente, total / abonado / falta, estado y la tabla de abonos. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvCliente"
+            style="@style/Queseria.Etiqueta"
+            android:drawableStart="@drawable/ic_campo_cliente"
+            android:textSize="18sp" />
+        <TextView
+            android:id="@+id/tvDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/gris_texto_secundario"
+            android:textSize="14sp" />
+
+        <!-- Total | Abonado | Falta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:padding="12dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total"
+                    android:textColor="@color/gris_texto_secundario"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/gris_texto_principal"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Abonado"
+                    android:textColor="@color/gris_texto_secundario"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvAbonado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/verde_principal"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Falta"
+                    android:textColor="@color/gris_texto_secundario"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvFalta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/ambar_advertencia"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvEstado"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_pago"
+            android:text="Abonos" />
+        <LinearLayout
+            android:id="@+id/tablaAbonos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical" />
+        <TextView
+            android:id="@+id/tvAyuda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Toca un abono para corregirlo o borrarlo."
+            android:textColor="@color/gris_texto_secundario"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+</ScrollView>

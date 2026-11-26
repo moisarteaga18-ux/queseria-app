@@ -53,6 +53,11 @@ import com.queseria.app.offline.pendientesDe
 import com.queseria.app.ui.ventas.TipoVenta
 import com.queseria.app.ui.ventas.Unidad
 import com.queseria.app.ui.ventas.total
+import com.queseria.app.ui.ventas.debe
+import com.queseria.app.ui.ventas.porCobrar
+import com.queseria.app.ui.ventas.textoPago
+import com.queseria.app.ui.cobros.abrirAbonos
+import com.queseria.app.ui.cobros.comoCobro
 import com.queseria.app.util.Formato
 import com.queseria.app.util.Semana
 import java.time.LocalDate
@@ -342,6 +347,31 @@ class VentasFragment : Fragment() {
         }
         f.etCantidad.doAfterTextChanged { actualizarTextos() }
         f.etPrecio.doAfterTextChanged { actualizarTextos() }
+
+        // Pago: "Pagada" (por defecto) o "Pendiente por pagar" (fiada: se paga después con abonos)
+        val abonado = existente?.abonado ?: 0.0
+        if (existente?.fiada == true) f.rbPendiente.isChecked = true
+        fun avisoPago() {
+            f.tvAvisoPago.text = when {
+                f.rbPendiente.isChecked && existente?.fiada != true ->
+                    "Queda en Cuentas por cobrar. Cuenta en las ventas de esta semana aunque no la hayan pagado."
+                existente?.fiada == true && abonado > 0.5 ->
+                    "Ya te abonaron ${Formato.moneda(abonado)}: para dejarla pagada, registra un abono por lo que falta."
+                else -> ""
+            }
+        }
+        // Con abonos no se puede marcar "Pagada" a mano (se paga con un abono por lo que falta)
+        if (existente?.fiada == true && abonado > 0.5) f.rbPagada.isEnabled = false
+        f.rgPago.setOnCheckedChangeListener { _, _ -> avisoPago() }
+        avisoPago()
+        val ventaFiada = existente?.takeIf { it.fiada == true && it.pendiente == null }
+        val cobro = ventaFiada?.comoCobro()
+        if (ventaFiada != null && cobro != null) {
+            f.btnAbonos.visibility = View.VISIBLE
+            f.btnAbonos.text = if (ventaFiada.porCobrar) "Abonos de esta venta · falta ${Formato.moneda(ventaFiada.debe)}"
+                else "Abonos de esta venta · pagada"
+            f.btnAbonos.setOnClickListener { abrirAbonos(cobro) { cargar() } }
+        }
         sugerirPrecio()
         actualizarTextos()
         cargarPrecios()
@@ -378,15 +408,17 @@ class VentasFragment : Fragment() {
                 cantidad = cantidad,
                 unidad = unidad,
                 precioUnitario = precio,
-                fecha = fecha
+                fecha = fecha,
+                fiada = f.rbPendiente.isChecked
             )
+            val textoPago = if (f.rbPendiente.isChecked) " (pendiente por pagar)" else ""
             val id = existente?.id
             if (id == null) {
                 // Lleva idLocal: sin internet queda en el teléfono y al subirse no se duplica
                 val nueva = request.copy(idLocal = nuevoIdLocal())
                 val enCola = pendiente(Pendiente.VENTA, nueva.idLocal!!, nueva, fecha,
                     "venta de ${Formato.moneda(cantidad * precio)} a ${cliente.nombre} (${Formato.fechaLegible(fecha)})", cliente.nombre)
-                guardarOEnCola(dialogo, "Listo: venta de ${Formato.moneda(cantidad * precio)}", enCola, {
+                guardarOEnCola(dialogo, "Listo: venta de ${Formato.moneda(cantidad * precio)}$textoPago", enCola, {
                     RetrofitClient.api.crearVenta(nueva)
                 }) { cargar() }
             } else {
@@ -399,7 +431,9 @@ class VentasFragment : Fragment() {
                     Cambio("Producto", productoAntes, prod?.nombre ?: "No descontar del inventario"),
                     Cambio("Cantidad", cantidadCorta(existente.cantidad, existente.unidad), cantidadCorta(cantidad, unidad)),
                     Cambio("Precio", Formato.moneda(existente.precioUnitario), Formato.moneda(precio)),
-                    Cambio("Total", Formato.moneda(existente.total), Formato.moneda(cantidad * precio))
+                    Cambio("Total", Formato.moneda(existente.total), Formato.moneda(cantidad * precio)),
+                    Cambio("Pago", if (existente.fiada == true) "Pendiente por pagar" else "Pagada",
+                        if (f.rbPendiente.isChecked) "Pendiente por pagar" else "Pagada")
                 )) {
                     guardarEnApi(dialogo, "Venta corregida: ${Formato.moneda(cantidad * precio)}", {
                         RetrofitClient.api.actualizarVenta(id, request.copy(productoId = prod?.id ?: ""))
@@ -419,8 +453,12 @@ class VentasFragment : Fragment() {
             Dato("Fecha", Formato.fechaLegible(v.fecha)),
             Dato("Cliente", v.cliente ?: "Cliente ocasional"),
             Dato("Cantidad", "${cantidadCorta(v.cantidad, v.unidad)} · ${tipoLegible(v.tipoVenta)}"),
-            Dato("Valor", Formato.moneda(v.total))
-        ), aviso = if (v.productoId != null) "El queso vuelve al inventario." else null) {
+            Dato("Valor", Formato.moneda(v.total)),
+            Dato("Pago", if (v.fiada == true) v.textoPago else "Pagada")
+        ), aviso = listOfNotNull(
+            if (v.productoId != null) "El queso vuelve al inventario." else null,
+            if (v.fiada == true && (v.abonado ?: 0.0) > 0.5) "Sus abonos (${Formato.moneda(v.abonado ?: 0.0)}) se borran con ella y vuelven si la recuperas." else null
+        ).joinToString("\n").ifEmpty { null }) {
             borrarConDeshacer("Venta borrada", { RetrofitClient.api.eliminarVenta(id) }) { cargar() }
         }
     }

@@ -28,6 +28,7 @@ data class EntradaPapelera(
         "venta" -> "Venta"
         "descuento" -> "Adelanto o descuento"
         "liquidacion" -> "Liquidación anulada"
+        "abono" -> "Abono"
         else -> tipo
     }
 }

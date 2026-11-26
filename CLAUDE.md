@@ -498,6 +498,22 @@ por registrar"; "Registrar merma" en Inicio → Hoy (sin ventana automática) y 
         Probado en el emulador (servidor local + base temporal en memoria, usuario `demo`): capturas en
         `Escritorio\Capturas QuesoData 2026-11-25`. App 18/18. Sin subir.
 
+### Parte 25 — Ventas fiadas y abonos
+98. [x] Servidor: `Venta.fiada` (true = pendiente por pagar; sin el campo = pagada, así quedan todas las antiguas sin
+        tocarlas; el usuario pidió `fiada` en vez de `estadoPago`) y colección nueva `abonos` (ventaId, fecha, valor, nota).
+        `utils/cobros.js`: saldo = total − abonos; pagada cuando el saldo llega a 0. Rutas: `GET /ventas` trae
+        `abonado`/`saldo`; `GET /ventas/por-cobrar?fecha=` (cuentas, abonos y deuda por cliente); `/api/abonos` (GET por
+        venta, POST, PUT, DELETE → papelera). Reglas: fiada exige cliente; abono ≤ lo que falta y no antes de la venta;
+        no se marca pagada una venta con abonos ni se baja el total por debajo de lo abonado. Borrar una venta guarda sus
+        abonos en la papelera con ella (`Papelera.extra`) y al restaurarla vuelven. Clientes traen `debe`; resumen trae
+        `porCobrar` por semana y `porCobrarTotal` hoy. La venta fiada cuenta en su semana (ventas y ganancia) igual que
+        antes. `test/cobros.test.js` 14; total 201/201.
+        App: "Pago" (Pagada / Por pagar) en el formulario de venta; columna Pago en Ventas y en el cliente ("Debe $ X" en
+        ámbar); "Cuentas por cobrar" (Inicio → Más opciones y menú Más): Cliente | Debe | Desde | Días | Total | Abonado;
+        tocar = abonos de la venta (registrar, corregir con cambios a la vista, borrar con confirmación + Deshacer dentro
+        de la ventana). Cliente: tarjeta "te debe". Inicio: "te deben $ X". Abonos necesitan internet. App 18/18.
+        Probado en el emulador (servidor local + base temporal); capturas 06–13 en `Escritorio\Capturas QuesoData 2026-11-25`.
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.

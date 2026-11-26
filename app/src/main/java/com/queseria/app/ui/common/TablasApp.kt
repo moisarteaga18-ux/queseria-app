@@ -13,6 +13,9 @@ import com.queseria.app.models.Venta
 import com.queseria.app.offline.etiqueta
 import com.queseria.app.ui.liquidaciones.LiquidacionPdf
 import com.queseria.app.ui.ventas.TipoVenta
+import com.queseria.app.ui.ventas.debe
+import com.queseria.app.ui.ventas.porCobrar
+import com.queseria.app.ui.ventas.textoPago
 import com.queseria.app.ui.ventas.total
 import com.queseria.app.util.Formato
 import com.queseria.app.util.Semana
@@ -42,8 +45,9 @@ private fun plural(n: Int, uno: String, varios: String) = "$n ${if (n == 1) uno 
 // ========================= VENTAS =========================
 
 /**
- * Ventas: Fecha (fija) | Cliente | Tipo | Cantidad | Precio | Total. [porSemana] = la lista es de una sola
+ * Ventas: Fecha (fija) | Cliente | Tipo | Cantidad | Precio | Total | Pago. [porSemana] = la lista es de una sola
  * semana (la fecha va como "vie 20"); si no, "20 nov". [conCliente] = false en la página de un cliente.
+ * Pago: "Pagada" o "Debe $ …" (venta fiada con saldo, en ámbar).
  */
 fun tablaVentas(
     porSemana: Boolean,
@@ -56,8 +60,10 @@ fun tablaVentas(
         Tabla.Columna("Tipo", 74),
         Tabla.Columna("Cantidad", 96, numero = true),
         Tabla.Columna("Precio", 100, numero = true),
-        Tabla.Columna("Total", 116, numero = true)
+        Tabla.Columna("Total", 116, numero = true),
+        Tabla.Columna("Pago", 132, numero = true)
     )
+    val pago = columnas.lastIndex
     return Tabla(
         columnas = columnas,
         celdas = { v ->
@@ -67,12 +73,14 @@ fun tablaVentas(
                 if (v.tipoVenta == TipoVenta.MAYORISTA) "Mayor" else "Detal",
                 cantidadCorta(v.cantidad, v.unidad),
                 Formato.moneda(v.precioUnitario),
-                Formato.moneda(v.total)
+                Formato.moneda(v.total),
+                v.textoPago
             )
         },
         marca = { v -> marcaPendiente(v.pendiente) },
         nota = { v -> v.pendiente?.etiqueta },
-        alTocar = alTocar
+        alTocar = alTocar,
+        colorCelda = { v, i -> if (i == pago) (if (v.porCobrar) R.color.ambar_advertencia else R.color.verde_principal) else null }
     )
 }
 
@@ -82,7 +90,8 @@ fun totalesVentas(ventas: List<Venta>, conCliente: Boolean = true): List<String>
         "Total",
         if (conCliente) plural(ventas.size, "venta", "ventas") else null,
         if (conCliente) "" else plural(ventas.size, "venta", "ventas"),
-        Formato.kg(kg), "", Formato.moneda(ventas.sumOf { it.total })
+        Formato.kg(kg), "", Formato.moneda(ventas.sumOf { it.total }),
+        ventas.sumOf { it.debe }.let { if (it > 0.5) "Debe ${Formato.moneda(it)}" else "Todo pagado" }
     )
 }
 

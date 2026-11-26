@@ -74,6 +74,34 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Lo que debe (ventas fiadas con saldo); tocar = Cuentas por cobrar -->
+    <LinearLayout
+        android:id="@+id/tarjetaDebe"
+        style="@style/Queseria.Tarjeta"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView android:id="@+id/tvDebe" style="@style/Queseria.ValorGrande" android:text="—"
+                android:textColor="@color/ambar_advertencia" />
+            <TextView android:id="@+id/tvDebeDetalle" style="@style/Queseria.TextoSecundario" android:text="te debe" />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_flecha_derecha"
+            app:tint="@color/gris_texto_secundario"
+            xmlns:app="http://schemas.android.com/apk/res-auto" />
+    </LinearLayout>
+
     <TextView style="@style/Queseria.TituloSeccion" android:text="Historial de compras" android:layout_marginBottom="0dp" />
 
 </LinearLayout>

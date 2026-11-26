@@ -124,6 +124,24 @@ interface QueseriaApi {
     suspend fun eliminarVenta(@Path("id") id: String): Response<ApiResponse<Borrado>>
 
     // ========================================
+    // VENTAS FIADAS: cuentas por cobrar y abonos (necesitan internet)
+    // ========================================
+    @GET("ventas/por-cobrar")
+    suspend fun getCuentasPorCobrar(@Query("fecha") fecha: String = Formato.hoyIso()): Response<ApiResponse<CuentasPorCobrar>>
+
+    @GET("abonos")
+    suspend fun getAbonos(@Query("ventaId") ventaId: String): Response<ApiResponse<List<Abono>>>
+
+    @POST("abonos")
+    suspend fun crearAbono(@Body request: AbonoRequest): Response<ApiResponse<AbonoGuardado>>
+
+    @PUT("abonos/{id}")
+    suspend fun actualizarAbono(@Path("id") id: String, @Body request: AbonoRequest): Response<ApiResponse<AbonoGuardado>>
+
+    @DELETE("abonos/{id}")
+    suspend fun eliminarAbono(@Path("id") id: String): Response<ApiResponse<Borrado>>
+
+    // ========================================
     // RESUMEN / GANANCIAS
     // ========================================
 

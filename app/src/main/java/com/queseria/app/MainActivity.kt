@@ -218,6 +218,7 @@ class MainActivity : AppCompatActivity() {
     private fun abrirMas() {
         val opciones = listOf<Pair<String, () -> Unit>>(
             "Inventario" to { ir(R.id.nav_inventario) },
+            "Cuentas por cobrar (ventas fiadas)" to { ir(R.id.nav_cuentas_cobrar) },
             "Liquidación a ganaderos" to { ir(R.id.nav_liquidaciones) },
             "Precios" to { ir(R.id.nav_precios) },
             "Ganaderos" to { ir(R.id.nav_ganaderos) },

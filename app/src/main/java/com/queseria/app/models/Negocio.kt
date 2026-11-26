@@ -64,7 +64,9 @@ data class Cliente(
     val telefono: String? = null,
     val direccion: String? = null,
     val tipo: String = MINORISTA,
-    val notas: String? = null
+    val notas: String? = null,
+    /** Lo que debe (ventas fiadas con saldo); lo calcula el servidor. */
+    val debe: Double? = null
 ) {
     companion object {
         const val MAYORISTA = "Mayorista"

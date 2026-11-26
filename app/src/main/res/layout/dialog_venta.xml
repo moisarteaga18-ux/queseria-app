@@ -120,5 +120,41 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <!-- ¿Ya pagó? Por defecto "Pagada". "Pendiente por pagar" = fiada: se paga después con abonos -->
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_pago"
+            android:text="Pago" />
+        <RadioGroup
+            android:id="@+id/rgPago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/rbPagada"
+                style="@style/Queseria.Opcion.Fila"
+                android:checked="true"
+                android:drawableStart="@drawable/ic_campo_dinero"
+                android:text="Pagada" />
+            <RadioButton
+                android:id="@+id/rbPendiente"
+                style="@style/Queseria.Opcion.Fila"
+                android:drawableStart="@drawable/ic_campo_fecha"
+                android:text="Por pagar" />
+        </RadioGroup>
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvAvisoPago"
+            style="@style/Queseria.Aviso" />
+        <TextView
+            android:id="@+id/btnAbonos"
+            style="@style/Queseria.Opcion.Fila"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:button="@null"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_campo_mano_dinero"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:text="Abonos de esta venta"
+            android:visibility="gone" />
+
     </LinearLayout>
 </ScrollView>

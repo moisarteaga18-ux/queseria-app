@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Registrar o corregir un abono a una venta fiada: fecha, valor (con "Todo lo que falta") y nota. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp">
+
+        <com.queseria.app.ui.common.Aviso
+            android:id="@+id/tvVenta"
+            style="@style/Queseria.Aviso" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_fecha"
+            android:text="Fecha del abono" />
+        <TextView
+            android:id="@+id/tvFecha"
+            style="@style/Queseria.CampoFecha" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_dinero"
+            android:text="Valor del abono *" />
+        <EditText
+            android:id="@+id/etValor"
+            style="@style/Queseria.Input"
+            android:hint="0"
+            android:inputType="number" />
+        <TextView
+            android:id="@+id/btnTodo"
+            style="@style/Queseria.Opcion.Fila"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:button="@null"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_campo_mano_dinero"
+            android:focusable="true"
+            android:gravity="center_vertical" />
+
+        <TextView style="@style/Queseria.Etiqueta" android:drawableStart="@drawable/ic_campo_nota"
+            android:text="Nota" />
+        <EditText
+            android:id="@+id/etNota"
+            style="@style/Queseria.Input"
+            android:hint="Opcional (efectivo, Nequi…)"
+            android:inputType="textCapSentences" />
+
+    </LinearLayout>
+</ScrollView>

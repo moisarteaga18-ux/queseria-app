@@ -147,6 +147,8 @@ fun Fragment.confirmarCambios(cambios: List<Cambio>, aviso: String? = null, alCo
 fun Fragment.borrarConDeshacer(
     mensaje: String,
     llamada: suspend (confirmar: Boolean) -> Response<ApiResponse<Borrado>>,
+    /** Dónde mostrar "Deshacer" si se borra desde una ventana que sigue abierta (si no, la pantalla). */
+    enVentana: () -> View? = { null },
     alTerminar: () -> Unit
 ) {
     viewLifecycleOwner.lifecycleScope.launch {
@@ -158,7 +160,7 @@ fun Fragment.borrarConDeshacer(
         when (r) {
             is Resultado.Exito -> {
                 alTerminar()
-                ofrecerDeshacer(mensaje, r.data?.papeleraId, alTerminar)
+                ofrecerDeshacer(mensaje, r.data?.papeleraId, enVentana(), alTerminar)
             }
             is Resultado.Error -> if (!r.requiereConfirmacion) avisarNoGuardado(r)
         }
@@ -168,11 +170,12 @@ fun Fragment.borrarConDeshacer(
 /**
  * Aviso abajo con el botón "Deshacer" (restaura desde la papelera). Funciona aunque la pantalla ya se haya
  * cerrado (la restauración va ligada a la actividad); [alDeshacer] solo se llama si la pantalla sigue abierta.
- * Sin papelera (servidor viejo), solo el aviso.
+ * Sin papelera (servidor viejo), solo el aviso. [ventana]: vista de una ventana abierta encima de la pantalla
+ * (por ejemplo, los abonos de una venta), para que el aviso no quede tapado.
  */
-fun Fragment.ofrecerDeshacer(mensaje: String, papeleraId: String?, alDeshacer: () -> Unit) {
+fun Fragment.ofrecerDeshacer(mensaje: String, papeleraId: String?, ventana: View? = null, alDeshacer: () -> Unit) {
     val actividad = activity ?: return
-    val raiz = actividad.findViewById<View>(android.R.id.content) ?: return
+    val raiz = ventana?.takeIf { it.isAttachedToWindow } ?: actividad.findViewById<View>(android.R.id.content) ?: return
     if (papeleraId == null) {
         toast(mensaje)
         return
@@ -183,8 +186,8 @@ fun Fragment.ofrecerDeshacer(mensaje: String, papeleraId: String?, alDeshacer: (
             actividad.restaurarDePapelera(papeleraId, "Listo: se recuperó") { if (fragmento.view != null) alDeshacer() }
         }
         .setActionTextColor(ContextCompat.getColor(actividad, R.color.dorado_titulo))
-    // Encima de la barra inferior (si está a la vista)
-    actividad.findViewById<View>(R.id.barraInferior)?.takeIf { it.isShown }?.let { aviso.setAnchorView(it) }
+    // Encima de la barra inferior (si está a la vista y el aviso va en la pantalla)
+    if (raiz !== ventana) actividad.findViewById<View>(R.id.barraInferior)?.takeIf { it.isShown }?.let { aviso.setAnchorView(it) }
     aviso.show()
 }
 

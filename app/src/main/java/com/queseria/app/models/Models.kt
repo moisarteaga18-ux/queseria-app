@@ -197,6 +197,11 @@ data class Venta(
     val totalVenta: Double? = null,
     /** Lo devuelve el servidor si el registro se hizo sin internet. */
     val idLocal: String? = null,
+    /** true = fiada (el cliente paga después con abonos). null/false = pagada (todas las antiguas). */
+    val fiada: Boolean? = null,
+    /** Lo abonado y lo que falta (los calcula el servidor; null en respuestas viejas o sin internet). */
+    val abonado: Double? = null,
+    val saldo: Double? = null,
     /** Registro hecho sin internet que todavía no llega al servidor (no viene en el JSON). */
     @Transient val pendiente: com.queseria.app.offline.Pendiente? = null
 )
@@ -212,7 +217,9 @@ data class VentaRequest(
     val precioUnitario: Double,
     val fecha: String? = null,
     /** Identificador que pone el teléfono: si el pedido llega dos veces, el servidor no lo duplica. */
-    val idLocal: String? = null
+    val idLocal: String? = null,
+    /** true = pendiente por pagar (fiada); false = pagada. */
+    val fiada: Boolean? = null
 )
 
 // ========================================
@@ -225,7 +232,9 @@ data class ResumenHoy(
     val totalVentasHoy: Double = 0.0,
     val numeroVentasHoy: Int = 0,
     val costoLecheHoy: Double = 0.0,
-    val gananciaEstimadaHoy: Double = 0.0
+    val gananciaEstimadaHoy: Double = 0.0,
+    /** Lo que te deben (todas las ventas fiadas con saldo). */
+    val porCobrarTotal: Double = 0.0
 )
 
 // ========================================
