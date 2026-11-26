@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Reportes (diseño oscuro con neón). Orden: ganancia de la semana, ventas y leche lado a lado, botón para comparar
-     con la semana anterior, gráfico de 8 semanas (ventas verde, leche dorada) y después ganancia por semana,
-     rendimiento, merma, mejores clientes e inventario. -->
+<!-- Reportes (diseño oscuro con neón). Orden: selector de semana, tabla "semana elegida vs. la anterior", botón al
+     detalle de la ganancia, tabla de 8 semanas con totales y debajo los gráficos de esas 8 semanas (ventas y leche,
+     ganancia, rendimiento, merma), mejores clientes e inventario. -->
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipeRefresh"
@@ -41,128 +41,40 @@
                     android:textSize="13sp"
                     android:visibility="gone" />
 
-                <!-- 1. Ganancia de esta semana -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_gr_tarjeta"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingVertical="18dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="12dp">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/tvGananciaTitulo"
-                            style="@style/Gr.Rotulo"
-                            android:text="Ganancia de esta semana" />
-                        <TextView
-                            android:id="@+id/tvGanancia"
-                            style="@style/Gr.Valor"
-                            android:layout_height="44dp"
-                            android:text="—"
-                            android:textSize="34sp"
-                            app:autoSizeMaxTextSize="34sp" />
-                        <TextView
-                            android:id="@+id/tvGananciaCambio"
-                            style="@style/Gr.Pildora"
-                            android:layout_marginTop="8dp" />
-                        <TextView
-                            android:id="@+id/tvSemanaInfo"
-                            style="@style/Gr.Secundario"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                    <ImageView
-                        android:id="@+id/ivGanancia"
-                        android:layout_width="92dp"
-                        android:layout_height="86dp"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/img_gr_circulo_flecha" />
-                </LinearLayout>
+                <!-- 1. Semana elegida (viernes a jueves) -->
+                <include
+                    android:id="@+id/selectorSemana"
+                    layout="@layout/vista_semana" />
 
-                <!-- 2. Ventas y leche, lado a lado -->
+                <!-- 2. Tabla: semana elegida vs. la anterior -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        android:id="@+id/tvCompararTitulo"
+                        style="@style/Gr.Rotulo"
+                        android:text="Esta semana vs. la anterior" />
+                    <TextView
+                        android:id="@+id/tvCompararAviso"
+                        style="@style/Gr.Secundario"
+                        android:layout_marginBottom="8dp" />
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_gr_tarjeta"
-                        android:orientation="vertical"
-                        android:padding="14dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/img_gr_monedas" />
-                            <TextView
-                                style="@style/Gr.Rotulo"
-                                android:layout_marginStart="8dp"
-                                android:text="Ventas" />
-                        </LinearLayout>
-                        <TextView
-                            android:id="@+id/tvVentas"
-                            style="@style/Gr.ValorMediano"
-                            android:layout_marginTop="8dp"
-                            android:text="—" />
-                        <TextView
-                            android:id="@+id/tvVentasDetalle"
-                            style="@style/Gr.Secundario" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_gr_tarjeta_azul"
-                        android:orientation="vertical"
-                        android:padding="14dp">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-                            <ImageView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/img_gr_jarra_leche" />
-                            <TextView
-                                style="@style/Gr.Rotulo"
-                                android:layout_marginStart="8dp"
-                                android:text="Leche" />
-                        </LinearLayout>
-                        <TextView
-                            android:id="@+id/tvLeche"
-                            style="@style/Gr.ValorMediano"
-                            android:layout_marginTop="8dp"
-                            android:text="—" />
-                        <TextView
-                            android:id="@+id/tvLecheDetalle"
-                            style="@style/Gr.Secundario" />
-                    </LinearLayout>
+                        android:id="@+id/tablaComparar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
                 </LinearLayout>
 
-                <!-- 3. Comparar con la semana anterior (abre Ganancias) -->
+                <!-- 3. Detalle de la ganancia (abre Ganancias) -->
                 <TextView
                     android:id="@+id/btnGanancias"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/bg_gr_boton"
                     android:drawableEnd="@drawable/ic_flecha_derecha"
                     android:drawablePadding="8dp"
@@ -173,12 +85,35 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:paddingHorizontal="24dp"
-                    android:text="Comparar con la semana anterior"
+                    android:text="Ver el detalle de la ganancia"
                     android:textColor="@color/gr_texto"
-                    android:textSize="16sp"
-                    app:autoSizeMaxTextSize="16sp"
+                    android:textSize="15sp"
+                    app:autoSizeMaxTextSize="15sp"
                     app:autoSizeMinTextSize="12sp"
                     app:autoSizeTextType="uniform" />
+
+                <!-- 4. Tabla: 8 semanas hasta la elegida, con totales -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_gr_tarjeta"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+                    <TextView
+                        style="@style/Gr.Rotulo"
+                        android:text="Semana por semana" />
+                    <TextView
+                        android:id="@+id/tvSemanasAviso"
+                        style="@style/Gr.Secundario"
+                        android:layout_marginBottom="8dp"
+                        android:text="8 semanas hasta la elegida · toca una para compararla" />
+                    <LinearLayout
+                        android:id="@+id/tablaSemanas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </LinearLayout>
 
                 <!-- 4. Ventas y leche comprada, 8 semanas -->
                 <LinearLayout
@@ -193,7 +128,8 @@
                         android:text="Ventas y leche comprada" />
                     <TextView
                         style="@style/Gr.Secundario"
-                        android:text="Últimas 8 semanas (viernes a jueves)" />
+                        android:id="@+id/tvGraficoAviso"
+                        android:text="8 semanas hasta la elegida (viernes a jueves)" />
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -355,12 +291,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="170dp"
                         android:layout_marginTop="8dp" />
-                    <LinearLayout
-                        android:id="@+id/contenedorMerma"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:orientation="vertical" />
                 </LinearLayout>
 
                 <!-- Mejores clientes -->

@@ -142,7 +142,9 @@ interface QueseriaApi {
     @GET("resumen/semanas")
     suspend fun getResumenSemanas(
         @Query("n") n: Int = 8,
-        @Query("fecha") fecha: String? = null
+        @Query("fecha") fecha: String? = null,
+        /** Última semana de la serie (cualquier día de ella); null = la de hoy. */
+        @Query("hasta") hasta: String? = null
     ): Response<ApiResponse<List<ResumenSemana>>>
 
     // ========================================

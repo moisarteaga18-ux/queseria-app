@@ -16,12 +16,17 @@ import com.queseria.app.api.RetrofitClient
 import com.queseria.app.api.llamarApi
 import com.queseria.app.databinding.FragmentReportesBinding
 import com.queseria.app.databinding.ItemBarraClienteBinding
-import com.queseria.app.databinding.ItemDiaBinding
-import com.queseria.app.models.Ganancias
 import com.queseria.app.models.RendimientoSemanal
 import com.queseria.app.models.ResumenSemana
 import com.queseria.app.models.Venta
 import com.queseria.app.ui.common.Grafico
+import com.queseria.app.ui.common.NavegadorSemana
+import com.queseria.app.ui.common.filasComparar
+import com.queseria.app.ui.common.semanaDe
+import com.queseria.app.ui.common.tablaComparar
+import com.queseria.app.ui.common.tablaReporteSemanas
+import com.queseria.app.ui.common.totalesReporteSemanas
+import com.queseria.app.util.Semana
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.manejarError
 import com.queseria.app.ui.home.RendimientoFragment
@@ -31,13 +36,15 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 /**
- * Pantalla de Reportes: ganancia de la semana, gráficos de las últimas 8 semanas
- * (ingresos vs. leche, ganancia, rendimiento), mejores clientes e inventario.
+ * Pantalla de Reportes, por semana (viernes a jueves): selector de semana, tabla "semana elegida vs. la anterior",
+ * tabla de las 8 semanas hasta la elegida (con totales) y debajo los gráficos de esas 8 semanas, rendimiento,
+ * merma, mejores clientes e inventario. Las tablas tienen el estilo de Leche y Ventas (ui/common/Tabla.kt).
  */
 class ReportesFragment : Fragment() {
 
     private var _binding: FragmentReportesBinding? = null
     private val binding get() = _binding!!
+    private lateinit var navegador: NavegadorSemana
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentReportesBinding.inflate(inflater, container, false)
@@ -56,71 +63,96 @@ class ReportesFragment : Fragment() {
         binding.btnGanancias.setOnClickListener { findNavController().navigate(R.id.nav_ganancias) }
         binding.btnRendimiento.setOnClickListener { findNavController().navigate(R.id.nav_rendimiento) }
         binding.swipeRefresh.setOnRefreshListener { cargar() }
+        selectorOscuro()
+        navegador = NavegadorSemana(binding.selectorSemana, semanaElegida ?: Semana.actual()) {
+            semanaElegida = it
+            cargarSemanas()
+        }
         cargar()
+    }
+
+    /** El selector de semana con los colores de esta pantalla (oscura con neón). */
+    private fun selectorOscuro() {
+        val sel = binding.selectorSemana
+        sel.root.setBackgroundResource(R.drawable.bg_gr_tarjeta)
+        sel.root.elevation = 0f
+        sel.tvSemana.setTextColor(color(R.color.gr_texto))
+        sel.tvSemanaDias.setTextColor(color(R.color.gr_texto_2))
+        listOf(sel.btnSemanaAnterior, sel.btnSemanaSiguiente).forEach {
+            it.setBackgroundResource(R.drawable.bg_gr_boton_redondo)
+            it.imageTintList = android.content.res.ColorStateList.valueOf(color(R.color.gr_neon))
+        }
     }
 
     private fun cargar() {
         cargarInventario()
-        binding.swipeRefresh.isRefreshing = true
+        cargarSemanas()
         viewLifecycleOwner.lifecycleScope.launch {
-            // Las consultas se hacen en paralelo
-            val ganancias = async { llamarApi { RetrofitClient.api.getGanancias() } }
-            val semanas = async { llamarApi { RetrofitClient.api.getResumenSemanas(n = 8, fecha = Formato.hoyIso()) } }
             val rendimiento = async { llamarApi { RetrofitClient.api.getRendimientoSemanal() } }
             val merma = async { llamarApi { RetrofitClient.api.getMerma() } }
             val ventas = async {
                 llamarApi { RetrofitClient.api.getVentas(limit = 500, desde = Formato.haceDias(30), hasta = Formato.hoyIso()) }
             }
-            val rG = ganancias.await()
-            val rS = semanas.await()
             val rR = rendimiento.await()
             val rV = ventas.await()
             val rM = merma.await()
             if (_binding == null) return@launch
-            binding.swipeRefresh.isRefreshing = false
-
-            (rG as? Resultado.Exito)?.data?.let { mostrarGanancias(it) }
-            (rS as? Resultado.Exito)?.data?.let { mostrarGraficos(it) }
             (rR as? Resultado.Exito)?.data?.let { mostrarRendimiento(it) }
             (rV as? Resultado.Exito)?.let { mostrarVentasPorCliente(it.data.orEmpty()) }
             (rM as? Resultado.Exito)?.data?.let {
                 binding.tvMermaPromedio.text = if (it.semanas.isEmpty()) "—" else "${Formato.numero(it.promedioPct, 1)} %"
             }
+            mostrarError(listOf(rR, rV, rM).filterIsInstance<Resultado.Error>().firstOrNull())
+        }
+    }
 
-            val error = listOf(rG, rS, rR, rV, rM).filterIsInstance<Resultado.Error>().firstOrNull()
-            binding.tvError.visibility = if (error == null) View.GONE else View.VISIBLE
-            error?.let {
-                binding.tvError.text = "Algunos datos no se pudieron cargar: ${it.mensaje}"
-                manejarError(it)
+    /** Tablas y gráficos: las 8 semanas que terminan en la elegida (una sola consulta). */
+    private fun cargarSemanas() {
+        val s = navegador.semana
+        binding.swipeRefresh.isRefreshing = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            val r = llamarApi { RetrofitClient.api.getResumenSemanas(n = 8, fecha = Formato.hoyIso(), hasta = s.fin.toString()) }
+            if (_binding == null || navegador.semana != s) return@launch
+            binding.swipeRefresh.isRefreshing = false
+            when (r) {
+                is Resultado.Exito -> {
+                    val lista = r.data.orEmpty()
+                    mostrarTablas(s, lista)
+                    mostrarGraficos(lista)
+                }
+                is Resultado.Error -> mostrarError(r)
             }
         }
     }
 
-    private fun mostrarGanancias(g: Ganancias) {
-        val s = g.semanaActual
-        // Negativa en rojo, positiva en verde (nunca una pérdida en verde)
-        binding.tvGananciaTitulo.text = if (s.completa) "Ganancia de esta semana" else "Ganancia de esta semana (hasta hoy)"
-        binding.tvGanancia.text = Formato.moneda(s.ganancia)
-        binding.tvGanancia.setTextColor(color(if (s.ganancia < 0) R.color.gr_negativo else R.color.gr_texto))
-        val sinDatos = g.semanaAnterior.ganancia == 0.0 && g.variacion == 0.0
-        binding.tvGananciaCambio.text = if (sinDatos) "Sin datos de la semana anterior" else
-            "${if (g.variacion < 0) "▼" else "▲"} ${Formato.moneda(kotlin.math.abs(g.variacion))}" +
-                (if (g.porcentaje != 0.0) " (${Formato.numero(kotlin.math.abs(g.porcentaje), 1)} %)" else "") +
-                " vs. semana anterior"
-        binding.tvGananciaCambio.setBackgroundResource(when {
-            sinDatos -> R.drawable.bg_gr_pildora_verde
-            g.variacion < 0 -> R.drawable.bg_gr_pildora_roja
-            else -> R.drawable.bg_gr_pildora_verde
-        })
-        binding.tvSemanaInfo.text = "Semana ${s.semana} · " + (s.rango?.texto ?: "") +
-            if (!s.completa) "\nLo vendido el viernes cuenta primero para la semana que cerró el jueves." else ""
-        // La ilustración de la flecha sube; con pérdida se gira para que apunte hacia abajo
-        binding.ivGanancia.scaleY = if (s.ganancia < 0) -1f else 1f
-        binding.tvVentas.text = Formato.moneda(s.ingresos)
-        binding.tvVentasDetalle.text = "${Formato.kg(s.kgVendidos)} vendidos"
-        binding.tvLeche.text = Formato.moneda(s.costoLeche)
-        binding.tvLecheDetalle.text = Formato.litros(s.litrosComprados) +
-            if (s.costoLitro > 0) " × ${Formato.moneda(s.costoLitro)}" else " · sin precio del litro"
+    private fun mostrarError(error: Resultado.Error?) {
+        if (_binding == null) return
+        binding.tvError.visibility = if (error == null) View.GONE else View.VISIBLE
+        error?.let {
+            binding.tvError.text = "Algunos datos no se pudieron cargar: ${it.mensaje}"
+            manejarError(it)
+        }
+    }
+
+    private fun mostrarTablas(s: Semana, lista: List<ResumenSemana>) {
+        val elegida = lista.lastOrNull { it.semana == s.numero && it.anio == s.anio }
+        val anterior = s.anterior()
+        val previa = lista.lastOrNull { it.semana == anterior.numero && it.anio == anterior.anio }
+        binding.tvCompararTitulo.text = if (s.esActual) "Esta semana vs. la anterior" else "Semana ${s.numero} vs. semana ${anterior.numero}"
+        binding.tvCompararAviso.text = when {
+            elegida == null -> ""
+            !elegida.completa -> "Va hasta hoy. Lo vendido el viernes cuenta primero para la semana que cerró el jueves."
+            else -> s.texto()
+        } + "\nDesliza la tabla a la izquierda para ver la diferencia."
+        val comparar = tablaComparar(s, anterior)
+        if (elegida == null) comparar.llenarEn(binding.tablaComparar, emptyList(), null, "Sin datos de esta semana")
+        else comparar.llenarEn(binding.tablaComparar, filasComparar(elegida, previa), null, "")
+
+        // Sin las semanas vacías anteriores al primer registro (el gráfico sí las muestra, en 0)
+        val conDatos = lista.dropWhile { it.litrosLeche == 0.0 && it.kgProducidos == 0.0 && it.ingresos == 0.0 }
+        val semanas = tablaReporteSemanas { fila -> navegador.ir(semanaDe(fila)) }
+        semanas.llenarEn(binding.tablaSemanas, conDatos, if (conDatos.isEmpty()) null else totalesReporteSemanas(conDatos),
+            "Todavía no hay registros")
     }
 
     private fun mostrarGraficos(semanas: List<ResumenSemana>) {
@@ -146,12 +178,11 @@ class ReportesFragment : Fragment() {
         binding.graficoMerma.mostrar(
             Grafico.Tipo.BARRAS,
             etiquetas,
-            // Semanas sin completar (no ha terminado su viernes siguiente) quedan en 0: su merma todavía no existe
+            // Semanas sin merma (pendiente) quedan en 0: no se inventa ningún número
             listOf(Grafico.Serie("Merma", semanas.map { it.mermaPct ?: 0.0 }, color(R.color.gr_rojo))),
             resaltar = actual,
             formatoValor = { "${Formato.numero(it, 1)} %" }
         )
-        mostrarDetalleMerma(semanas)
         binding.graficoRendimiento.mostrar(
             Grafico.Tipo.LINEA,
             etiquetas,
@@ -159,36 +190,6 @@ class ReportesFragment : Fragment() {
             resaltar = actual,
             formatoValor = { Formato.numero(it, 1) }
         )
-    }
-
-    /**
-     * Últimas 4 semanas con queso: kg y % de merma de las completas; las que no han terminado su viernes
-     * siguiente dicen cuánto falta por vender (la merma no se inventa). "⚠" si el servidor pide revisar.
-     */
-    private fun mostrarDetalleMerma(semanas: List<ResumenSemana>) {
-        val contenedor = binding.contenedorMerma
-        contenedor.removeAllViews()
-        semanas.filter { it.kgProducidos > 0 || (it.mermaKg ?: 0.0) != 0.0 }.takeLast(4).reversed().forEachIndexed { i, s ->
-            val fila = ItemDiaBinding.inflate(layoutInflater, contenedor, false)
-            val kg = s.mermaKg
-            fila.tvDia.setTextColor(color(R.color.gr_texto))
-            fila.tvEntregas.setTextColor(color(R.color.gr_texto_2))
-            fila.tvDia.text = "Semana ${s.semana}" + if (s.revisar != null) " ⚠ revisar" else ""
-            if (!s.completa || kg == null) {
-                fila.tvEntregas.text = "Se completa al terminar el viernes · vendido ${Formato.kg(s.kgVendidos)} de ${Formato.kg(s.kgProducidos)}"
-                fila.tvLitros.text = "—"
-                fila.tvLitros.setTextColor(color(R.color.gr_texto_2))
-            } else {
-                fila.tvEntregas.text = "${Formato.numero(s.mermaPct ?: 0.0, 1)} % de ${Formato.kg(s.kgProducidos)}"
-                fila.tvLitros.text = Formato.kg(kg)
-                fila.tvLitros.setTextColor(color(if (kg < 0 || s.revisar != null) R.color.gr_negativo else R.color.gr_oro))
-            }
-            if (i % 2 == 0) {
-                fila.root.setBackgroundResource(R.drawable.bg_chip)
-                fila.root.backgroundTintList = android.content.res.ColorStateList.valueOf(0x14FFFFFF)
-            }
-            contenedor.addView(fila.root)
-        }
     }
 
     private fun mostrarRendimiento(r: RendimientoSemanal) {
@@ -262,6 +263,11 @@ class ReportesFragment : Fragment() {
     }
 
     private fun color(id: Int) = ContextCompat.getColor(requireContext(), id)
+
+    companion object {
+        /** Semana que se estaba viendo (se conserva al volver del detalle de la ganancia). */
+        private var semanaElegida: Semana? = null
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

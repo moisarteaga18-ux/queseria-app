@@ -475,6 +475,29 @@ Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
         ayuda corta en 1 ("Por ganadero", "Leche → queso", "A un ganadero", "Pasar queso · Lo que sobró"); en celulares < 360 dp
         una por fila. Probado en el emulador (servidor local + base temporal) a 411 y 320 dp. App 18/18. Sin subir.
 
+## Plan (25 nov 2026) — Reportes por semana, ventas fiadas, merma manual
+Orden: Parte 24 → 25 → 26. Al terminar cada parte: pruebas, commit local (SIN subir) y anotarlo aquí.
+Regla: no modificar, borrar ni migrar datos existentes; de la base real solo leer; pruebas contra base temporal.
+Plan aprobado por el usuario: fiado = `Venta.estadoPago` nuevo (sin campo = pagada) + colección nueva `abonos`
+(abonos necesitan internet; borrar venta lleva sus abonos a la papelera); "Cuentas por cobrar" (Inicio y Más);
+"Te debe" en el cliente. Merma manual en campo NUEVO de `CierreSemana` (el `mermaKg` viejo se ignora, no se toca);
+sugerida = sobrante; merma + pasado ≤ sobrante; valor = kg × precio promedio real; sin registrar = "Merma pendiente
+por registrar"; "Registrar merma" en Inicio → Hoy (sin ventana automática) y al tocar la semana en Reportes/Ganancias.
+
+### Parte 24 — Reportes estilo Excel y por semanas
+97. [x] Servidor: `GET /resumen/semanas?hasta=yyyy-MM-dd` (la serie termina en la semana elegida; futura o sin
+        `hasta` = la de hoy; inválida → 400) y cada semana trae `valorMerma`. Prueba nueva en api.test.js: 187/187.
+        App: `Tabla.Paleta` (CLARA por defecto, OSCURA con colores `tabla_os_*` para Reportes). Reportes: selector de
+        semana (oscuro) → tabla "Semana N vs. semana N−1" (Concepto fijo | Sem. N | Sem. N−1 | Diferencia ▲/▼ verde si es
+        bueno para el negocio, rojo si es malo: leche, valor, queso, ventas, por cobrar, merma, valor merma, ganancia) →
+        "Ver el detalle de la ganancia" → tabla "Semana por semana" (8 semanas hasta la elegida, sin las vacías del
+        principio, con totales; tocar una la elige) → gráficos de esas 8 semanas, rendimiento, merma, clientes,
+        inventario. Se quitaron las tarjetas grandes de ganancia/ventas/leche y el detalle de merma (ya está en la tabla).
+        Merma sin número = "Pendiente". "Por cobrar" = 0 hasta la Parte 25 (`ResumenSemana.porCobrar`). Ganancias pide
+        la curva con `hasta` (antes mandaba el jueves como `fecha` = "hoy"). Tablas en `TablasApp.kt` (REPORTES).
+        Probado en el emulador (servidor local + base temporal en memoria, usuario `demo`): capturas en
+        `Escritorio\Capturas QuesoData 2026-11-25`. App 18/18. Sin subir.
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.

@@ -71,7 +71,7 @@ class GananciasFragment : Fragment() {
             it?.let { g -> mostrar(g) }
         }
         // Curvas: 8 semanas hasta la elegida (si falla, las tarjetas se ven igual, sin curva)
-        conApi({ RetrofitClient.api.getResumenSemanas(n = 8, fecha = s.fin.toString()) }) { lista ->
+        conApi({ RetrofitClient.api.getResumenSemanas(n = 8, fecha = Formato.hoyIso(), hasta = s.fin.toString()) }) { lista ->
             val semanas = lista.orEmpty()
             if (semanas.size < 2) return@conApi
             binding.curvaDiferencia.mostrar(semanas.map { it.ganancia }, color(R.color.gr_neon))

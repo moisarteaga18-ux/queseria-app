@@ -294,5 +294,9 @@ data class ResumenSemana(
     val completa: Boolean = true,
     val mermaKg: Double? = null,
     val mermaPct: Double? = null,
+    /** kg de merma × precio promedio de venta (null mientras no hay merma). */
+    val valorMerma: Double? = null,
+    /** Lo que falta por cobrar de las ventas de la semana (ventas fiadas). */
+    val porCobrar: Double = 0.0,
     val revisar: String? = null
 )

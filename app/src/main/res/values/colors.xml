@@ -130,4 +130,12 @@
     <color name="tabla_total">#D7EFCF</color>
     <color name="tabla_pendiente">#FFF4D6</color>
     <color name="tabla_rechazada">#FDE2E2</color>
+    <!-- Tabla en pantallas oscuras con neón (Reportes); iguales en modo claro y oscuro -->
+    <color name="tabla_os_encabezado">#1F6B33</color>
+    <color name="tabla_os_rejilla">#2A3B30</color>
+    <color name="tabla_os_par">#0F1A13</color>
+    <color name="tabla_os_impar">#15231A</color>
+    <color name="tabla_os_total">#173A22</color>
+    <color name="tabla_os_pendiente">#3A3016</color>
+    <color name="tabla_os_rechazada">#46202A</color>
 </resources>

@@ -326,3 +326,148 @@ fun tablaDescuentosLiquidacion(precioLitro: Double, alTocar: ((LineaDescuento) -
     colorCelda = { _, i -> if (i == 2) R.color.rojo_error else null },
     alTocar = alTocar
 )
+
+// ========================= REPORTES =========================
+
+/** Semana (viernes a jueves) de una fila de `resumen/semanas`. */
+fun semanaDe(r: com.queseria.app.models.ResumenSemana): Semana =
+    Semana.de(LocalDate.parse(Formato.soloFecha(r.fechaInicio)))
+
+/** Merma de la semana como texto: "Pendiente" mientras no hay número (nunca se inventa). */
+fun textoMerma(r: com.queseria.app.models.ResumenSemana): String = when {
+    r.mermaKg == null -> "Pendiente"
+    else -> Formato.kg(r.mermaKg)
+}
+
+fun textoValorMerma(r: com.queseria.app.models.ResumenSemana): String = when {
+    r.mermaKg == null -> "—"
+    else -> Formato.moneda(r.valorMerma ?: 0.0)
+}
+
+/**
+ * Reportes, semana por semana: Semana (fija) | Leche | Valor leche | Queso | Ventas | Por cobrar | Merma |
+ * Valor merma | Ganancia. La semana que no ha terminado su viernes siguiente dice "en curso".
+ */
+fun tablaReporteSemanas(alTocar: (com.queseria.app.models.ResumenSemana) -> Unit): Tabla<com.queseria.app.models.ResumenSemana> =
+    Tabla(
+        columnas = listOf(
+            Tabla.Columna("Semana", 116),
+            Tabla.Columna("Leche", 92, numero = true),
+            Tabla.Columna("Valor leche", 112, numero = true),
+            Tabla.Columna("Queso", 92, numero = true),
+            Tabla.Columna("Ventas", 116, numero = true),
+            Tabla.Columna("Por cobrar", 108, numero = true),
+            Tabla.Columna("Merma", 96, numero = true),
+            Tabla.Columna("Valor merma", 112, numero = true),
+            Tabla.Columna("Ganancia", 120, numero = true)
+        ),
+        celdas = { r ->
+            listOf(
+                rangoCorto(semanaDe(r)),
+                Formato.litros(r.litrosLeche),
+                Formato.moneda(r.costoLeche),
+                Formato.kg(r.kgProducidos),
+                Formato.moneda(r.ingresos),
+                Formato.moneda(r.porCobrar),
+                textoMerma(r),
+                textoValorMerma(r),
+                Formato.moneda(r.ganancia)
+            )
+        },
+        nota = { r -> "Sem. ${r.semana}" + if (!r.completa) " · en curso" else "" },
+        alTocar = alTocar,
+        colorCelda = { r, i ->
+            when {
+                i == 8 -> if (r.ganancia < 0) R.color.gr_negativo else R.color.gr_positivo
+                i == 5 && r.porCobrar > 0 -> R.color.gr_oro
+                i == 6 && r.mermaKg == null -> R.color.gr_texto_2
+                i == 6 && r.revisar != null -> R.color.gr_negativo
+                else -> null
+            }
+        },
+        paleta = Tabla.Paleta.OSCURA
+    )
+
+fun totalesReporteSemanas(lista: List<com.queseria.app.models.ResumenSemana>): List<String> {
+    val conMerma = lista.filter { it.mermaKg != null }
+    return listOf(
+        "Total",
+        Formato.litros(lista.sumOf { it.litrosLeche }),
+        Formato.moneda(lista.sumOf { it.costoLeche }),
+        Formato.kg(lista.sumOf { it.kgProducidos }),
+        Formato.moneda(lista.sumOf { it.ingresos }),
+        Formato.moneda(lista.sumOf { it.porCobrar }),
+        if (conMerma.isEmpty()) "—" else Formato.kg(conMerma.sumOf { it.mermaKg ?: 0.0 }),
+        if (conMerma.isEmpty()) "—" else Formato.moneda(conMerma.sumOf { it.valorMerma ?: 0.0 }),
+        Formato.moneda(lista.sumOf { it.ganancia })
+    )
+}
+
+/** Una fila de "semana elegida vs. la anterior". [colorDiferencia]: recurso de color o null (neutro). */
+data class FilaComparar(
+    val concepto: String,
+    val actual: String,
+    val anterior: String,
+    val diferencia: String,
+    val colorDiferencia: Int? = null,
+    /** Color de los valores de la semana (la ganancia: verde o rojo según el signo). */
+    val colorActual: Int? = null,
+    val colorAnterior: Int? = null
+)
+
+/**
+ * Compara [actual] con [anterior] concepto por concepto. Diferencia con ▲/▼; en verde si es buena para el
+ * negocio (más ventas, más ganancia, menos merma…), en rojo si es mala; litros y queso, sin color.
+ */
+fun filasComparar(actual: com.queseria.app.models.ResumenSemana, anterior: com.queseria.app.models.ResumenSemana?): List<FilaComparar> {
+    // bueno: +1 = subir es bueno, −1 = subir es malo, 0 = neutro
+    fun fila(nombre: String, a: Double?, b: Double?, texto: (Double) -> String, bueno: Int, siFalta: String = "—"): FilaComparar {
+        val ta = a?.let(texto) ?: siFalta
+        val tb = if (anterior == null) "—" else b?.let(texto) ?: siFalta
+        if (a == null || b == null || anterior == null) return FilaComparar(nombre, ta, tb, "—")
+        val d = a - b
+        if (kotlin.math.abs(d) < 0.005) return FilaComparar(nombre, ta, tb, "=")
+        val flecha = if (d > 0) "▲" else "▼"
+        val color = when {
+            bueno == 0 -> null
+            (d > 0) == (bueno > 0) -> R.color.gr_positivo
+            else -> R.color.gr_negativo
+        }
+        return FilaComparar(nombre, ta, tb, "$flecha ${texto(kotlin.math.abs(d))}", color)
+    }
+    fun signo(v: Double?) = when { v == null -> null; v < 0 -> R.color.gr_negativo; else -> R.color.gr_positivo }
+    val b = anterior
+    return listOf(
+        fila("Leche", actual.litrosLeche, b?.litrosLeche, Formato::litros, 0),
+        fila("Valor leche", actual.costoLeche, b?.costoLeche, Formato::moneda, -1),
+        fila("Queso producido", actual.kgProducidos, b?.kgProducidos, Formato::kg, 0),
+        fila("Ventas", actual.ingresos, b?.ingresos, Formato::moneda, 1),
+        fila("Por cobrar", actual.porCobrar, b?.porCobrar, Formato::moneda, -1),
+        fila("Merma", actual.mermaKg, b?.mermaKg, Formato::kg, -1, siFalta = "Pendiente"),
+        fila("Valor merma", actual.mermaKg?.let { actual.valorMerma ?: 0.0 }, b?.mermaKg?.let { b.valorMerma ?: 0.0 }, Formato::moneda, -1),
+        fila("Ganancia", actual.ganancia, b?.ganancia, Formato::moneda, 1)
+            .copy(colorActual = signo(actual.ganancia), colorAnterior = signo(b?.ganancia))
+    )
+}
+
+/** Tabla: Concepto (fija) | Semana N | Semana N−1 | Diferencia. */
+fun tablaComparar(actual: Semana, anterior: Semana): Tabla<FilaComparar> =
+    Tabla(
+        columnas = listOf(
+            Tabla.Columna("Concepto", 104),
+            Tabla.Columna("Sem. ${actual.numero}", 106, numero = true),
+            Tabla.Columna("Sem. ${anterior.numero}", 106, numero = true),
+            Tabla.Columna("Diferencia", 112, numero = true)
+        ),
+        celdas = { f -> listOf(f.concepto, f.actual, f.anterior, f.diferencia) },
+        colorCelda = { f, i ->
+            when {
+                i == 3 -> f.colorDiferencia
+                i == 1 && f.colorActual != null -> f.colorActual
+                i == 2 && f.colorAnterior != null -> f.colorAnterior
+                (i == 1 && f.actual == "Pendiente") || (i == 2 && f.anterior == "Pendiente") -> R.color.gr_texto_2
+                else -> null
+            }
+        },
+        paleta = Tabla.Paleta.OSCURA
+    )

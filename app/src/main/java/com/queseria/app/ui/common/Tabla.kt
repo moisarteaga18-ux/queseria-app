@@ -35,8 +35,27 @@ class Tabla<T>(
     private val nota: (T) -> String? = { null },
     private val alTocar: ((T) -> Unit)? = null,
     /** Color de una celda (columna i) según el dato: estados, negativos… null = el normal. */
-    private val colorCelda: (T, Int) -> Int? = { _, _ -> null }
+    private val colorCelda: (T, Int) -> Int? = { _, _ -> null },
+    /** Colores de la tabla: [Paleta.CLARA] (sigue el modo claro/oscuro) o [Paleta.OSCURA] (Reportes). */
+    private val paleta: Paleta = Paleta.CLARA
 ) : RecyclerView.Adapter<Tabla.Holder>() {
+
+    /** Recursos de color de la tabla. */
+    data class Paleta(
+        val encabezado: Int, val textoEncabezado: Int, val rejilla: Int, val par: Int, val impar: Int,
+        val total: Int, val texto: Int, val textoTotal: Int, val textoVacio: Int,
+        val pendiente: Int, val rechazada: Int
+    ) {
+        companion object {
+            val CLARA = Paleta(R.color.tabla_encabezado, R.color.white, R.color.tabla_rejilla, R.color.tabla_fila_par,
+                R.color.tabla_fila_impar, R.color.tabla_total, R.color.gris_texto_principal, R.color.verde_oscuro,
+                R.color.gris_texto_secundario, R.color.tabla_pendiente, R.color.tabla_rechazada)
+            /** Para las pantallas oscuras con neón (Reportes): igual en modo claro y oscuro. */
+            val OSCURA = Paleta(R.color.tabla_os_encabezado, R.color.gr_texto, R.color.tabla_os_rejilla, R.color.tabla_os_par,
+                R.color.tabla_os_impar, R.color.tabla_os_total, R.color.gr_texto, R.color.gr_neon,
+                R.color.gr_texto_2, R.color.tabla_os_pendiente, R.color.tabla_os_rechazada)
+        }
+    }
 
     /** [ancho] en dp; [numero] = alineada a la derecha. La primera columna es la fija. */
     data class Columna(val titulo: String, val ancho: Int, val numero: Boolean = false)
@@ -68,8 +87,8 @@ class Tabla<T>(
         fila.celdas.forEachIndexed { i, tv ->
             tv.text = columnas[i].titulo
             tv.setTypeface(negrita(ctx), Typeface.NORMAL)
-            tv.setTextColor(ContextCompat.getColor(ctx, R.color.white))
-            tv.setBackgroundColor(ContextCompat.getColor(ctx, R.color.tabla_encabezado))
+            tv.setTextColor(ContextCompat.getColor(ctx, paleta.textoEncabezado))
+            tv.setBackgroundColor(ContextCompat.getColor(ctx, paleta.encabezado))
             tv.minHeight = dp(ctx, 42)
         }
         fila.raiz.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
@@ -93,8 +112,8 @@ class Tabla<T>(
                 layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 setPadding(dp(ctx, 16), dp(ctx, 22), dp(ctx, 16), dp(ctx, 22))
                 gravity = Gravity.CENTER
-                setTextColor(ContextCompat.getColor(ctx, R.color.gris_texto_secundario))
-                setBackgroundColor(ContextCompat.getColor(ctx, R.color.tabla_fila_par))
+                setTextColor(ContextCompat.getColor(ctx, paleta.textoVacio))
+                setBackgroundColor(ContextCompat.getColor(ctx, paleta.par))
                 textSize = 14f
             }
             return Holder(tv, null)
@@ -149,13 +168,13 @@ class Tabla<T>(
         val textos = if (esTotal) totales.orEmpty() else celdas(elemento!!)
         val m = elemento?.let(marca) ?: Marca.NINGUNA
         val fondo = ContextCompat.getColor(ctx, when {
-            esTotal -> R.color.tabla_total
-            m == Marca.RECHAZADA -> R.color.tabla_rechazada
-            m == Marca.PENDIENTE || m == Marca.AVISO -> R.color.tabla_pendiente
-            position % 2 == 0 -> R.color.tabla_fila_par
-            else -> R.color.tabla_fila_impar
+            esTotal -> paleta.total
+            m == Marca.RECHAZADA -> paleta.rechazada
+            m == Marca.PENDIENTE || m == Marca.AVISO -> paleta.pendiente
+            position % 2 == 0 -> paleta.par
+            else -> paleta.impar
         })
-        val colorTexto = ContextCompat.getColor(ctx, if (esTotal) R.color.verde_oscuro else R.color.gris_texto_principal)
+        val colorTexto = ContextCompat.getColor(ctx, if (esTotal) paleta.textoTotal else paleta.texto)
         fila.celdas.forEachIndexed { i, tv ->
             tv.setBackgroundColor(fondo)
             tv.setTextColor(colorTexto)
@@ -201,7 +220,7 @@ class Tabla<T>(
 
     /** Fila: celda fija + (desplazable → celdas). La rejilla es el fondo que asoma entre celdas. */
     private fun armarFila(ctx: Context): Fila {
-        val rejilla = ContextCompat.getColor(ctx, R.color.tabla_rejilla)
+        val rejilla = ContextCompat.getColor(ctx, paleta.rejilla)
         val linea = dp(ctx, 1).coerceAtLeast(1)
         val raiz = LinearLayout(ctx).apply {
             orientation = LinearLayout.HORIZONTAL
