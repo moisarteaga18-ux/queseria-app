@@ -532,6 +532,9 @@ por registrar"; "Registrar merma" en Inicio → Hoy (sin ventana automática) y 
         ventana automática; "Por cobrar" pasó de Más opciones a Hoy para dejar la rejilla pareja), Reportes (botón bajo la
         comparación) y Ganancias (tocar la tarjeta de merma). Reportes: "Por registrar" / "—". App 18/18. Probado en el
         emulador (servidor local + base temporal): registrar 4 kg, corregir a 5, quitar y Deshacer; capturas 14–17.
+100. [x] Push (aprobado por el usuario, 25 nov 2026): servidor 371a68a (Partes 24–26) y app 3d1eb10 (Partes 24–26 y 3b00f33).
+        Antes se revisó que los commits no tuvieran claves ni cifras reales (solo datos de prueba). Render publicó la versión
+        nueva: `/api/abonos` y `/api/merma/:anio/:semana/merma` responden 401 sin sesión (verificado solo con GET, sin escribir).
 
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
