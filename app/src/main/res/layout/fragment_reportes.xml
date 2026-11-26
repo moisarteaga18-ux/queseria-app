@@ -92,6 +92,26 @@
                     app:autoSizeMinTextSize="12sp"
                     app:autoSizeTextType="uniform" />
 
+                <!-- Merma manual de la semana elegida (solo si ya cerró y tuvo queso) -->
+                <TextView
+                    android:id="@+id/btnMerma"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_gr_tarjeta_roja"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingHorizontal="20dp"
+                    android:textColor="@color/gr_texto"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    app:autoSizeMaxTextSize="15sp"
+                    app:autoSizeMinTextSize="11sp"
+                    app:autoSizeTextType="uniform" />
+
                 <!-- 4. Tabla: 8 semanas hasta la elegida, con totales -->
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -15,6 +15,8 @@ import com.queseria.app.models.GananciaSemana
 import com.queseria.app.models.Ganancias
 import com.queseria.app.ui.common.NavegadorSemana
 import com.queseria.app.ui.common.conApi
+import com.queseria.app.ui.common.toast
+import com.queseria.app.ui.merma.registrarMerma
 import com.queseria.app.util.Formato
 import com.queseria.app.util.Semana
 import kotlin.math.abs
@@ -124,15 +126,29 @@ class GananciasFragment : Fragment() {
         binding.tvAnteriorGanancia.setTextColor(colorSigno(a.ganancia))
     }
 
-    /** Tarjeta roja: la pérdida por merma solo cuando la semana está completa; antes, lo que falta por vender. */
+    /**
+     * Tarjeta roja (merma manual): la merma que registró el usuario; si la semana ya cerró y no se ha
+     * registrado, "Merma pendiente por registrar" con lo que sobró; antes del viernes, lo que falta por vender.
+     * Tocarla abre "Registrar merma" de esa semana (si ya cerró).
+     */
     private fun mostrarMerma(s: GananciaSemana) {
         val kg = s.mermaKg
         val tv = binding.tvActualMerma
-        if (!s.completa || kg == null) {
-            binding.tvMermaTitulo.text = "Merma de la semana"
+        binding.tarjetaMerma.setOnClickListener {
+            if (s.cerrada == true) registrarMerma(s.semana, s.anio) { cargar() }
+            else toast("La merma de la semana ${s.semana} se registra desde el viernes siguiente")
+        }
+        if (kg == null) {
+            binding.tvMermaTitulo.text = if (s.mermaPendiente == true) "Merma pendiente por registrar" else "Merma de la semana"
             val viernes = s.viernesSiguiente?.let { " del ${Formato.fechaLegible(it)}" } ?: ""
-            tv.text = "Queso: ${Formato.kg(s.stockInicialKg + s.kgProducidos)} · vendido ${Formato.kg(s.kgVendidos)} · " +
-                "por vender ${Formato.kg(s.kgPorVender)}. Se completa al terminar el viernes$viernes."
+            tv.text = when {
+                s.mermaPendiente == true -> "Sobró ${Formato.kg(maxOf(0.0, s.sobranteKg ?: 0.0))}" +
+                    (if (s.kgPasados > 0) " (pasaste ${Formato.kg(s.kgPasados)} a la siguiente)" else "") +
+                    ". Toca para registrar la merma."
+                s.cerrada == true -> "Esta semana no tuvo queso."
+                else -> "Queso: ${Formato.kg(s.stockInicialKg + s.kgProducidos)} · vendido ${Formato.kg(s.kgVendidos)} · " +
+                    "por vender ${Formato.kg(s.kgPorVender)}. La merma se registra desde el viernes$viernes."
+            }
             return
         }
         val pct = Formato.numero(s.mermaPct ?: 0.0, 1)
@@ -142,28 +158,28 @@ class GananciasFragment : Fragment() {
         }
         tv.text = when {
             kg == 0.0 -> "Sin merma esta semana"
-            kg < 0 -> "${Formato.kg(kg)} ($pct %): se vendió más de lo registrado"
             s.precioVentaKg <= 0 -> "${Formato.kg(kg)} · $pct % (sin valor: no hubo ventas ni precio del queso)"
             else -> "${Formato.kg(kg)} · $pct % × ${Formato.moneda(s.precioVentaKg)}/kg" +
                 if (s.precioPromedioKg != null) " (precio promedio)" else " (precio registrado)"
-        } + (s.revisar?.let { "\n⚠ Revisar: $it" } ?: "")
+        } + (s.revisar?.let { "\n⚠ Revisar: $it" } ?: "") + "\nToca para corregirla."
     }
 
     companion object {
         /**
-         * Merma de la semana tal como la calcula el servidor. Mientras no termine el viernes siguiente no
-         * hay merma (no se inventa): se muestra lo producido, lo vendido y lo que falta por vender.
+         * Merma de la semana (manual): la registrada por el usuario. Sin registrar no hay número (no se inventa):
+         * "Merma pendiente por registrar" si la semana ya cerró; antes, lo producido, lo vendido y lo que falta.
          */
         fun textoMerma(s: GananciaSemana): String {
             val kg = s.mermaKg
-            if (!s.completa || kg == null) {
+            if (kg == null) {
+                if (s.mermaPendiente == true) return "Merma pendiente por registrar (sobró ${Formato.kg(maxOf(0.0, s.sobranteKg ?: 0.0))})."
+                if (s.cerrada == true) return "Sin queso esta semana."
                 val viernes = s.viernesSiguiente?.let { " del ${Formato.fechaLegible(it)}" } ?: ""
                 return "Queso de la semana: ${Formato.kg(s.stockInicialKg + s.kgProducidos)} · vendido ${Formato.kg(s.kgVendidos)} · " +
-                    "por vender ${Formato.kg(s.kgPorVender)}.\nLa merma y la ganancia de esta semana se completan al terminar el viernes$viernes."
+                    "por vender ${Formato.kg(s.kgPorVender)}.\nLa ganancia se completa al terminar el viernes$viernes; la merma se registra desde ese día."
             }
             val pct = Formato.numero(s.mermaPct ?: 0.0, 1)
             val texto = when {
-                kg < 0 -> "Merma: ${Formato.kg(kg)} ($pct %)"
                 kg == 0.0 -> "Merma: 0 kg"
                 // Sin ventas ni precio registrado no se puede valorar (no es una pérdida de $ 0)
                 s.precioVentaKg <= 0 -> "Merma: ${Formato.kg(kg)} · $pct % (sin valor: no hubo ventas ni precio del queso esa semana)"

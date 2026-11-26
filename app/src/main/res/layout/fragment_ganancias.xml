@@ -203,8 +203,10 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- 4. Pérdida por merma -->
+                <!-- 4. Pérdida por merma (tocar = registrar o corregir la merma de la semana) -->
                 <LinearLayout
+                    android:id="@+id/tarjetaMerma"
+                    android:foreground="?attr/selectableItemBackground"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -319,7 +321,7 @@
                     style="@style/Gr.Secundario"
                     android:layout_marginHorizontal="6dp"
                     android:layout_marginTop="14dp"
-                    android:text="Semanas de viernes a jueves. Lo vendido el viernes cuenta primero para la semana que cerró el jueves (se vende primero el queso que quedó). Ganancia = ventas del queso de la semana − leche de esa semana. La merma y la ganancia se completan al terminar el viernes siguiente; la pérdida por merma es informativa: ese queso no se vendió, así que no se resta otra vez." />
+                    android:text="Semanas de viernes a jueves. Lo vendido el viernes cuenta primero para la semana que cerró el jueves (se vende primero el queso que quedó). Ganancia = ventas del queso de la semana − leche de esa semana. La ganancia se completa al terminar el viernes siguiente. La merma la registras tú desde ese viernes (la app sugiere lo que sobró); la pérdida por merma es informativa: ese queso no se vendió, así que no se resta otra vez." />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

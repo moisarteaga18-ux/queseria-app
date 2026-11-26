@@ -30,6 +30,7 @@ import com.queseria.app.util.Semana
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.common.manejarError
 import com.queseria.app.ui.home.RendimientoFragment
+import com.queseria.app.ui.merma.registrarMerma
 import com.queseria.app.ui.ventas.total
 import com.queseria.app.util.Formato
 import kotlinx.coroutines.async
@@ -61,6 +62,11 @@ class ReportesFragment : Fragment() {
         binding.swipeRefresh.setColorSchemeResources(R.color.gr_neon)
         binding.swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.gr_barra)
         binding.btnGanancias.setOnClickListener { findNavController().navigate(R.id.nav_ganancias) }
+        // Merma manual de la semana elegida: registrar o corregir
+        binding.btnMerma.setOnClickListener {
+            val s = navegador.semana
+            registrarMerma(s.numero, s.anio) { cargarSemanas(); cargar() }
+        }
         binding.btnRendimiento.setOnClickListener { findNavController().navigate(R.id.nav_rendimiento) }
         binding.swipeRefresh.setOnRefreshListener { cargar() }
         selectorOscuro()
@@ -144,6 +150,12 @@ class ReportesFragment : Fragment() {
             !elegida.completa -> "Va hasta hoy. Lo vendido el viernes cuenta primero para la semana que cerró el jueves."
             else -> s.texto()
         } + "\nDesliza la tabla a la izquierda para ver la diferencia."
+        // Botón de la merma: solo si la semana ya cerró y tuvo queso
+        binding.btnMerma.visibility = if (elegida != null && (elegida.mermaPendiente == true || elegida.mermaKg != null)) View.VISIBLE else View.GONE
+        binding.btnMerma.text = when {
+            elegida?.mermaKg != null -> "Merma: ${Formato.kg(elegida.mermaKg)} · tocar para corregir"
+            else -> "Merma pendiente por registrar · Registrar"
+        }
         val comparar = tablaComparar(s, anterior)
         if (elegida == null) comparar.llenarEn(binding.tablaComparar, emptyList(), null, "Sin datos de esta semana")
         else comparar.llenarEn(binding.tablaComparar, filasComparar(elegida, previa), null, "")

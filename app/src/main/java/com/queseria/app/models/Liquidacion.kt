@@ -214,8 +214,9 @@ data class PagarLiquidacionRequest(
 
 /**
  * Cuenta del queso de una semana. Las ventas del viernes siguiente cuentan primero para esta semana
- * (se vende primero el queso que quedó). [mermaKg], [mermaPct] y [valorMerma] son null mientras no
- * termine el viernes siguiente ([completa] = false): la app no inventa la merma.
+ * (se vende primero el queso que quedó). Merma MANUAL: [mermaKg], [mermaPct] y [valorMerma] son los de la
+ * merma que registró el usuario; sin registrar son null y, si la semana ya cerró, [mermaPendiente] = true.
+ * [sobranteKg] = lo que sobró (pasado + producido − vendido); [mermaSugeridaKg] = sobrante − lo pasado.
  */
 data class CierreSemana(
     val semana: Int,
@@ -225,6 +226,11 @@ data class CierreSemana(
     val texto: String? = null,
     val viernesSiguiente: String? = null,
     val completa: Boolean = false,
+    /** true desde el viernes siguiente: ya se puede registrar la merma. */
+    val cerrada: Boolean? = null,
+    val mermaPendiente: Boolean? = null,
+    val sobranteKg: Double? = null,
+    val mermaSugeridaKg: Double? = null,
     val stockInicialKg: Double = 0.0,
     val kgProducidos: Double = 0.0,
     val kgVendidos: Double = 0.0,
@@ -238,14 +244,14 @@ data class CierreSemana(
     val mermaKg: Double? = null,
     val mermaPct: Double? = null,
     val valorMerma: Double? = null,
-    /** Aviso del servidor si la merma pasa del 15 % o da negativa (puede faltar un registro). */
+    /** Aviso del servidor si la merma pasa del 15 % o no cabe en lo que sobró (puede faltar un registro). */
     val revisar: String? = null
 )
 
 data class MermaResumen(
     /** La más reciente primero (la primera es la semana en curso). */
     val semanas: List<CierreSemana> = emptyList(),
-    /** % de merma de todas las semanas completas (merma total ÷ queso total). */
+    /** % de merma de las semanas con merma registrada (merma total ÷ queso total). */
     val promedioPct: Double = 0.0,
     val actual: CierreSemana? = null,
     /** Queso por vender hoy: el de la semana en curso y, el viernes, lo que quede de la que cerró. */
@@ -254,3 +260,12 @@ data class MermaResumen(
 
 /** "Pasar queso a la semana siguiente": kg de esa semana que pasan a la siguiente (0 = deshacer). */
 data class CierreRequest(val kgFinal: Double, val fecha: String)
+
+/** "Registrar merma": kg de queso que se perdió esa semana (0 si no hubo). */
+data class MermaRequest(val kg: Double, val fecha: String)
+
+/** Respuesta al registrar o quitar la merma: la merma que había antes ([anterior], para deshacer) y las semanas. */
+data class MermaGuardada(
+    val anterior: Double? = null,
+    val semanas: List<CierreSemana>? = null
+)

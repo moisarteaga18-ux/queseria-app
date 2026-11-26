@@ -191,6 +191,38 @@ fun Fragment.ofrecerDeshacer(mensaje: String, papeleraId: String?, ventana: View
     aviso.show()
 }
 
+/**
+ * Aviso con "Deshacer" para cambios que no pasan por la papelera (por ejemplo, quitar la merma de una semana):
+ * [deshacer] vuelve a dejar lo de antes (ligado a la actividad, sirve aunque se cierre la pantalla);
+ * [alDeshacer] se llama si salió bien y la pantalla sigue abierta.
+ */
+fun <T> Fragment.ofrecerDeshacerCon(
+    mensaje: String,
+    deshacer: suspend () -> Response<ApiResponse<T>>,
+    alDeshacer: () -> Unit
+) {
+    val actividad = activity ?: return
+    val raiz = actividad.findViewById<View>(android.R.id.content) ?: return
+    val fragmento = this
+    val aviso = Snackbar.make(raiz, mensaje, SEGUNDOS_DESHACER * 1000)
+        .setAction("Deshacer") {
+            actividad.lifecycleScope.launch {
+                when (val r = llamarApi { deshacer() }) {
+                    is Resultado.Exito -> {
+                        Toast.makeText(actividad, "Listo: se deshizo", Toast.LENGTH_SHORT).show()
+                        if (fragmento.view != null) alDeshacer()
+                    }
+                    is Resultado.Error -> AlertDialog.Builder(actividad).setTitle("No se deshizo")
+                        .setMessage(if (r.sinConexion) "Necesita internet. Vuelve a registrarlo cuando tengas conexión." else r.mensaje)
+                        .setPositiveButton("Entendido", null).show()
+                }
+            }
+        }
+        .setActionTextColor(ContextCompat.getColor(actividad, R.color.dorado_titulo))
+    actividad.findViewById<View>(R.id.barraInferior)?.takeIf { it.isShown }?.let { aviso.setAnchorView(it) }
+    aviso.show()
+}
+
 /** Restaura una entrada de la papelera desde una pantalla ([alTerminar] solo si la pantalla sigue abierta). */
 fun Fragment.restaurarDePapelera(papeleraId: String, mensaje: String, alTerminar: () -> Unit) {
     val actividad = activity ?: return

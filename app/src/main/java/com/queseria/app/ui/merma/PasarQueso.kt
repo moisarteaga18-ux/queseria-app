@@ -18,7 +18,7 @@ private const val SEMANAS_ATRAS = 8
 /**
  * "Pasar queso a la semana siguiente": opción aparte que el usuario usa solo cuando quiera (ya no hay
  * pregunta automática el viernes). Elige una semana ya cerrada (por defecto, la última) y los kg que pasan;
- * el servidor los suma a la semana siguiente y con eso calcula la merma. 0 = no pasar nada / deshacer.
+ * el servidor los suma a la semana siguiente (la merma se registra aparte: RegistrarMerma). 0 = no pasar nada.
  */
 fun Fragment.pasarQuesoASemanaSiguiente(alGuardar: (MermaResumen?) -> Unit = {}) {
     conApi({ RetrofitClient.api.getMerma() }, alFallar = { toast("No se pudo cargar el queso de las semanas: ${it.mensaje}") }) { m ->

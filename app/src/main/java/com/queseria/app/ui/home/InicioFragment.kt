@@ -36,6 +36,7 @@ import com.queseria.app.models.ResumenHoy
 import com.queseria.app.ui.common.conApi
 import com.queseria.app.ui.liquidaciones.registrarAdelantoODescuento
 import com.queseria.app.ui.merma.pasarQuesoASemanaSiguiente
+import com.queseria.app.ui.merma.registrarMerma
 import com.google.android.material.card.MaterialCardView
 import com.queseria.app.util.Formato
 import java.util.Calendar
@@ -87,7 +88,12 @@ class InicioFragment : Fragment() {
                 R.color.qd_c_cuenta, accion = { registrarAdelantoODescuento { cargar() } }),
             // Opción aparte (ya no se pregunta sola el viernes): solo cuando el usuario quiera
             Opcion("Pasar queso", "Lo que sobró", R.drawable.ic_qd_inventario, null,
-                R.color.qd_c_inventario, accion = { pasarQuesoASemanaSiguiente { cargar() } })
+                R.color.qd_c_inventario, accion = { pasarQuesoASemanaSiguiente { cargar() } }),
+            // Merma manual: la registra el usuario cuando la semana cerró (no hay ventana automática)
+            Opcion("Registrar merma", "Queso perdido", R.drawable.ic_qd_productos, null,
+                R.color.qd_c_productos, accion = { registrarMerma { cargar() } }),
+            Opcion("Por cobrar", "Ventas fiadas", R.drawable.ic_dinero, R.id.nav_cuentas_cobrar,
+                R.color.qd_c_precios)
         )
     }
 
@@ -115,8 +121,6 @@ class InicioFragment : Fragment() {
                 R.color.qd_c_clientes, R.color.qd_clientes, R.drawable.img_clientes_apreton, 46),
             Opcion("Productos", "", R.drawable.ic_qd_productos, R.id.nav_productos,
                 R.color.qd_c_productos, R.color.qd_productos, R.drawable.img_productos_queso, 46),
-            Opcion("Por cobrar", "", R.drawable.ic_dinero, R.id.nav_cuentas_cobrar,
-                R.color.qd_c_precios, R.color.qd_precios, R.drawable.img_nueva_venta_queso, 46),
             Opcion("Configuración", "", R.drawable.ic_qd_configuracion, null,
                 R.color.qd_c_configuracion, R.color.qd_configuracion, R.drawable.img_configuracion_engranajes, 36,
                 accion = { abrirConfiguracion() })

@@ -342,10 +342,14 @@ fun tablaDescuentosLiquidacion(precioLitro: Double, alTocar: ((LineaDescuento) -
 fun semanaDe(r: com.queseria.app.models.ResumenSemana): Semana =
     Semana.de(LocalDate.parse(Formato.soloFecha(r.fechaInicio)))
 
-/** Merma de la semana como texto: "Pendiente" mientras no hay número (nunca se inventa). */
+/**
+ * Merma de la semana como texto (merma manual): la registrada; "Por registrar" si la semana ya cerró y no se
+ * ha registrado; "—" si todavía no cierra o no tuvo queso. Nunca se inventa un número.
+ */
 fun textoMerma(r: com.queseria.app.models.ResumenSemana): String = when {
-    r.mermaKg == null -> "Pendiente"
-    else -> Formato.kg(r.mermaKg)
+    r.mermaKg != null -> Formato.kg(r.mermaKg)
+    r.mermaPendiente == true -> "Por registrar"
+    else -> "—"
 }
 
 fun textoValorMerma(r: com.queseria.app.models.ResumenSemana): String = when {
@@ -366,7 +370,7 @@ fun tablaReporteSemanas(alTocar: (com.queseria.app.models.ResumenSemana) -> Unit
             Tabla.Columna("Queso", 92, numero = true),
             Tabla.Columna("Ventas", 116, numero = true),
             Tabla.Columna("Por cobrar", 108, numero = true),
-            Tabla.Columna("Merma", 96, numero = true),
+            Tabla.Columna("Merma", 116, numero = true),
             Tabla.Columna("Valor merma", 112, numero = true),
             Tabla.Columna("Ganancia", 120, numero = true)
         ),
@@ -389,6 +393,7 @@ fun tablaReporteSemanas(alTocar: (com.queseria.app.models.ResumenSemana) -> Unit
             when {
                 i == 8 -> if (r.ganancia < 0) R.color.gr_negativo else R.color.gr_positivo
                 i == 5 && r.porCobrar > 0 -> R.color.gr_oro
+                i == 6 && r.mermaPendiente == true -> R.color.gr_oro
                 i == 6 && r.mermaKg == null -> R.color.gr_texto_2
                 i == 6 && r.revisar != null -> R.color.gr_negativo
                 else -> null
@@ -452,7 +457,8 @@ fun filasComparar(actual: com.queseria.app.models.ResumenSemana, anterior: com.q
         fila("Queso producido", actual.kgProducidos, b?.kgProducidos, Formato::kg, 0),
         fila("Ventas", actual.ingresos, b?.ingresos, Formato::moneda, 1),
         fila("Por cobrar", actual.porCobrar, b?.porCobrar, Formato::moneda, -1),
-        fila("Merma", actual.mermaKg, b?.mermaKg, Formato::kg, -1, siFalta = "Pendiente"),
+        fila("Merma", actual.mermaKg, b?.mermaKg, Formato::kg, -1)
+            .copy(actual = textoMerma(actual), anterior = b?.let(::textoMerma) ?: "—"),
         fila("Valor merma", actual.mermaKg?.let { actual.valorMerma ?: 0.0 }, b?.mermaKg?.let { b.valorMerma ?: 0.0 }, Formato::moneda, -1),
         fila("Ganancia", actual.ganancia, b?.ganancia, Formato::moneda, 1)
             .copy(colorActual = signo(actual.ganancia), colorAnterior = signo(b?.ganancia))

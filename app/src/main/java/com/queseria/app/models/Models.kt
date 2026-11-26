@@ -269,7 +269,11 @@ data class GananciaSemana(
     val kgPasados: Double = 0.0,
     val kgPorVender: Double = 0.0,
     val precioPromedioKg: Double? = null,
-    // Merma: null mientras no termine el viernes siguiente (no se inventa)
+    // Merma registrada por el usuario (null = sin registrar; pendiente si la semana ya cerró)
+    val cerrada: Boolean? = null,
+    val mermaPendiente: Boolean? = null,
+    val sobranteKg: Double? = null,
+    val mermaSugeridaKg: Double? = null,
     val mermaKg: Double? = null,
     val mermaPct: Double? = null,
     val valorMerma: Double? = null,
@@ -301,9 +305,14 @@ data class ResumenSemana(
     val librasPorLata: Double = 0.0,
     /** false mientras no termine el viernes siguiente: ventas y ganancia todavía pueden cambiar y no hay merma. */
     val completa: Boolean = true,
+    /** Merma registrada por el usuario (null = sin registrar). */
     val mermaKg: Double? = null,
     val mermaPct: Double? = null,
-    /** kg de merma × precio promedio de venta (null mientras no hay merma). */
+    /** Semana cerrada con queso y sin merma registrada: "Merma pendiente por registrar". */
+    val mermaPendiente: Boolean? = null,
+    val sobranteKg: Double? = null,
+    val mermaSugeridaKg: Double? = null,
+    /** kg de merma × precio promedio de venta (null mientras no hay merma registrada). */
     val valorMerma: Double? = null,
     /** Lo que falta por cobrar de las ventas de la semana (ventas fiadas). */
     val porCobrar: Double = 0.0,

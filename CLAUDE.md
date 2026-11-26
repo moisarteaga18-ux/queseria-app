@@ -514,17 +514,41 @@ por registrar"; "Registrar merma" en Inicio → Hoy (sin ventana automática) y 
         de la ventana). Cliente: tarjeta "te debe". Inicio: "te deben $ X". Abonos necesitan internet. App 18/18.
         Probado en el emulador (servidor local + base temporal); capturas 06–13 en `Escritorio\Capturas QuesoData 2026-11-25`.
 
+### Parte 26 — Merma manual
+99. [x] Servidor: campo NUEVO `CierreSemana.mermaRegistradaKg` (+ `mermaRegistradaEn`). El campo viejo `mermaKg` (del
+        cálculo automático anterior) se ignora y no se toca; se le quitó el valor por defecto para no escribirlo más. En
+        Atlas había 4 cierres viejos con `mermaKg` (3 distintos de 0, ninguno confirmado; revisado solo leyendo).
+        `utils/merma.js`: ya no calcula la merma. `sobranteKg` = pasado + producido − vendido (desde el viernes siguiente,
+        `cerrada`); `mermaSugeridaKg` = sobrante − pasado; `mermaKg` = la registrada o null; `mermaPendiente` = cerrada,
+        con queso y sin registrar; % y valor (kg × precio promedio real de venta) solo de la registrada; promedio solo de
+        semanas registradas; "revisar" si > 15 %, si se vendió más de lo producido o si merma + pasado ya no caben en lo
+        que sobró (ventas tardías). Rutas: `PUT /api/merma/:anio/:semana/merma {kg}` (registrar/corregir; semana cerrada,
+        kg ≥ 0, merma + pasado ≤ sobrante; responde `anterior`) y `DELETE` (quitar; responde `anterior` para Deshacer).
+        "Pasar queso" no deja pasar más de lo que queda después de la merma registrada. `test/merma.test.js` reescrito con
+        números (63 kg − 58 vendidos = 5 kg sugerida → 7,9 %, $ 80.690; corregir; quitar; campo viejo ignorado): 209/209.
+        App: `ui/merma/RegistrarMerma.kt` + `dialog_registrar_merma.xml` (semana con flechas, producido/vendido/sobró,
+        kg sugeridos, "Usar lo que sobró", valor en vivo; corregir = "Revisa los cambios"; "Quitar la merma registrada"
+        rojo arriba → confirmación → Deshacer con `ofrecerDeshacerCon`). Entradas: Inicio → Hoy "Registrar merma" (sin
+        ventana automática; "Por cobrar" pasó de Más opciones a Hoy para dejar la rejilla pareja), Reportes (botón bajo la
+        comparación) y Ganancias (tocar la tarjeta de merma). Reportes: "Por registrar" / "—". App 18/18. Probado en el
+        emulador (servidor local + base temporal): registrar 4 kg, corregir a 5, quitar y Deshacer; capturas 14–17.
+
 ## Decisiones
 - Semanas de viernes a jueves (antes ISO lunes–domingo), calculadas en UTC; la app envía fechas
   `yyyy-MM-dd`. El número de semana es el de la semana ISO del jueves de corte.
 - Los precios semanales guardados antes del cambio conservan sus fechas (lunes–domingo).
 - La merma se calcula sobre el total de queso (no por producto). El stock por producto de Inventario no descuenta la merma.
 - (19 nov 2026) Ventas por lotes: lo vendido el viernes cuenta primero para la semana que cerró el jueves (ventas y ganancia).
-  La merma solo existe al terminar el viernes siguiente; antes se muestra lo que falta por vender. Sin merma estimada.
-  "Pasar queso a la semana siguiente" es una opción aparte (no se pregunta sola). Merma > 15 % o negativa → revisar.
-- El valor de la merma se muestra como pérdida informativa y NO se resta otra vez de la ganancia:
-  es queso que no se vendió (ya falta en los ingresos) y su leche ya está en el costo.
-- El promedio de merma usa solo semanas completas.
+  "Pasar queso a la semana siguiente" es una opción aparte (no se pregunta sola).
+- (25 nov 2026) Merma MANUAL: la registra el usuario desde el viernes siguiente (la app sugiere lo que sobró menos lo
+  pasado); merma + pasado ≤ sobrante. Sin registrar = "Merma pendiente por registrar", sin número. Las semanas
+  anteriores quedan pendientes hasta que se registren (el cálculo automático viejo no se copia ni se borra).
+  Merma > 15 %, sobrante negativo o merma que ya no cabe por ventas tardías → revisar.
+- El valor de la merma (kg × precio promedio real de venta) se muestra como pérdida informativa y NO se resta otra vez
+  de la ganancia: es queso que no se vendió (ya falta en los ingresos) y su leche ya está en el costo.
+- El promedio de merma usa solo semanas con merma registrada.
+- Venta fiada (`fiada: true`): cuenta en su semana aunque no esté pagada; lo que falta se muestra aparte (Por cobrar).
+  Sin el campo = pagada (todas las ventas antiguas). Los abonos necesitan internet.
 - Sin internet solo se registran leche, producción y ventas (cola en el teléfono con idLocal); lo demás necesita conexión.
   Un registro rechazado por el servidor nunca se borra solo: el usuario lo reintenta.
 - Una liquidación pendiente se recalcula sola; al pagarla queda congelada como comprobante.

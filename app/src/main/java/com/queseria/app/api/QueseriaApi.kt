@@ -337,6 +337,22 @@ interface QueseriaApi {
         @Body request: CierreRequest
     ): Response<ApiResponse<MermaResumen>>
 
+    /** Registrar o corregir la merma de una semana cerrada (kg ≥ 0; merma + lo pasado ≤ lo que sobró). */
+    @PUT("merma/{anio}/{semana}/merma")
+    suspend fun registrarMerma(
+        @Path("anio") anio: Int,
+        @Path("semana") semana: Int,
+        @Body request: MermaRequest
+    ): Response<ApiResponse<MermaGuardada>>
+
+    /** Quitar la merma registrada (la semana vuelve a "pendiente por registrar"). */
+    @DELETE("merma/{anio}/{semana}/merma")
+    suspend fun quitarMerma(
+        @Path("anio") anio: Int,
+        @Path("semana") semana: Int,
+        @Query("fecha") fecha: String = Formato.hoyIso()
+    ): Response<ApiResponse<MermaGuardada>>
+
     // ========================================
     // PAPELERA (lo borrado se puede recuperar durante 30 días)
     // ========================================
